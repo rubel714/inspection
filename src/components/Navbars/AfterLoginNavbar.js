@@ -93,6 +93,17 @@ function AfterLoginNavbar(props) {
                       </li>
                     )} */}
 
+                    {menuShowPermision("checklist") === 1 && (
+                      <li>
+                        <a
+                          href="javascript:void(0)"
+                          onClick={() => props.history.push("checklist")}
+                        >
+                          CheckList
+                        </a>
+                      </li>
+                    )}
+
                     {menuShowPermision("designation") === 1 && (
                       <li>
                         <a

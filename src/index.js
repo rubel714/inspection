@@ -23,6 +23,7 @@ import UserEntry from "views/screens/userentry/index.js";
 import Team from "views/screens/team/index.js";
 import Designation from "views/screens/designation/index.js";
 import Department from "views/screens/department/index.js";
+import CheckList from "views/screens/checklist/index.js";
 import Machine from "views/screens/machine/index.js";
 import Machineparts from "views/screens/machineparts/index.js";
 import Machinemodel from "views/screens/machinemodel/index.js";
@@ -87,6 +88,7 @@ ReactDOM.render(
             <Route path="/team" render={(props) => <Team {...props} />} />
             <Route path="/designation" render={(props) => <Designation {...props} />} />
             <Route path="/department" render={(props) => <Department {...props} />} />
+            <Route path="/checklist" render={(props) => <CheckList {...props} />} />
             <Route path="/machine" render={(props) => <Machine {...props} />} />
             <Route path="/machineparts" render={(props) => <Machineparts {...props} />} />
             <Route path="/machinemodel" render={(props) => <Machinemodel {...props} />} />

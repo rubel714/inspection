@@ -29,6 +29,9 @@ switch ($task) {
 	case "DesignationExport":
 		DesignationExport();
 		break;
+	case "CheckListExport":
+		CheckListExport();
+		break;
 	case "DepartmentExport":
 		DepartmentExport();
 		break;
@@ -191,6 +194,37 @@ function DesignationExport()
 
 	//Report save name. Not allow any type of special character
 	$tableProperties["report_save_name"] = 'Designation';
+}
+
+
+function CheckListExport()
+{
+
+	global $sql, $tableProperties, $TEXT, $siteTitle;
+	$ClientId = $_REQUEST['ClientId'];
+
+	$sql = "SELECT `CheckName`
+	FROM t_checklist 
+	ORDER BY `CheckName`;";
+
+	$tableProperties["query_field"] = array("CheckName");
+	$tableProperties["table_header"] = array('Check Name');
+	$tableProperties["align"] = array("left");
+	$tableProperties["width_print_pdf"] = array("100%"); //when exist serial then here total 95% and 5% use for serial
+	$tableProperties["width_excel"] = array("80");
+	$tableProperties["precision"] = array("string"); //string,date,datetime,0,1,2,3,4
+	$tableProperties["total"] = array(0); //not total=0, total=1
+	$tableProperties["color_code"] = array(0); //colorcode field = 1 not color code field = 0
+	$tableProperties["header_logo"] = 0; //include header left and right logo. 0 or 1
+	$tableProperties["footer_signatory"] = 0; //include footer signatory. 0 or 1
+
+	//Report header list
+	$tableProperties["header_list"][0] = $siteTitle;
+	$tableProperties["header_list"][1] = 'CheckList';
+	// $tableProperties["header_list"][1] = 'Heading 2';
+
+	//Report save name. Not allow any type of special character
+	$tableProperties["report_save_name"] = 'CheckList';
 }
 
 
