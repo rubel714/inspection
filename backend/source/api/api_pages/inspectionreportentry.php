@@ -33,8 +33,10 @@ function getDataList($data)
 	try {
 		$dbh = new Db();
 
-		$query = "SELECT a.TransactionId AS id,a.TransactionTypeId,DATE(a.`TransactionDate`) TransactionDate, a.InvoiceNo,a.CoverFilePages,
-		a.`UserId`, a.StatusId, b.`UserName`,c.`StatusName`, a.CoverFileUrl,a.ManyImgPrefix,'' Items
+		$query = "SELECT a.TransactionId AS id,a.TransactionTypeId,DATE(a.`TransactionDate`) TransactionDate, 
+		a.InvoiceNo,a.CoverFilePages,
+		a.`UserId`, a.StatusId, b.`UserName`,c.`StatusName`, a.CoverFileUrl,'' CoverFileUrlUpload,
+		case when a.CoverFileUrl is null then '' else 'Yes' end as CoverFileUrlStatus,a.ManyImgPrefix,'' Items
 	   FROM `t_transaction` a
 	   INNER JOIN `t_users` b ON a.`UserId` = b.`UserId`
 	   INNER JOIN `t_status` c ON a.`StatusId` = c.`StatusId`
@@ -88,11 +90,14 @@ function dataAddEdit($data)
 		$id = $data->rowData->id;
 		$TransactionTypeId = $data->rowData->TransactionTypeId;
 		$StatusId = $data->rowData->StatusId;
-		$CoverFileUrl = $data->rowData->CoverFileUrl ? $data->rowData->CoverFileUrl : null;
+		// $CoverFileUrl = $data->rowData->CoverFileUrl ? $data->rowData->CoverFileUrl : null;
 		$InvoiceNo = $data->rowData->InvoiceNo;
 		$TransactionDate = $data->rowData->TransactionDate;
 		$CoverFilePages = $data->rowData->CoverFilePages;
 		$ManyImgPrefix = $data->rowData->ManyImgPrefix;
+
+		$CoverFileUrl = $data->rowData->CoverFileUrlUpload ? ConvertFile($data->rowData->CoverFileUrlUpload,$ManyImgPrefix) : null;
+
 		// $Items = $data->rowData->Items;
 		// $PhotoUrl =  $data->rowData->PhotoUrl? $data->rowData->PhotoUrl : "placeholder.png";
 		// echo "<pre>";
@@ -310,6 +315,22 @@ function dataAddEditMany($data)
 
 		return $returnData;
 	}
+}
+
+
+
+function ConvertFile($base64_string, $prefix)
+{
+
+	$targetDir = '../../../image/transaction/';
+	$exploded = explode(',', $base64_string, 2);
+	$extention = explode(';', explode('/', $exploded[0])[1])[0];
+	$decoded = base64_decode($exploded[1]);
+	$output_file = $prefix . "_" . date("Y_m_d_H_i_s_") . "_" . rand(1, 9999) . "." . $extention;
+	// $output_file = date("Y_m_d_H_i_s_") . rand(1, 9999) . "." . $extention;
+	/**Image file name */
+	file_put_contents($targetDir . "/" . $output_file, $decoded);
+	return $output_file;
 }
 
 

@@ -47,6 +47,33 @@ const InspectionReportEntryAddEditModal = (props) => {
     setErrorObject({ ...errorObject, [name]: null });
   };
 
+  const handleChangeMasterFile = (e) => {
+    // const { name, value } = e.target;
+    let file = e.target.files[0];
+    console.log('file: ', file);
+    if (file) {
+
+      let data = { ...currentRow };
+      // data['CoverFileUrlUpload'] = file;
+      // setCurrentRow(data);
+      // console.log('data: ', data);
+
+
+      let reader = new FileReader();
+      // reader.onload = () => setPreview(reader.result);
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        // setPreview(event.target.result);
+        data['CoverFileUrlUpload'] = event.target.result;
+        //  console.log('event.target.result: ', event.target.result);
+        // console.log('From onload');
+        setCurrentRow(data);
+      };
+
+      // setErrorObject({ ...errorObject, [name]: null });
+    }
+  };
+
   // const handleChangeManyDropDown = (name, value, Idx) => {
   //   let data = { ...currentRow };
   //   if (name === "CheckId") {
@@ -112,6 +139,10 @@ const InspectionReportEntryAddEditModal = (props) => {
 
   function addEditAPICall() {
     if (validateForm()) {
+
+        console.log('currentRow: ', currentRow);
+
+
       let params = {
         action: "dataAddEdit",
         lan: language(),
@@ -204,9 +235,11 @@ const InspectionReportEntryAddEditModal = (props) => {
               type="file"
               id="PhotoUrl"
               name="PhotoUrl"
-              accept="image/*"
+              accept="application/pdf"
               //onChange={handleFileChange}
               //onChange={(e) => handleFileChange(e, "PhotoUrl")}
+              onChange={(e) => handleChangeMasterFile(e)}
+
             />
 
             <label>Cover File Page Count *</label>
