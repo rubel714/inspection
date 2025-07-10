@@ -72,7 +72,7 @@ ReactDOM.render(
         <Suspense>
           <Switch>
 
-            <Route path="/home" render={(props) => <Index {...props} />} />
+            <Route path="/" render={(props) => <Index {...props} />} />
             <Route path="/login" render={(props) => <LoginPage {...props} />} />
             {/* <Route path="/signup" render={(props) => <SignUpPage {...props} />} /> */}
             {/* <Route path="/reset-password" render={(props) => <ResetPassword {...props} />} /> */}

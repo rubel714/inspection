@@ -27,7 +27,7 @@ function LoginPage(props) {
 
   if (token) {
     //if already login then redirect to home page
-    props.history.push("/home");
+    props.history.push("/");
   }
 
   const [state, setState] = React.useState({
@@ -111,7 +111,7 @@ function LoginPage(props) {
 
             setLoading(false);
 
-            window.location.href =process.env.REACT_APP_BASE_NAME + "/home";
+            window.location.href =process.env.REACT_APP_BASE_NAME + "/";
             // window.location.href = process.env.REACT_APP_BASE_NAME + `/check-permission`;
           } else if (res.success == 0) {
             setLoading(false);
