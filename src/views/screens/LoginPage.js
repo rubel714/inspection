@@ -27,7 +27,7 @@ function LoginPage(props) {
 
   if (token) {
     //if already login then redirect to home page
-    props.history.push("/");
+    props.history.push("/home");
   }
 
   const [state, setState] = React.useState({

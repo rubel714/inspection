@@ -45,7 +45,7 @@ function AfterLoginNavbar(props) {
                 <a
                   class="parentMenu"
                   href="javascript:void(0)"
-                  onClick={() => props.history.push("/")}
+                  onClick={() => props.history.push("/home")}
                 >
                   Home
                 </a>
