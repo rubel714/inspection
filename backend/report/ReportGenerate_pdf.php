@@ -1,8 +1,19 @@
 <?php
+// echo "<pre>";
+// print_r($_REQUEST);
 
 include_once('../env.php');
-include_once('../source/api/pdolibs/pdo_lib.php');
-include_once('../source/api/pdolibs/function_global.php');
+
+
+require("../source/api/pdolibs/Db.class.php");
+// include_once('../source/api/pdolibs/pdo_lib.php');
+// include_once('../source/api/pdolibs/pdo_lib.php');
+
+
+// include_once('../source/api/pdolibs/function_global.php');
+
+
+
 
 $db = new Db();
 
@@ -46,8 +57,6 @@ $siteTitle = reportsitetitleeng;
 //include 'PDFMerger/PDFMerger.php';
 
 
-
-
 require_once('TCPDF-master/examples/tcpdf_include.php');
 
 /* $arrayPageCopy=array("1st copy: For receiving store","2nd copy: For Dhaka CWH with counter signature from receiving store",
@@ -74,6 +83,8 @@ require_once('TCPDF-master/examples/tcpdf_include.php');
 
 
 $pdf = new MYPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false); */
+
+
 
 
 
@@ -542,12 +553,57 @@ $exportTime = date("Y-m-d-His", time());
 $file = 'InspectionReport-' . $exportTime . '.pdf'; //Save file name
 //$pdf->Output(dirname(__FILE__).'/media/'.$file, 'F');
 $pdf->Output(dirname(__FILE__) . '/../../media/files/' . $file, 'F');
+// echo '/../../media/files/' . $file;
+// echo (__FILE__) . '/../../media/files/' . $file;
 
 $pdfFileNameArray = "../../media/files/" . $file;
-
 $pdf->Output(dirname(__FILE__) . '/../../media/files/' . $pdfFileNameArray, 'I');
+
+
+
+
+
+
+
+//   $reportName = 'Health_Commodity_Dashboard_Monthly_Logistics_Report_' . $CountryName . '_' . $MonthName . '_' . $Year . '.pdf';
+   //  $filePath = $baseUrl . 'report/pdfslice/' . $reportName;
+   //  if (file_exists($filePath)) {
+   //      unlink($filePath);
+   //  }
+   //  //echo $reportName;
+// $reportName = "xxx.pdf";
+
+// // require_once('PDFMerger/PDFMerger.php');
+
+//     include './PDFMerger/PDFMerger.php';
+    
+//     $pdf3 = new PDFMerger;
+//    $pdf3->addPDF('media/InspectionReport-2025-07-09-223332.pdf', 'all')
+//          ->addPDF('media/InspectionReport-2025-07-09-221716.pdf' , 'all')
+//          ->merge('file', 'media/' . $reportName);
+   //  echo $reportName;
+
+
 
 
 //============================================================+
 // END OF FILE
 //============================================================+
+
+// mergerpt();
+
+// function mergerpt(){
+   
+// $reportName = time()."xxx.pdf";
+// include './PDFMerger/PDFMerger.php';
+
+// $pdf3 = new PDFMerger;
+// $pdf3->addPDF('media/InspectionReport-2025-07-09-223332.pdf', 'all')
+//       ->addPDF('media/InspectionReport-2025-07-09-221716.pdf' , 'all')
+//       ->merge('file', 'media/' . $reportName);
+
+// exit;
+
+// }
+
+

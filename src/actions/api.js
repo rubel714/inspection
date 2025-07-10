@@ -35,7 +35,10 @@ export const apiCall = axios.create({
   baseURL: process.env.REACT_APP_API_URL + "source/api/",
  // baseURL: "http://localhost/phamangpl/backend/source/api/",
 });
-
+export const apiCallReport = axios.create({
+  baseURL: process.env.REACT_APP_API_URL + "report/",
+ // baseURL: "http://localhost/phamangpl/backend/source/api/",
+});
 export const apiOption = () => {
   return (
     options

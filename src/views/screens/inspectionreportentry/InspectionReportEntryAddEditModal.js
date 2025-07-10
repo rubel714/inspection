@@ -236,10 +236,10 @@ const InspectionReportEntryAddEditModal = (props) => {
               id="PhotoUrl"
               name="PhotoUrl"
               accept="application/pdf"
+              style={{"color": "transparent"}}
               //onChange={handleFileChange}
               //onChange={(e) => handleFileChange(e, "PhotoUrl")}
               onChange={(e) => handleChangeMasterFile(e)}
-
             />
 
             <label>Cover File Page Count *</label>

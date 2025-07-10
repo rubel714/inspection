@@ -13,6 +13,7 @@ import { Typography, TextField } from "@material-ui/core";
 import CustomTable from "components/CustomTable/CustomTable";
 import {
   apiCall,
+  apiCallReport,
   apiOption,
   LoginUserInfo,
   language,
@@ -54,6 +55,52 @@ const InspectionReportEntry = (props) => {
       finalUrl + "?TransactionId=" + TransactionId + "&TimeStamp=" + Date.now()
     );
   };
+
+
+  // backend\report\ReportGenerate_pdf.php
+  function PDFGenerate1(TransactionId) {
+    let params = {
+      action: "export",
+      lan: language(),
+      UserId: UserInfo.UserId,
+      TransactionId: TransactionId,
+    };
+
+    // apiCall.post("productgroup", { params }, apiOption()).then((res) => {
+    apiCallReport.post('ReportGenerate_pdf.php', { params }, apiOption()).then((res) => {
+      console.log("res: ", res);
+
+      // window.open(finalUrl + "?TransactionId=" + TransactionId + "&TimeStamp=" + Date.now());
+      // props.openNoticeModal({
+      //   isOpen: true,
+      //   msg: res.data.message,
+      //   msgtype: res.data.success,
+      // });
+      // getDataList();
+    });
+  }
+
+
+  // 	$.ajax({
+	// 	type: "POST",
+	// 	url: baseUrl + "monthlylogisticsreportwizardserver.php",
+	// 	data: {
+	// 		operation: 'combineLogisticsReport',
+	// 		baseUrl: baseUrl,
+	// 		lan: lan,
+	// 		MonthId :MonthId,
+	// 		MonthName : monthList[parseInt(MonthId)-1],
+	// 		YearId : YearId,
+	// 		CountryId : CountryId
+	// 	},
+	// 	success: function(response) {
+	// 		//console.log(response);
+	// 		$("#tab9loader").hide();
+	// 		window.open( baseUrl + 'report/pdfslice/Health_Commodity_Dashboard_Monthly_Logistics_Report_'+CountryId+'_'+monthList[parseInt(MonthId)-1]+'_'+YearId+'.pdf');
+	// 	}
+		
+	// });
+
 
   // const PrintPDFExcelExportFunction = (reportType) => {
   //   let finalUrl = EXCEL_EXPORT_URL + "report/print_pdf_excel_server.php";
