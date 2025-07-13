@@ -1,16 +1,11 @@
 <?php
 
-// print_r($data);
-// exit;
-
-
-
 try{
 	
 	apiLogWrite("\n\n========$PageName=======Called (".date('Y_m_d_H_i_s').")===================");
 	apiLogWrite("Params (".date('Y_m_d_H_i_s')."): ".json_encode($data));
 	
-	$CompanyCode =  isset($data['CompanyCode'])?$data['CompanyCode']:'';
+	$CompanyCode =  isset($data['Code'])?$data['Code']:'';
 		
 	$dbh = new Db();
 	$query = "SELECT 1 AS SysValue,'Successful' AS SysMessage, 

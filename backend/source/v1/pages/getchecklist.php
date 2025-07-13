@@ -1,21 +1,24 @@
 <?php
 
+
+
 try{
-	
 	apiLogWrite("\n\n========$PageName=======Called (".date('Y_m_d_H_i_s').")===================");
 	apiLogWrite("Params (".date('Y_m_d_H_i_s')."): ".json_encode($data));
 	
-	$UserId =  isset($data['UserInfoID']) ? $data['UserInfoID'] : 0;
-	$VisitDate = isset($data['VisitDate']) ? convertAppToDBDate(checkNull($data['VisitDate'])) : null;
-		
 	$dbh = new Db();
-	$query = "SELECT 1 AS SysValue,'Successful' AS SysMessage, count(a.TransactionId) AS VisitCount
-	FROM t_transaction a
-	where a.TransactionTypeId=1
-	and a.UserId = $UserId
-	and a.DropDownListIDForPurpose in (1,2,3,4,5)
-	and (date(a.TransactionDate) = '$VisitDate');";
-
+	$Search =  isset($data['Search'])?$data['Search']:'';
+	
+	$sWhere="";
+	if($Search){
+		$sWhere=" where CheckName like '%$Search%' ";
+	}
+	
+	$query = "SELECT 1 AS SysValue,'Successful' AS SysMessage, 
+	CheckId, CheckName
+	FROM t_checklist
+	$sWhere
+	ORDER BY CheckName ASC;";		
 	$resultdata = $dbh->query($query);
 	
 	if (is_object($resultdata)) {

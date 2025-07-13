@@ -2,9 +2,6 @@
 
 try {
 
-	//https://www.dysin.ng-ssl.com/image/appmenu/my_task.png
-	// echo domainurl;
-
 	apiLogWrite("\n\n========$PageName=======Called (" . date('Y_m_d_H_i_s') . ")===================");
 	apiLogWrite("Params (" . date('Y_m_d_H_i_s') . "): " . json_encode($data));
 

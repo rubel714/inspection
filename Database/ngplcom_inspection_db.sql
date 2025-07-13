@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.0
+-- version 5.2.2
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Jul 10, 2025 at 07:39 PM
--- Server version: 10.4.24-MariaDB
--- PHP Version: 7.4.29
+-- Host: localhost:3306
+-- Generation Time: Jul 14, 2025 at 12:17 AM
+-- Server version: 10.6.22-MariaDB
+-- PHP Version: 8.3.22
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `inspection_db`
+-- Database: `ngplcom_inspection_db`
 --
 
 -- --------------------------------------------------------
@@ -36,7 +36,7 @@ CREATE TABLE `t_branch` (
   `BranchAddress` varchar(250) DEFAULT NULL,
   `CreateTs` timestamp NOT NULL DEFAULT current_timestamp(),
   `UpdateTs` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `t_branch`
@@ -56,7 +56,7 @@ CREATE TABLE `t_checklist` (
   `CheckName` varchar(50) NOT NULL,
   `CreateTs` timestamp NOT NULL DEFAULT current_timestamp(),
   `UpdateTs` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `t_checklist`
@@ -70,7 +70,8 @@ INSERT INTO `t_checklist` (`CheckId`, `CheckName`, `CreateTs`, `UpdateTs`) VALUE
 (5, 'Shipping mark sticker', '2025-06-15 07:55:39', NULL),
 (6, 'Shipping mark', '2025-06-15 07:55:39', NULL),
 (7, 'Open carton', '2025-06-15 07:55:39', NULL),
-(8, 'View of pack', '2025-06-15 07:55:39', NULL);
+(8, 'View of pack', '2025-06-15 07:55:39', NULL),
+(11, 'Scanning machine', '2025-07-13 17:07:51', '2025-07-13 17:07:51');
 
 -- --------------------------------------------------------
 
@@ -81,7 +82,7 @@ INSERT INTO `t_checklist` (`CheckId`, `CheckName`, `CreateTs`, `UpdateTs`) VALUE
 CREATE TABLE `t_client` (
   `ClientId` smallint(6) NOT NULL,
   `ClientName` varchar(50) NOT NULL,
-  `ClientCode` varchar(20) CHARACTER SET utf8 NOT NULL,
+  `ClientCode` varchar(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
   `AppName` varchar(50) NOT NULL,
   `PoweredBy` varchar(50) NOT NULL,
   `DevelopmentBy` varchar(50) NOT NULL,
@@ -93,14 +94,14 @@ CREATE TABLE `t_client` (
   `IsActive` tinyint(1) NOT NULL DEFAULT 1,
   `CreateTs` timestamp NOT NULL DEFAULT current_timestamp(),
   `UpdateTs` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `t_client`
 --
 
 INSERT INTO `t_client` (`ClientId`, `ClientName`, `ClientCode`, `AppName`, `PoweredBy`, `DevelopmentBy`, `DevelopmentByWebsite`, `PhoneNo`, `Email`, `ClientAddress`, `ClientLogo`, `IsActive`, `CreateTs`, `UpdateTs`) VALUES
-(1, 'Intertek', 'Intertek', 'Intertek', 'Intertek', 'Intertek', 'https://www.xxxx.com', '', NULL, '', NULL, 1, '2023-08-10 00:14:16', '2023-08-10 00:14:16');
+(1, 'Intertek', 'INSPECTION', 'Intertek', 'Intertek', 'Intertek', 'https://www.intertek.com', '', NULL, '', NULL, 1, '2023-08-10 00:14:16', '2023-08-10 00:14:16');
 
 -- --------------------------------------------------------
 
@@ -123,7 +124,7 @@ CREATE TABLE `t_customer` (
   `UserId` int(11) NOT NULL COMMENT 'Entry bu User Id',
   `UpdateTs` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `CreateTs` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
 -- Dumping data for table `t_customer`
@@ -143,7 +144,7 @@ CREATE TABLE `t_department` (
   `DepartmentName` varchar(50) NOT NULL,
   `CreateTs` timestamp NOT NULL DEFAULT current_timestamp(),
   `UpdateTs` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `t_department`
@@ -172,7 +173,7 @@ CREATE TABLE `t_designation` (
   `DesignationName` varchar(50) NOT NULL,
   `CreateTs` timestamp NOT NULL DEFAULT current_timestamp(),
   `UpdateTs` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `t_designation`
@@ -225,7 +226,7 @@ CREATE TABLE `t_errorlog` (
   `ErrorNo` varchar(30) NOT NULL,
   `ErrorMsg` text NOT NULL,
   `SqlParams` text DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
 -- Dumping data for table `t_errorlog`
@@ -240,7 +241,8 @@ INSERT INTO `t_errorlog` (`LogId`, `LogDate`, `RemoteIP`, `UserId`, `Query`, `Qu
 (6, '2025-07-03 23:22:04', '127.0.0.1', 1, 'INSERT INTO t_transaction_items (TransactionId,CheckId,RowNo,ColumnNo,PhotoUrl,SortOrder) values (:TransactionId,:CheckId,:RowNo,:ColumnNo,:PhotoUrl,:SortOrder)', 'INSERT', '1452', 'Cannot add or update a child row: a foreign key constraint fails (`inspection_db`.`t_transaction_items`, CONSTRAINT `FK_t_transaction_items_t_checklist` FOREIGN KEY (`CheckId`) REFERENCES `t_checklist` (`CheckId`))', '{\"values\":{\"TransactionId\":\"6\",\"CheckId\":0,\"RowNo\":\"reportcheckblock-width-half\",\"ColumnNo\":\"reportcheckblock-height-onethird\",\"PhotoUrl\":\"placeholder.jpg\",\"SortOrder\":1}}'),
 (7, '2025-07-05 00:05:46', '127.0.0.1', 1, 'INSERT INTO t_transaction_items (TransactionId,CheckId,RowNo,ColumnNo,PhotoUrl,SortOrder) values (:TransactionId,:CheckId,:RowNo,:ColumnNo,:PhotoUrl,:SortOrder)', 'INSERT', '1452', 'Cannot add or update a child row: a foreign key constraint fails (`inspection_db`.`t_transaction_items`, CONSTRAINT `FK_t_transaction_items_t_transaction` FOREIGN KEY (`TransactionId`) REFERENCES `t_transaction` (`TransactionId`))', '{\"values\":{\"TransactionId\":1751652330083,\"CheckId\":2,\"RowNo\":\"reportcheckblock-width-half\",\"ColumnNo\":\"reportcheckblock-height-onethird\",\"PhotoUrl\":\"2025_07_05_00_05_46_1287.png\",\"SortOrder\":3}}'),
 (8, '2025-07-06 11:30:04', '127.0.0.1', 1, 'INSERT INTO t_designation (ClientId,DesignationName) values (:ClientId,:DesignationName)', 'INSERT', '1062', 'Duplicate entry \'1-Assistant Manager\' for key \'UK_t_designation_Client_Designation\'', '{\"values\":{\"ClientId\":\"1\",\"DesignationName\":\"Assistant Manager\"}}'),
-(9, '2025-07-06 21:57:21', '127.0.0.1', 1, 'INSERT INTO t_transaction (ClientId,TransactionTypeId,TransactionDate,InvoiceNo,CoverFilePages,CoverFileUrl,UserId,StatusId,ManyImgPrefix) values (:ClientId,:TransactionTypeId,:TransactionDate,:InvoiceNo,:CoverFilePages,:CoverFileUrl,:UserId,:StatusId,:ManyImgPrefix)', 'INSERT', '1048', 'Column \'TransactionTypeId\' cannot be null', '{\"values\":{\"ClientId\":\"1\",\"TransactionTypeId\":null,\"TransactionDate\":null,\"InvoiceNo\":null,\"CoverFilePages\":null,\"CoverFileUrl\":null,\"UserId\":\"1\",\"StatusId\":null,\"ManyImgPrefix\":null}}');
+(9, '2025-07-06 21:57:21', '127.0.0.1', 1, 'INSERT INTO t_transaction (ClientId,TransactionTypeId,TransactionDate,InvoiceNo,CoverFilePages,CoverFileUrl,UserId,StatusId,ManyImgPrefix) values (:ClientId,:TransactionTypeId,:TransactionDate,:InvoiceNo,:CoverFilePages,:CoverFileUrl,:UserId,:StatusId,:ManyImgPrefix)', 'INSERT', '1048', 'Column \'TransactionTypeId\' cannot be null', '{\"values\":{\"ClientId\":\"1\",\"TransactionTypeId\":null,\"TransactionDate\":null,\"InvoiceNo\":null,\"CoverFilePages\":null,\"CoverFileUrl\":null,\"UserId\":\"1\",\"StatusId\":null,\"ManyImgPrefix\":null}}'),
+(10, '2025-07-12 14:11:19', '103.102.206.1', 1, 'DELETE FROM t_checklist  WHERE CheckId = :CheckId', 'DELETE', '1451', 'Cannot delete or update a parent row: a foreign key constraint fails (`ngplcom_inspection_db`.`t_transaction_items`, CONSTRAINT `FK_t_transaction_items_t_checklist` FOREIGN KEY (`CheckId`) REFERENCES `t_checklist` (`CheckId`))', '{\"values\":{\"CheckId\":7}}');
 
 -- --------------------------------------------------------
 
@@ -257,11 +259,11 @@ CREATE TABLE `t_menu` (
   `MenuLevel` varchar(30) DEFAULT NULL,
   `SortOrder` int(11) DEFAULT NULL,
   `MenuType` varchar(10) NOT NULL DEFAULT 'WEB' COMMENT 'WEB/APP',
-  `CategoryName` varchar(30) CHARACTER SET utf8 DEFAULT NULL,
-  `ICONURL` varchar(150) CHARACTER SET utf8 DEFAULT NULL,
+  `CategoryName` varchar(30) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `ICONURL` varchar(150) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `CreateTs` timestamp NOT NULL DEFAULT current_timestamp(),
   `UpdateTs` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `t_menu`
@@ -278,45 +280,15 @@ INSERT INTO `t_menu` (`MenuId`, `MenuKey`, `MenuTitle`, `Url`, `ParentId`, `Menu
 (60, 'myprofileweb', 'My Profile Web', '/myprofileweb', 0, 'menu_level_1', 250, 'WEB', NULL, NULL, '2023-08-09 06:14:16', '2023-08-09 06:14:16'),
 (63, 'auditlog', 'Audit Log', '/auditlog', 0, 'menu_level_2', 40, 'WEB', NULL, NULL, '2023-08-09 06:14:16', '2023-08-09 06:14:16'),
 (64, 'errorlog', 'Error Log', '/errorlog', 0, 'menu_level_2', 45, 'WEB', NULL, NULL, '2023-08-09 06:14:16', '2023-08-09 06:14:16'),
-(90, 'MyProfileActivity', 'My Profile', '/myprofile', 0, 'menu_level_1', 600, 'APP', 'Dashboard', 'my_profile.png', '2024-07-04 21:14:16', '2024-07-04 21:14:16'),
-(91, 'MyTaskActivity', 'My Task', '/mytask', 0, 'menu_level_1', 610, 'APP', 'Dashboard', 'my_task.png', '2024-07-04 21:14:16', '2024-07-04 21:14:16'),
-(92, 'MyVisitActivity', 'Visit', '/visit', 0, 'menu_level_1', 630, 'APP', 'Dashboard', 'visit.png', '2024-07-04 21:14:16', '2024-07-04 21:14:16'),
-(93, 'SampleActivity', 'Sample', '/sample', 0, 'menu_level_1', 650, 'APP', 'Dashboard', 'sample.png', '2024-07-04 21:14:16', '2024-07-04 21:14:16'),
-(94, 'OrderSalesActivity', 'Phone Visit', '/phonevisit', 0, 'menu_level_1', 655, 'APP', 'Dashboard', 'order_sell.png', '2024-07-04 21:14:16', '2024-07-04 21:14:16'),
-(95, 'VisitPlanActivity', 'Visit Plan', '/visitplan', 0, 'menu_level_1', 660, 'APP', 'Dashboard', 'visit_plan.png', '2024-07-04 21:14:16', '2024-07-04 21:14:16'),
-(96, 'CustomerActivity', 'Customer', '/customer', 0, 'menu_level_1', 665, 'APP', 'Dashboard', 'customer.png', '2024-07-04 21:14:16', '2024-07-04 21:14:16'),
-(97, 'EmployeeDirectoryActivity', 'Employee Directory', '/employeedirectory', 0, 'menu_level_1', 670, 'APP', 'Dashboard', 'EmployeeDirectory.png', '2024-07-04 21:14:16', '2024-07-04 21:14:16'),
-(98, 'ReportsActivity', 'Report', '/report', 0, 'menu_level_1', 670, 'APP', 'Dashboard', 'Report-Main.png', '2024-07-04 21:14:16', '2024-07-04 21:14:16'),
-(99, 'SalesFunnelActivity', 'Sales Funnel', '/salesfunnel', 0, 'menu_level_1', 695, 'APP', 'Dashboard', 'SalesFunnel-01.png', '2024-07-04 21:14:16', '2024-07-04 21:14:16'),
-(102, 'VisitPunchActivity', 'Physical Visit', '/physicalvisit', 0, 'menu_level_2', 635, 'APP', 'Visit', 'visit_now.png', '2024-07-04 21:14:16', '2024-07-04 21:14:16'),
-(104, 'MyVisitActivity', 'View My Visit', '/viewmyvisit', 0, 'menu_level_2', 640, 'APP', 'Visit', 'visit.png', '2024-07-04 21:14:16', '2024-07-04 21:14:16'),
-(105, 'MyApprovedVisitActivity', 'Approved Visit', '/approvedvisit', 0, 'menu_level_2', 645, 'APP', 'Visit', 'visit.png', '2024-07-04 21:14:16', '2024-07-04 21:14:16'),
-(106, 'machine', 'Machine', '/machine', 4, 'menu_level_2', 100, 'WEB', NULL, NULL, '2023-08-09 06:14:16', '2023-08-09 06:14:16'),
+(90, 'MyProfileActivity', 'My Profile', '/myprofile', 0, 'menu_level_1', 900, 'APP', 'Dashboard', 'my_profile.png', '2024-07-04 21:14:16', '2024-07-04 21:14:16'),
+(97, 'ReportEntry', 'Report Entry', '/reportentry', 0, 'menu_level_1', 670, 'APP', 'Dashboard', 'EmployeeDirectory.png', '2024-07-04 21:14:16', '2024-07-04 21:14:16'),
+(98, 'ReportsActivity', 'Report', '/report', 0, 'menu_level_1', 800, 'APP', 'Dashboard', 'Report-Main.png', '2024-07-04 21:14:16', '2024-07-04 21:14:16'),
+(99, 'BasicSetup', 'Basic Setup', '/basicsetup', 0, 'menu_level_1', 695, 'APP', 'Dashboard', 'SalesFunnel-01.png', '2024-07-04 21:14:16', '2024-07-04 21:14:16'),
 (107, 'designation', 'Designation', '/designation', 4, 'menu_level_2', 5, 'WEB', NULL, NULL, '2023-08-09 06:14:16', '2023-08-09 06:14:16'),
 (108, 'department', 'Department', '/department', 4, 'menu_level_2', 10, 'WEB', NULL, NULL, '2023-08-09 06:14:16', '2023-08-09 06:14:16'),
-(109, 'ConveyanceActivity', 'Conveyance', '/conveyance', 0, 'menu_level_2', 680, 'APP', 'ReportsActivity', 'Conveyance-Report.png', '2024-07-04 21:14:16', '2024-07-04 21:14:16'),
-(110, 'MachineryServiceActivity', 'Machinery Service', '/machineryserviceactivity', 0, 'menu_level_2', 685, 'APP', 'ReportsActivity', 'Machinery-Service-Report.png', '2024-07-04 21:14:16', '2024-07-04 21:14:16'),
-(111, 'CustomerVisitPunchActivity', 'Customer Visit Punch', '/customervisitpunchactivity', 0, 'menu_level_2', 690, 'APP', 'ReportsActivity', 'Customer-Visit-Punch-Report.png', '2024-07-04 21:14:16', '2024-07-04 21:14:16'),
-(112, 'machineparts', 'Machine Parts', '/machineparts', 4, 'menu_level_2', 105, 'WEB', NULL, NULL, '2023-08-09 06:14:16', '2023-08-09 06:14:16'),
-(113, 'machinemodel', 'Machine Model', '/machinemodel', 4, 'menu_level_2', 110, 'WEB', NULL, NULL, '2023-08-09 06:14:16', '2023-08-09 06:14:16'),
-(114, 'machineserial', 'Machine Serial', '/machineserial', 4, 'menu_level_2', 115, 'WEB', NULL, NULL, '2023-08-09 06:14:16', '2023-08-09 06:14:16'),
-(115, 'LMFeedbackActivity', 'Feedback', '/feedback', 0, 'menu_level_2', 615, 'APP', 'MyTaskActivity', 'my_task.png', '2024-07-04 21:14:16', '2024-07-04 21:14:16'),
-(116, 'SalesForceTrailActivity', 'Sales Force Movement', '/salesforcetrailactivity', 0, 'menu_level_2', 620, 'APP', 'MyTaskActivity', 'visit_plan.png', '2024-07-04 21:14:16', '2024-07-04 21:14:16'),
-(119, 'businessline', 'Business Line', '/businessline', 4, 'menu_level_2', 20, 'WEB', NULL, NULL, '2023-08-09 06:14:16', '2023-08-09 06:14:16'),
-(120, 'machinerysetup', 'Machinery Setup', '#', 0, 'menu_level_1', 95, 'WEB', NULL, NULL, '2023-08-09 06:14:16', '2023-08-09 06:14:16'),
-(121, 'customervisitpunchledger', 'Visit Punch Ledger', '/customervisitpunchledger', 3, 'menu_level_2', 150, 'WEB', NULL, NULL, '2023-08-09 06:14:16', '2023-08-09 06:14:16'),
-(122, 'customervisitpunchsummary', 'Visit Punch Summary', '/customervisitpunchsummary', 3, 'menu_level_2', 155, 'WEB', NULL, NULL, '2023-08-09 06:14:16', '2023-08-09 06:14:16'),
-(123, 'visitplan', 'Visit Plan', '/visitplan', 3, 'menu_level_2', 160, 'WEB', NULL, NULL, '2023-08-09 06:14:16', '2023-08-09 06:14:16'),
-(124, 'conveyancereport', 'Conveyance Report', '/conveyancereport', 3, 'menu_level_2', 165, 'WEB', NULL, NULL, '2023-08-09 06:14:16', '2023-08-09 06:14:16'),
-(125, 'localconveyance', 'Self Conveyance Report', '/localconveyance', 3, 'menu_level_2', 170, 'WEB', NULL, NULL, '2023-08-09 06:14:16', '2023-08-09 06:14:16'),
-(126, 'visitsummaryreport', 'Visit Summary Report', '/visitsummaryreport', 3, 'menu_level_2', 175, 'WEB', NULL, NULL, '2023-08-09 06:14:16', '2023-08-09 06:14:16'),
-(127, 'machineryservicereport', 'Machinery Service Report', '/machineryservicereport', 3, 'menu_level_2', 180, 'WEB', NULL, NULL, '2023-08-09 06:14:16', '2023-08-09 06:14:16'),
-(128, 'VisitPunchServiceActivity', 'Service Visit Punch', '/visitpunchserviceactivity', 0, 'menu_level_2', 647, 'APP', 'Visit', 'visit_now.png', '2024-07-04 21:14:16', '2024-07-04 21:14:16'),
-(129, 'machineryinstallationreport', 'Machinery Installation Report', '/machineryinstallationreport', 3, 'menu_level_2', 185, 'WEB', NULL, NULL, '2023-08-09 06:14:16', '2023-08-09 06:14:16'),
-(130, 'VisitPunchInstallationActivity', 'Visit Punch Installation', '/VisitPunchInstallationActivity', 0, 'menu_level_2', 648, 'APP', 'Visit', 'visit_now.png', '2024-07-04 21:14:16', '2024-07-04 21:14:16'),
-(131, 'mytask', 'My Task', '#', 0, 'menu_level_1', 125, 'WEB', NULL, NULL, '2023-08-09 06:14:16', '2023-08-09 06:14:16'),
-(132, 'feedback', 'Feedback', '/feedback', 131, 'menu_level_2', 128, 'WEB', NULL, NULL, '2023-08-09 06:14:16', '2023-08-09 06:14:16'),
-(133, 'DepartmentWiseVisitReportActivity', 'Department Wise Visit', '/DepartmentWiseVisitReportActivity', 0, 'menu_level_2', 692, 'APP', 'ReportsActivity', 'Customer-Visit-Punch-Report.png', '2024-07-04 21:14:16', '2024-07-04 21:14:16'),
+(116, 'InspectionReportEntry', 'InspectionReportEntry', '/inspectionreportentry', 0, 'menu_level_2', 675, 'APP', 'ReportEntry', 'visit_plan.png', '2024-07-04 21:14:16', '2024-07-04 21:14:16'),
+(120, 'machinerysetup', 'Report Entry', '#', 0, 'menu_level_1', 95, 'WEB', NULL, NULL, '2023-08-09 06:14:16', '2023-08-09 06:14:16'),
+(130, 'CheckList', 'Check List', '/checklist', 0, 'menu_level_2', 700, 'APP', 'BasicSetup', 'visit_now.png', '2024-07-04 21:14:16', '2024-07-04 21:14:16'),
 (134, 'inspectionreportentry', 'Inspection Report Entry', '/inspectionreportentry', 4, 'menu_level_2', 101, 'WEB', NULL, NULL, '2023-08-09 06:14:16', '2023-08-09 06:14:16'),
 (135, 'checklist', 'CheckList', '/checklist', 4, 'menu_level_2', 4, 'WEB', NULL, NULL, '2023-08-09 06:14:16', '2023-08-09 06:14:16');
 
@@ -331,7 +303,7 @@ CREATE TABLE `t_month` (
   `MonthName` varchar(25) NOT NULL,
   `UpdateTs` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `CreateTs` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
 -- Dumping data for table `t_month`
@@ -363,7 +335,7 @@ CREATE TABLE `t_roles` (
   `DefaultRedirect` varchar(150) NOT NULL,
   `CreateTs` timestamp NULL DEFAULT NULL,
   `UpdateTs` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `t_roles`
@@ -387,7 +359,7 @@ CREATE TABLE `t_role_menu_map` (
   `PermissionType` tinyint(1) NOT NULL COMMENT '1=View,2=Edit',
   `CreateTs` timestamp NOT NULL DEFAULT current_timestamp(),
   `UpdateTs` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `t_role_menu_map`
@@ -402,49 +374,19 @@ INSERT INTO `t_role_menu_map` (`RoleMenuId`, `ClientId`, `BranchId`, `RoleId`, `
 (39, 1, 1, 1, 63, 2, '2023-10-31 04:47:03', '2024-10-21 09:04:27'),
 (40, 1, 1, 1, 64, 2, '2023-10-31 04:47:03', '2024-10-21 09:04:27'),
 (44, 1, 1, 1, 59, 2, '2023-12-22 16:52:12', '2024-10-21 09:04:27'),
-(84, 1, 1, 1, 93, 2, '2024-09-06 06:13:31', '2024-10-21 09:04:27'),
-(85, 1, 1, 1, 94, 2, '2024-09-06 06:13:33', '2024-10-21 09:04:27'),
-(86, 1, 1, 1, 95, 2, '2024-09-06 06:13:33', '2024-10-21 09:04:27'),
-(87, 1, 1, 1, 96, 2, '2024-09-06 06:13:34', '2024-10-21 09:04:27'),
-(89, 1, 1, 1, 98, 2, '2024-09-06 06:13:35', '2024-10-21 09:04:27'),
-(90, 1, 1, 1, 92, 1, '2024-09-06 06:13:36', '2024-10-21 09:04:27'),
-(91, 1, 1, 1, 91, 2, '2024-09-06 06:13:37', '2024-10-21 09:04:27'),
 (92, 1, 1, 1, 90, 2, '2024-09-06 06:13:37', '2024-10-21 09:04:27'),
-(93, 1, 1, 1, 99, 2, '2024-09-06 06:13:38', '2024-10-21 09:04:27'),
-(97, 1, 1, 1, 105, 2, '2024-09-06 06:29:25', '2024-10-21 09:04:27'),
-(98, 1, 1, 1, 104, 2, '2024-09-06 06:29:27', '2024-10-21 09:04:27'),
-(99, 1, 1, 1, 102, 2, '2024-09-06 06:29:28', '2024-10-21 09:04:27'),
-(102, 1, 1, 1, 109, 2, '2024-09-06 06:29:25', '2024-10-21 09:04:27'),
-(103, 1, 1, 1, 110, 2, '2024-09-06 06:29:25', '2024-10-21 09:04:27'),
-(104, 1, 1, 1, 111, 2, '2024-09-06 06:29:25', '2024-10-21 09:04:27'),
-(105, 1, 1, 1, 106, 2, '2024-09-06 06:29:25', '2024-10-21 09:04:27'),
 (106, 1, 1, 1, 107, 2, '2024-09-06 06:29:25', '2024-10-21 09:04:27'),
-(108, 1, 1, 1, 112, 2, '2024-09-06 06:29:25', '2024-10-21 09:04:27'),
-(109, 1, 1, 1, 113, 2, '2024-09-06 06:29:25', '2024-10-21 09:04:27'),
-(110, 1, 1, 1, 114, 2, '2024-09-06 06:29:25', '2024-10-21 09:04:27'),
-(111, 1, 1, 1, 115, 2, '2024-09-06 06:29:25', '2024-10-21 09:04:27'),
-(112, 1, 1, 1, 116, 2, '2024-09-06 06:29:25', '2024-10-21 09:04:27'),
-(114, 1, 1, 1, 119, 2, '2024-10-19 03:34:38', '2024-10-21 09:04:27'),
-(118, 1, 1, 1, 121, 2, '2024-10-21 09:04:23', '2024-10-21 09:04:27'),
-(119, 1, 1, 1, 122, 2, '2024-10-21 09:04:24', '2024-10-21 09:04:27'),
-(120, 1, 1, 1, 123, 2, '2024-10-21 09:04:24', '2024-10-21 09:04:27'),
-(121, 1, 1, 1, 124, 2, '2024-10-21 09:04:25', '2024-10-21 09:04:27'),
-(122, 1, 1, 1, 125, 2, '2024-10-21 09:04:26', '2024-10-21 09:04:27'),
-(123, 1, 1, 1, 126, 2, '2024-10-21 09:04:26', '2024-10-21 09:04:27'),
-(124, 1, 1, 1, 127, 2, '2024-10-21 09:04:27', '2024-10-21 09:04:27'),
-(160, 1, 1, 1, 120, 1, '2024-10-21 18:41:34', '2024-10-21 09:04:27'),
-(161, 1, 1, 1, 97, 2, '2024-10-21 18:42:15', '2024-10-21 09:04:27'),
 (314, 1, 1, 1, 108, 2, '2024-10-26 05:05:00', NULL),
 (315, 1, 1, 1, 1, 1, '2024-10-26 05:05:51', NULL),
 (317, 1, 1, 1, 4, 2, '2024-10-27 03:35:15', NULL),
-(318, 1, 1, 1, 128, 2, '2024-11-06 10:49:54', NULL),
-(366, 1, 1, 1, 130, 2, '2024-12-19 17:22:59', NULL),
-(370, 1, 1, 1, 129, 2, '2024-12-26 17:41:24', NULL),
-(371, 1, 1, 1, 131, 2, '2024-12-31 18:41:09', NULL),
-(372, 1, 1, 1, 132, 2, '2024-12-31 18:41:17', NULL),
-(394, 1, 1, 1, 133, 2, '2025-04-08 03:51:01', NULL),
 (398, 1, 1, 1, 134, 2, '2025-06-14 17:30:02', NULL),
-(399, 1, 1, 1, 135, 2, '2025-07-08 17:00:53', NULL);
+(399, 1, 1, 1, 135, 2, '2025-07-08 17:00:53', NULL),
+(400, 1, 1, 1, 120, 2, '2025-07-12 08:16:44', NULL),
+(401, 1, 1, 1, 116, 1, '2025-07-13 18:00:05', NULL),
+(402, 1, 1, 1, 130, 1, '2025-07-13 18:02:00', NULL),
+(403, 1, 1, 1, 97, 1, '2025-07-13 18:02:01', NULL),
+(404, 1, 1, 1, 98, 1, '2025-07-13 18:02:05', NULL),
+(405, 1, 1, 1, 99, 1, '2025-07-13 18:02:06', NULL);
 
 -- --------------------------------------------------------
 
@@ -462,7 +404,7 @@ CREATE TABLE `t_sqllog` (
   `JsonText` longtext NOT NULL,
   `SqlText` longtext NOT NULL,
   `SqlParams` text DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
 -- Dumping data for table `t_sqllog`
@@ -570,7 +512,74 @@ INSERT INTO `t_sqllog` (`LogId`, `LogDate`, `RemoteIP`, `UserId`, `QueryType`, `
 (115, '2025-07-09 00:03:23', '127.0.0.1', 1, 'UPDATE', 't_transaction', '[[\"CoverFileUrl\",\"1751994414177_2025_07_09_00_01_51__4350.pdf\",\"1751994414177_2025_07_09_00_03_23__3790.pdf\"],[\"UpdateTs\",\"2025-07-09 00:01:51\",\"2025-07-09 00:03:23\"]]', 'UPDATE t_transaction SET TransactionDate = :TransactionDate, InvoiceNo = :InvoiceNo, CoverFilePages = :CoverFilePages, CoverFileUrl = :CoverFileUrl, StatusId = :StatusId  WHERE TransactionId = :TransactionId', '{\"values\":{\"TransactionDate\":\"2025-07-08\",\"InvoiceNo\":\"B12\",\"CoverFilePages\":5,\"CoverFileUrl\":\"1751994414177_2025_07_09_00_03_23__3790.pdf\",\"StatusId\":1,\"TransactionId\":18}}'),
 (116, '2025-07-09 20:44:52', '127.0.0.1', 1, 'INSERT', 't_transaction_items', '[[\"TransactionItemId\",\"\",36],[\"TransactionId\",\"\",18],[\"RowNo\",\"\",\"reportcheckblock-width-half\"],[\"ColumnNo\",\"\",\"reportcheckblock-height-full\"],[\"PhotoUrl\",\"\",\"1751994414177_2025_07_09_20_44_52__5404.jpeg\"],[\"SortOrder\",\"\",4],[\"UpdateTs\",\"\",\"2025-07-09 20:44:52\"],[\"CreateTs\",\"\",\"2025-07-09 20:44:52\"]]', 'INSERT INTO t_transaction_items (TransactionId,CheckId,RowNo,ColumnNo,PhotoUrl,SortOrder) values (:TransactionId,:CheckId,:RowNo,:ColumnNo,:PhotoUrl,:SortOrder)', '{\"values\":{\"TransactionId\":18,\"CheckId\":null,\"RowNo\":\"reportcheckblock-width-half\",\"ColumnNo\":\"reportcheckblock-height-full\",\"PhotoUrl\":\"1751994414177_2025_07_09_20_44_52__5404.jpeg\",\"SortOrder\":4}}'),
 (117, '2025-07-09 20:45:10', '127.0.0.1', 1, 'UPDATE', 't_transaction', '[[\"CoverFileUrl\",\"1751994414177_2025_07_09_00_03_23__3790.pdf\",\"1751994414177_2025_07_09_20_45_10__7093.pdf\"],[\"UpdateTs\",\"2025-07-09 00:03:23\",\"2025-07-09 20:45:10\"]]', 'UPDATE t_transaction SET TransactionDate = :TransactionDate, InvoiceNo = :InvoiceNo, CoverFilePages = :CoverFilePages, CoverFileUrl = :CoverFileUrl, StatusId = :StatusId  WHERE TransactionId = :TransactionId', '{\"values\":{\"TransactionDate\":\"2025-07-08\",\"InvoiceNo\":\"B12\",\"CoverFilePages\":5,\"CoverFileUrl\":\"1751994414177_2025_07_09_20_45_10__7093.pdf\",\"StatusId\":1,\"TransactionId\":18}}'),
-(118, '2025-07-09 20:52:46', '127.0.0.1', 1, 'UPDATE', 't_transaction', '[[\"CoverFileUrl\",\"1751994414177_2025_07_09_20_45_10__7093.pdf\",\"1751994414177_2025_07_09_20_52_46__952.pdf\"],[\"UpdateTs\",\"2025-07-09 20:45:10\",\"2025-07-09 20:52:46\"]]', 'UPDATE t_transaction SET TransactionDate = :TransactionDate, InvoiceNo = :InvoiceNo, CoverFilePages = :CoverFilePages, CoverFileUrl = :CoverFileUrl, StatusId = :StatusId  WHERE TransactionId = :TransactionId', '{\"values\":{\"TransactionDate\":\"2025-07-08\",\"InvoiceNo\":\"B12\",\"CoverFilePages\":5,\"CoverFileUrl\":\"1751994414177_2025_07_09_20_52_46__952.pdf\",\"StatusId\":1,\"TransactionId\":18}}');
+(118, '2025-07-09 20:52:46', '127.0.0.1', 1, 'UPDATE', 't_transaction', '[[\"CoverFileUrl\",\"1751994414177_2025_07_09_20_45_10__7093.pdf\",\"1751994414177_2025_07_09_20_52_46__952.pdf\"],[\"UpdateTs\",\"2025-07-09 20:45:10\",\"2025-07-09 20:52:46\"]]', 'UPDATE t_transaction SET TransactionDate = :TransactionDate, InvoiceNo = :InvoiceNo, CoverFilePages = :CoverFilePages, CoverFileUrl = :CoverFileUrl, StatusId = :StatusId  WHERE TransactionId = :TransactionId', '{\"values\":{\"TransactionDate\":\"2025-07-08\",\"InvoiceNo\":\"B12\",\"CoverFilePages\":5,\"CoverFileUrl\":\"1751994414177_2025_07_09_20_52_46__952.pdf\",\"StatusId\":1,\"TransactionId\":18}}'),
+(119, '2025-07-12 14:11:15', '103.102.206.1', 1, 'INSERT', 't_checklist', '[[\"CheckId\",\"\",10],[\"CheckName\",\"\",\"sdgd\"],[\"CreateTs\",\"\",\"2025-07-12 14:11:15\"]]', 'INSERT INTO t_checklist (CheckName) values (:CheckName)', '{\"values\":{\"CheckName\":\"sdgd\"}}'),
+(120, '2025-07-12 14:11:28', '103.102.206.1', 1, 'DELETE', 't_checklist', '[[\"CheckId\",10,\"\"],[\"CheckName\",\"sdgd\",\"\"],[\"CreateTs\",\"2025-07-12 14:11:15\",\"\"],[\"UpdateTs\",null,\"\"]]', 'DELETE FROM t_checklist  WHERE CheckId = :CheckId', '{\"values\":{\"CheckId\":10}}'),
+(121, '2025-07-12 14:12:10', '103.102.206.1', 1, 'INSERT', 't_transaction', '[[\"TransactionId\",\"\",19],[\"ClientId\",\"\",1],[\"TransactionTypeId\",\"\",1],[\"TransactionDate\",\"\",\"2025-07-12 00:00:00\"],[\"InvoiceNo\",\"\",\"Sqwe415\"],[\"CoverFilePages\",\"\",6],[\"CoverFileUrl\",\"\",\"1752307898565_2025_07_12_14_12_10__1612.pdf\"],[\"ManyImgPrefix\",\"\",\"1752307898565\"],[\"UserId\",\"\",1],[\"StatusId\",\"\",1],[\"UpdateTs\",\"\",\"2025-07-12 14:12:10\"],[\"CreateTs\",\"\",\"2025-07-12 14:12:10\"]]', 'INSERT INTO t_transaction (ClientId,TransactionTypeId,TransactionDate,InvoiceNo,CoverFilePages,CoverFileUrl,UserId,StatusId,ManyImgPrefix) values (:ClientId,:TransactionTypeId,:TransactionDate,:InvoiceNo,:CoverFilePages,:CoverFileUrl,:UserId,:StatusId,:ManyImgPrefix)', '{\"values\":{\"ClientId\":\"1\",\"TransactionTypeId\":1,\"TransactionDate\":\"2025-07-12\",\"InvoiceNo\":\"Sqwe415\",\"CoverFilePages\":\"6\",\"CoverFileUrl\":\"1752307898565_2025_07_12_14_12_10__1612.pdf\",\"UserId\":\"1\",\"StatusId\":1,\"ManyImgPrefix\":1752307898565}}'),
+(122, '2025-07-12 14:12:41', '103.102.206.1', 1, 'INSERT', 't_transaction_items', '[[\"TransactionItemId\",\"\",37],[\"TransactionId\",\"\",19],[\"RowNo\",\"\",\"reportcheckblock-width-half\"],[\"ColumnNo\",\"\",\"reportcheckblock-height-onethird\"],[\"PhotoUrl\",\"\",\"1752307898565_2025_07_12_14_12_41__4275.png\"],[\"SortOrder\",\"\",1],[\"UpdateTs\",\"\",\"2025-07-12 14:12:41\"],[\"CreateTs\",\"\",\"2025-07-12 14:12:41\"]]', 'INSERT INTO t_transaction_items (TransactionId,CheckId,RowNo,ColumnNo,PhotoUrl,SortOrder) values (:TransactionId,:CheckId,:RowNo,:ColumnNo,:PhotoUrl,:SortOrder)', '{\"values\":{\"TransactionId\":19,\"CheckId\":null,\"RowNo\":\"reportcheckblock-width-half\",\"ColumnNo\":\"reportcheckblock-height-onethird\",\"PhotoUrl\":\"1752307898565_2025_07_12_14_12_41__4275.png\",\"SortOrder\":1}}'),
+(123, '2025-07-12 14:13:31', '103.102.206.1', 1, 'UPDATE', 't_transaction_items', '[[\"CheckId\",null,4],[\"UpdateTs\",\"2025-07-12 14:12:41\",\"2025-07-12 14:13:31\"]]', 'UPDATE t_transaction_items SET CheckId = :CheckId, RowNo = :RowNo, ColumnNo = :ColumnNo, PhotoUrl = :PhotoUrl, SortOrder = :SortOrder  WHERE TransactionItemId = :TransactionItemId', '{\"values\":{\"CheckId\":4,\"RowNo\":\"reportcheckblock-width-half\",\"ColumnNo\":\"reportcheckblock-height-onethird\",\"PhotoUrl\":\"1752307898565_2025_07_12_14_12_41__4275.png\",\"SortOrder\":1,\"TransactionItemId\":37}}'),
+(124, '2025-07-12 14:13:31', '103.102.206.1', 1, 'INSERT', 't_transaction_items', '[[\"TransactionItemId\",\"\",38],[\"TransactionId\",\"\",19],[\"CheckId\",\"\",1],[\"RowNo\",\"\",\"reportcheckblock-width-half\"],[\"ColumnNo\",\"\",\"reportcheckblock-height-onethird\"],[\"PhotoUrl\",\"\",\"1752307898565_2025_07_12_14_13_31__4284.jpeg\"],[\"SortOrder\",\"\",2],[\"UpdateTs\",\"\",\"2025-07-12 14:13:31\"],[\"CreateTs\",\"\",\"2025-07-12 14:13:31\"]]', 'INSERT INTO t_transaction_items (TransactionId,CheckId,RowNo,ColumnNo,PhotoUrl,SortOrder) values (:TransactionId,:CheckId,:RowNo,:ColumnNo,:PhotoUrl,:SortOrder)', '{\"values\":{\"TransactionId\":19,\"CheckId\":1,\"RowNo\":\"reportcheckblock-width-half\",\"ColumnNo\":\"reportcheckblock-height-onethird\",\"PhotoUrl\":\"1752307898565_2025_07_12_14_13_31__4284.jpeg\",\"SortOrder\":2}}'),
+(125, '2025-07-12 14:13:31', '103.102.206.1', 1, 'INSERT', 't_transaction_items', '[[\"TransactionItemId\",\"\",39],[\"TransactionId\",\"\",19],[\"CheckId\",\"\",7],[\"RowNo\",\"\",\"reportcheckblock-width-half\"],[\"ColumnNo\",\"\",\"reportcheckblock-height-onethird\"],[\"PhotoUrl\",\"\",\"1752307898565_2025_07_12_14_13_31__687.jpeg\"],[\"SortOrder\",\"\",3],[\"UpdateTs\",\"\",\"2025-07-12 14:13:31\"],[\"CreateTs\",\"\",\"2025-07-12 14:13:31\"]]', 'INSERT INTO t_transaction_items (TransactionId,CheckId,RowNo,ColumnNo,PhotoUrl,SortOrder) values (:TransactionId,:CheckId,:RowNo,:ColumnNo,:PhotoUrl,:SortOrder)', '{\"values\":{\"TransactionId\":19,\"CheckId\":7,\"RowNo\":\"reportcheckblock-width-half\",\"ColumnNo\":\"reportcheckblock-height-onethird\",\"PhotoUrl\":\"1752307898565_2025_07_12_14_13_31__687.jpeg\",\"SortOrder\":3}}'),
+(126, '2025-07-12 14:13:33', '103.102.206.1', 1, 'INSERT', 't_transaction_items', '[[\"TransactionItemId\",\"\",40],[\"TransactionId\",\"\",19],[\"CheckId\",\"\",1],[\"RowNo\",\"\",\"reportcheckblock-width-half\"],[\"ColumnNo\",\"\",\"reportcheckblock-height-onethird\"],[\"PhotoUrl\",\"\",\"1752307898565_2025_07_12_14_13_33__8083.jpeg\"],[\"SortOrder\",\"\",2],[\"UpdateTs\",\"\",\"2025-07-12 14:13:33\"],[\"CreateTs\",\"\",\"2025-07-12 14:13:33\"]]', 'INSERT INTO t_transaction_items (TransactionId,CheckId,RowNo,ColumnNo,PhotoUrl,SortOrder) values (:TransactionId,:CheckId,:RowNo,:ColumnNo,:PhotoUrl,:SortOrder)', '{\"values\":{\"TransactionId\":19,\"CheckId\":1,\"RowNo\":\"reportcheckblock-width-half\",\"ColumnNo\":\"reportcheckblock-height-onethird\",\"PhotoUrl\":\"1752307898565_2025_07_12_14_13_33__8083.jpeg\",\"SortOrder\":2}}'),
+(127, '2025-07-12 14:13:33', '103.102.206.1', 1, 'INSERT', 't_transaction_items', '[[\"TransactionItemId\",\"\",41],[\"TransactionId\",\"\",19],[\"CheckId\",\"\",7],[\"RowNo\",\"\",\"reportcheckblock-width-half\"],[\"ColumnNo\",\"\",\"reportcheckblock-height-onethird\"],[\"PhotoUrl\",\"\",\"1752307898565_2025_07_12_14_13_33__522.jpeg\"],[\"SortOrder\",\"\",3],[\"UpdateTs\",\"\",\"2025-07-12 14:13:33\"],[\"CreateTs\",\"\",\"2025-07-12 14:13:33\"]]', 'INSERT INTO t_transaction_items (TransactionId,CheckId,RowNo,ColumnNo,PhotoUrl,SortOrder) values (:TransactionId,:CheckId,:RowNo,:ColumnNo,:PhotoUrl,:SortOrder)', '{\"values\":{\"TransactionId\":19,\"CheckId\":7,\"RowNo\":\"reportcheckblock-width-half\",\"ColumnNo\":\"reportcheckblock-height-onethird\",\"PhotoUrl\":\"1752307898565_2025_07_12_14_13_33__522.jpeg\",\"SortOrder\":3}}'),
+(128, '2025-07-12 14:13:34', '103.102.206.1', 1, 'INSERT', 't_transaction_items', '[[\"TransactionItemId\",\"\",42],[\"TransactionId\",\"\",19],[\"CheckId\",\"\",1],[\"RowNo\",\"\",\"reportcheckblock-width-half\"],[\"ColumnNo\",\"\",\"reportcheckblock-height-onethird\"],[\"PhotoUrl\",\"\",\"1752307898565_2025_07_12_14_13_34__6779.jpeg\"],[\"SortOrder\",\"\",2],[\"UpdateTs\",\"\",\"2025-07-12 14:13:34\"],[\"CreateTs\",\"\",\"2025-07-12 14:13:34\"]]', 'INSERT INTO t_transaction_items (TransactionId,CheckId,RowNo,ColumnNo,PhotoUrl,SortOrder) values (:TransactionId,:CheckId,:RowNo,:ColumnNo,:PhotoUrl,:SortOrder)', '{\"values\":{\"TransactionId\":19,\"CheckId\":1,\"RowNo\":\"reportcheckblock-width-half\",\"ColumnNo\":\"reportcheckblock-height-onethird\",\"PhotoUrl\":\"1752307898565_2025_07_12_14_13_34__6779.jpeg\",\"SortOrder\":2}}'),
+(129, '2025-07-12 14:13:34', '103.102.206.1', 1, 'INSERT', 't_transaction_items', '[[\"TransactionItemId\",\"\",43],[\"TransactionId\",\"\",19],[\"CheckId\",\"\",7],[\"RowNo\",\"\",\"reportcheckblock-width-half\"],[\"ColumnNo\",\"\",\"reportcheckblock-height-onethird\"],[\"PhotoUrl\",\"\",\"1752307898565_2025_07_12_14_13_34__794.jpeg\"],[\"SortOrder\",\"\",3],[\"UpdateTs\",\"\",\"2025-07-12 14:13:34\"],[\"CreateTs\",\"\",\"2025-07-12 14:13:34\"]]', 'INSERT INTO t_transaction_items (TransactionId,CheckId,RowNo,ColumnNo,PhotoUrl,SortOrder) values (:TransactionId,:CheckId,:RowNo,:ColumnNo,:PhotoUrl,:SortOrder)', '{\"values\":{\"TransactionId\":19,\"CheckId\":7,\"RowNo\":\"reportcheckblock-width-half\",\"ColumnNo\":\"reportcheckblock-height-onethird\",\"PhotoUrl\":\"1752307898565_2025_07_12_14_13_34__794.jpeg\",\"SortOrder\":3}}'),
+(130, '2025-07-12 14:13:35', '103.102.206.1', 1, 'INSERT', 't_transaction_items', '[[\"TransactionItemId\",\"\",44],[\"TransactionId\",\"\",19],[\"CheckId\",\"\",1],[\"RowNo\",\"\",\"reportcheckblock-width-half\"],[\"ColumnNo\",\"\",\"reportcheckblock-height-onethird\"],[\"PhotoUrl\",\"\",\"1752307898565_2025_07_12_14_13_35__9094.jpeg\"],[\"SortOrder\",\"\",2],[\"UpdateTs\",\"\",\"2025-07-12 14:13:35\"],[\"CreateTs\",\"\",\"2025-07-12 14:13:35\"]]', 'INSERT INTO t_transaction_items (TransactionId,CheckId,RowNo,ColumnNo,PhotoUrl,SortOrder) values (:TransactionId,:CheckId,:RowNo,:ColumnNo,:PhotoUrl,:SortOrder)', '{\"values\":{\"TransactionId\":19,\"CheckId\":1,\"RowNo\":\"reportcheckblock-width-half\",\"ColumnNo\":\"reportcheckblock-height-onethird\",\"PhotoUrl\":\"1752307898565_2025_07_12_14_13_35__9094.jpeg\",\"SortOrder\":2}}'),
+(131, '2025-07-12 14:13:35', '103.102.206.1', 1, 'INSERT', 't_transaction_items', '[[\"TransactionItemId\",\"\",45],[\"TransactionId\",\"\",19],[\"CheckId\",\"\",7],[\"RowNo\",\"\",\"reportcheckblock-width-half\"],[\"ColumnNo\",\"\",\"reportcheckblock-height-onethird\"],[\"PhotoUrl\",\"\",\"1752307898565_2025_07_12_14_13_35__8493.jpeg\"],[\"SortOrder\",\"\",3],[\"UpdateTs\",\"\",\"2025-07-12 14:13:35\"],[\"CreateTs\",\"\",\"2025-07-12 14:13:35\"]]', 'INSERT INTO t_transaction_items (TransactionId,CheckId,RowNo,ColumnNo,PhotoUrl,SortOrder) values (:TransactionId,:CheckId,:RowNo,:ColumnNo,:PhotoUrl,:SortOrder)', '{\"values\":{\"TransactionId\":19,\"CheckId\":7,\"RowNo\":\"reportcheckblock-width-half\",\"ColumnNo\":\"reportcheckblock-height-onethird\",\"PhotoUrl\":\"1752307898565_2025_07_12_14_13_35__8493.jpeg\",\"SortOrder\":3}}'),
+(132, '2025-07-12 14:14:01', '103.102.206.1', 1, 'DELETE', 't_transaction_items', '[[\"TransactionItemId\",38,\"\"],[\"TransactionId\",19,\"\"],[\"CheckId\",1,\"\"],[\"RowNo\",\"reportcheckblock-width-half\",\"\"],[\"ColumnNo\",\"reportcheckblock-height-onethird\",\"\"],[\"PhotoUrl\",\"1752307898565_2025_07_12_14_13_31__4284.jpeg\",\"\"],[\"SortOrder\",2,\"\"],[\"UpdateTs\",\"2025-07-12 14:13:31\",\"\"],[\"CreateTs\",\"2025-07-12 14:13:31\",\"\"]]', 'DELETE FROM t_transaction_items  WHERE TransactionItemId = :TransactionItemId', '{\"values\":{\"TransactionItemId\":38}}'),
+(133, '2025-07-12 14:14:01', '103.102.206.1', 1, 'DELETE', 't_transaction_items', '[[\"TransactionItemId\",39,\"\"],[\"TransactionId\",19,\"\"],[\"CheckId\",7,\"\"],[\"RowNo\",\"reportcheckblock-width-half\",\"\"],[\"ColumnNo\",\"reportcheckblock-height-onethird\",\"\"],[\"PhotoUrl\",\"1752307898565_2025_07_12_14_13_31__687.jpeg\",\"\"],[\"SortOrder\",3,\"\"],[\"UpdateTs\",\"2025-07-12 14:13:31\",\"\"],[\"CreateTs\",\"2025-07-12 14:13:31\",\"\"]]', 'DELETE FROM t_transaction_items  WHERE TransactionItemId = :TransactionItemId', '{\"values\":{\"TransactionItemId\":39}}'),
+(134, '2025-07-12 14:14:01', '103.102.206.1', 1, 'DELETE', 't_transaction_items', '[[\"TransactionItemId\",40,\"\"],[\"TransactionId\",19,\"\"],[\"CheckId\",1,\"\"],[\"RowNo\",\"reportcheckblock-width-half\",\"\"],[\"ColumnNo\",\"reportcheckblock-height-onethird\",\"\"],[\"PhotoUrl\",\"1752307898565_2025_07_12_14_13_33__8083.jpeg\",\"\"],[\"SortOrder\",2,\"\"],[\"UpdateTs\",\"2025-07-12 14:13:33\",\"\"],[\"CreateTs\",\"2025-07-12 14:13:33\",\"\"]]', 'DELETE FROM t_transaction_items  WHERE TransactionItemId = :TransactionItemId', '{\"values\":{\"TransactionItemId\":40}}'),
+(135, '2025-07-12 14:14:01', '103.102.206.1', 1, 'DELETE', 't_transaction_items', '[[\"TransactionItemId\",43,\"\"],[\"TransactionId\",19,\"\"],[\"CheckId\",7,\"\"],[\"RowNo\",\"reportcheckblock-width-half\",\"\"],[\"ColumnNo\",\"reportcheckblock-height-onethird\",\"\"],[\"PhotoUrl\",\"1752307898565_2025_07_12_14_13_34__794.jpeg\",\"\"],[\"SortOrder\",3,\"\"],[\"UpdateTs\",\"2025-07-12 14:13:34\",\"\"],[\"CreateTs\",\"2025-07-12 14:13:34\",\"\"]]', 'DELETE FROM t_transaction_items  WHERE TransactionItemId = :TransactionItemId', '{\"values\":{\"TransactionItemId\":43}}'),
+(136, '2025-07-12 14:14:01', '103.102.206.1', 1, 'DELETE', 't_transaction_items', '[[\"TransactionItemId\",44,\"\"],[\"TransactionId\",19,\"\"],[\"CheckId\",1,\"\"],[\"RowNo\",\"reportcheckblock-width-half\",\"\"],[\"ColumnNo\",\"reportcheckblock-height-onethird\",\"\"],[\"PhotoUrl\",\"1752307898565_2025_07_12_14_13_35__9094.jpeg\",\"\"],[\"SortOrder\",2,\"\"],[\"UpdateTs\",\"2025-07-12 14:13:35\",\"\"],[\"CreateTs\",\"2025-07-12 14:13:35\",\"\"]]', 'DELETE FROM t_transaction_items  WHERE TransactionItemId = :TransactionItemId', '{\"values\":{\"TransactionItemId\":44}}'),
+(137, '2025-07-12 14:14:01', '103.102.206.1', 1, 'DELETE', 't_transaction_items', '[[\"TransactionItemId\",45,\"\"],[\"TransactionId\",19,\"\"],[\"CheckId\",7,\"\"],[\"RowNo\",\"reportcheckblock-width-half\",\"\"],[\"ColumnNo\",\"reportcheckblock-height-onethird\",\"\"],[\"PhotoUrl\",\"1752307898565_2025_07_12_14_13_35__8493.jpeg\",\"\"],[\"SortOrder\",3,\"\"],[\"UpdateTs\",\"2025-07-12 14:13:35\",\"\"],[\"CreateTs\",\"2025-07-12 14:13:35\",\"\"]]', 'DELETE FROM t_transaction_items  WHERE TransactionItemId = :TransactionItemId', '{\"values\":{\"TransactionItemId\":45}}'),
+(138, '2025-07-12 14:15:04', '103.102.206.1', 1, 'DELETE', 't_role_menu_map', '[[\"RoleMenuId\",114,\"\"],[\"ClientId\",1,\"\"],[\"BranchId\",1,\"\"],[\"RoleId\",1,\"\"],[\"MenuId\",119,\"\"],[\"PermissionType\",2,\"\"],[\"CreateTs\",\"2024-10-19 09:34:38\",\"\"],[\"UpdateTs\",\"2024-10-21 15:04:27\",\"\"]]', 'DELETE FROM t_role_menu_map  WHERE RoleMenuId = :RoleMenuId', '{\"values\":{\"RoleMenuId\":114}}'),
+(139, '2025-07-12 14:15:08', '103.102.206.1', 1, 'DELETE', 't_role_menu_map', '[[\"RoleMenuId\",105,\"\"],[\"ClientId\",1,\"\"],[\"BranchId\",1,\"\"],[\"RoleId\",1,\"\"],[\"MenuId\",106,\"\"],[\"PermissionType\",2,\"\"],[\"CreateTs\",\"2024-09-06 12:29:25\",\"\"],[\"UpdateTs\",\"2024-10-21 15:04:27\",\"\"]]', 'DELETE FROM t_role_menu_map  WHERE RoleMenuId = :RoleMenuId', '{\"values\":{\"RoleMenuId\":105}}'),
+(140, '2025-07-12 14:15:10', '103.102.206.1', 1, 'UPDATE', 't_role_menu_map', '[[\"PermissionType\",1,2]]', 'UPDATE t_role_menu_map SET PermissionType = :PermissionType  WHERE RoleMenuId = :RoleMenuId', '{\"values\":{\"PermissionType\":2,\"RoleMenuId\":160}}'),
+(141, '2025-07-12 14:15:16', '103.102.206.1', 1, 'DELETE', 't_role_menu_map', '[[\"RoleMenuId\",160,\"\"],[\"ClientId\",1,\"\"],[\"BranchId\",1,\"\"],[\"RoleId\",1,\"\"],[\"MenuId\",120,\"\"],[\"PermissionType\",2,\"\"],[\"CreateTs\",\"2024-10-22 00:41:34\",\"\"],[\"UpdateTs\",\"2024-10-21 15:04:27\",\"\"]]', 'DELETE FROM t_role_menu_map  WHERE RoleMenuId = :RoleMenuId', '{\"values\":{\"RoleMenuId\":160}}'),
+(142, '2025-07-12 14:15:20', '103.102.206.1', 1, 'DELETE', 't_role_menu_map', '[[\"RoleMenuId\",108,\"\"],[\"ClientId\",1,\"\"],[\"BranchId\",1,\"\"],[\"RoleId\",1,\"\"],[\"MenuId\",112,\"\"],[\"PermissionType\",2,\"\"],[\"CreateTs\",\"2024-09-06 12:29:25\",\"\"],[\"UpdateTs\",\"2024-10-21 15:04:27\",\"\"]]', 'DELETE FROM t_role_menu_map  WHERE RoleMenuId = :RoleMenuId', '{\"values\":{\"RoleMenuId\":108}}'),
+(143, '2025-07-12 14:15:22', '103.102.206.1', 1, 'DELETE', 't_role_menu_map', '[[\"RoleMenuId\",109,\"\"],[\"ClientId\",1,\"\"],[\"BranchId\",1,\"\"],[\"RoleId\",1,\"\"],[\"MenuId\",113,\"\"],[\"PermissionType\",2,\"\"],[\"CreateTs\",\"2024-09-06 12:29:25\",\"\"],[\"UpdateTs\",\"2024-10-21 15:04:27\",\"\"]]', 'DELETE FROM t_role_menu_map  WHERE RoleMenuId = :RoleMenuId', '{\"values\":{\"RoleMenuId\":109}}'),
+(144, '2025-07-12 14:15:28', '103.102.206.1', 1, 'DELETE', 't_role_menu_map', '[[\"RoleMenuId\",110,\"\"],[\"ClientId\",1,\"\"],[\"BranchId\",1,\"\"],[\"RoleId\",1,\"\"],[\"MenuId\",114,\"\"],[\"PermissionType\",2,\"\"],[\"CreateTs\",\"2024-09-06 12:29:25\",\"\"],[\"UpdateTs\",\"2024-10-21 15:04:27\",\"\"]]', 'DELETE FROM t_role_menu_map  WHERE RoleMenuId = :RoleMenuId', '{\"values\":{\"RoleMenuId\":110}}'),
+(145, '2025-07-12 14:15:33', '103.102.206.1', 1, 'DELETE', 't_role_menu_map', '[[\"RoleMenuId\",371,\"\"],[\"ClientId\",1,\"\"],[\"BranchId\",1,\"\"],[\"RoleId\",1,\"\"],[\"MenuId\",131,\"\"],[\"PermissionType\",2,\"\"],[\"CreateTs\",\"2025-01-01 00:41:09\",\"\"],[\"UpdateTs\",null,\"\"]]', 'DELETE FROM t_role_menu_map  WHERE RoleMenuId = :RoleMenuId', '{\"values\":{\"RoleMenuId\":371}}'),
+(146, '2025-07-12 14:15:34', '103.102.206.1', 1, 'DELETE', 't_role_menu_map', '[[\"RoleMenuId\",372,\"\"],[\"ClientId\",1,\"\"],[\"BranchId\",1,\"\"],[\"RoleId\",1,\"\"],[\"MenuId\",132,\"\"],[\"PermissionType\",2,\"\"],[\"CreateTs\",\"2025-01-01 00:41:17\",\"\"],[\"UpdateTs\",null,\"\"]]', 'DELETE FROM t_role_menu_map  WHERE RoleMenuId = :RoleMenuId', '{\"values\":{\"RoleMenuId\":372}}'),
+(147, '2025-07-12 14:15:37', '103.102.206.1', 1, 'DELETE', 't_role_menu_map', '[[\"RoleMenuId\",118,\"\"],[\"ClientId\",1,\"\"],[\"BranchId\",1,\"\"],[\"RoleId\",1,\"\"],[\"MenuId\",121,\"\"],[\"PermissionType\",2,\"\"],[\"CreateTs\",\"2024-10-21 15:04:23\",\"\"],[\"UpdateTs\",\"2024-10-21 15:04:27\",\"\"]]', 'DELETE FROM t_role_menu_map  WHERE RoleMenuId = :RoleMenuId', '{\"values\":{\"RoleMenuId\":118}}'),
+(148, '2025-07-12 14:15:38', '103.102.206.1', 1, 'DELETE', 't_role_menu_map', '[[\"RoleMenuId\",119,\"\"],[\"ClientId\",1,\"\"],[\"BranchId\",1,\"\"],[\"RoleId\",1,\"\"],[\"MenuId\",122,\"\"],[\"PermissionType\",2,\"\"],[\"CreateTs\",\"2024-10-21 15:04:24\",\"\"],[\"UpdateTs\",\"2024-10-21 15:04:27\",\"\"]]', 'DELETE FROM t_role_menu_map  WHERE RoleMenuId = :RoleMenuId', '{\"values\":{\"RoleMenuId\":119}}'),
+(149, '2025-07-12 14:15:39', '103.102.206.1', 1, 'DELETE', 't_role_menu_map', '[[\"RoleMenuId\",120,\"\"],[\"ClientId\",1,\"\"],[\"BranchId\",1,\"\"],[\"RoleId\",1,\"\"],[\"MenuId\",123,\"\"],[\"PermissionType\",2,\"\"],[\"CreateTs\",\"2024-10-21 15:04:24\",\"\"],[\"UpdateTs\",\"2024-10-21 15:04:27\",\"\"]]', 'DELETE FROM t_role_menu_map  WHERE RoleMenuId = :RoleMenuId', '{\"values\":{\"RoleMenuId\":120}}'),
+(150, '2025-07-12 14:15:40', '103.102.206.1', 1, 'DELETE', 't_role_menu_map', '[[\"RoleMenuId\",121,\"\"],[\"ClientId\",1,\"\"],[\"BranchId\",1,\"\"],[\"RoleId\",1,\"\"],[\"MenuId\",124,\"\"],[\"PermissionType\",2,\"\"],[\"CreateTs\",\"2024-10-21 15:04:25\",\"\"],[\"UpdateTs\",\"2024-10-21 15:04:27\",\"\"]]', 'DELETE FROM t_role_menu_map  WHERE RoleMenuId = :RoleMenuId', '{\"values\":{\"RoleMenuId\":121}}'),
+(151, '2025-07-12 14:15:41', '103.102.206.1', 1, 'DELETE', 't_role_menu_map', '[[\"RoleMenuId\",122,\"\"],[\"ClientId\",1,\"\"],[\"BranchId\",1,\"\"],[\"RoleId\",1,\"\"],[\"MenuId\",125,\"\"],[\"PermissionType\",2,\"\"],[\"CreateTs\",\"2024-10-21 15:04:26\",\"\"],[\"UpdateTs\",\"2024-10-21 15:04:27\",\"\"]]', 'DELETE FROM t_role_menu_map  WHERE RoleMenuId = :RoleMenuId', '{\"values\":{\"RoleMenuId\":122}}'),
+(152, '2025-07-12 14:15:41', '103.102.206.1', 1, 'DELETE', 't_role_menu_map', '[[\"RoleMenuId\",123,\"\"],[\"ClientId\",1,\"\"],[\"BranchId\",1,\"\"],[\"RoleId\",1,\"\"],[\"MenuId\",126,\"\"],[\"PermissionType\",2,\"\"],[\"CreateTs\",\"2024-10-21 15:04:26\",\"\"],[\"UpdateTs\",\"2024-10-21 15:04:27\",\"\"]]', 'DELETE FROM t_role_menu_map  WHERE RoleMenuId = :RoleMenuId', '{\"values\":{\"RoleMenuId\":123}}'),
+(153, '2025-07-12 14:15:43', '103.102.206.1', 1, 'DELETE', 't_role_menu_map', '[[\"RoleMenuId\",124,\"\"],[\"ClientId\",1,\"\"],[\"BranchId\",1,\"\"],[\"RoleId\",1,\"\"],[\"MenuId\",127,\"\"],[\"PermissionType\",2,\"\"],[\"CreateTs\",\"2024-10-21 15:04:27\",\"\"],[\"UpdateTs\",\"2024-10-21 15:04:27\",\"\"]]', 'DELETE FROM t_role_menu_map  WHERE RoleMenuId = :RoleMenuId', '{\"values\":{\"RoleMenuId\":124}}'),
+(154, '2025-07-12 14:15:44', '103.102.206.1', 1, 'DELETE', 't_role_menu_map', '[[\"RoleMenuId\",370,\"\"],[\"ClientId\",1,\"\"],[\"BranchId\",1,\"\"],[\"RoleId\",1,\"\"],[\"MenuId\",129,\"\"],[\"PermissionType\",2,\"\"],[\"CreateTs\",\"2024-12-26 23:41:24\",\"\"],[\"UpdateTs\",null,\"\"]]', 'DELETE FROM t_role_menu_map  WHERE RoleMenuId = :RoleMenuId', '{\"values\":{\"RoleMenuId\":370}}'),
+(155, '2025-07-12 14:15:48', '103.102.206.1', 1, 'DELETE', 't_role_menu_map', '[[\"RoleMenuId\",112,\"\"],[\"ClientId\",1,\"\"],[\"BranchId\",1,\"\"],[\"RoleId\",1,\"\"],[\"MenuId\",116,\"\"],[\"PermissionType\",2,\"\"],[\"CreateTs\",\"2024-09-06 12:29:25\",\"\"],[\"UpdateTs\",\"2024-10-21 15:04:27\",\"\"]]', 'DELETE FROM t_role_menu_map  WHERE RoleMenuId = :RoleMenuId', '{\"values\":{\"RoleMenuId\":112}}'),
+(156, '2025-07-12 14:15:52', '103.102.206.1', 1, 'UPDATE', 't_role_menu_map', '[[\"PermissionType\",1,2]]', 'UPDATE t_role_menu_map SET PermissionType = :PermissionType  WHERE RoleMenuId = :RoleMenuId', '{\"values\":{\"PermissionType\":2,\"RoleMenuId\":90}}'),
+(157, '2025-07-12 14:15:53', '103.102.206.1', 1, 'DELETE', 't_role_menu_map', '[[\"RoleMenuId\",99,\"\"],[\"ClientId\",1,\"\"],[\"BranchId\",1,\"\"],[\"RoleId\",1,\"\"],[\"MenuId\",102,\"\"],[\"PermissionType\",2,\"\"],[\"CreateTs\",\"2024-09-06 12:29:28\",\"\"],[\"UpdateTs\",\"2024-10-21 15:04:27\",\"\"]]', 'DELETE FROM t_role_menu_map  WHERE RoleMenuId = :RoleMenuId', '{\"values\":{\"RoleMenuId\":99}}'),
+(158, '2025-07-12 14:15:54', '103.102.206.1', 1, 'DELETE', 't_role_menu_map', '[[\"RoleMenuId\",90,\"\"],[\"ClientId\",1,\"\"],[\"BranchId\",1,\"\"],[\"RoleId\",1,\"\"],[\"MenuId\",92,\"\"],[\"PermissionType\",2,\"\"],[\"CreateTs\",\"2024-09-06 12:13:36\",\"\"],[\"UpdateTs\",\"2024-10-21 15:04:27\",\"\"]]', 'DELETE FROM t_role_menu_map  WHERE RoleMenuId = :RoleMenuId', '{\"values\":{\"RoleMenuId\":90}}'),
+(159, '2025-07-12 14:15:55', '103.102.206.1', 1, 'DELETE', 't_role_menu_map', '[[\"RoleMenuId\",98,\"\"],[\"ClientId\",1,\"\"],[\"BranchId\",1,\"\"],[\"RoleId\",1,\"\"],[\"MenuId\",104,\"\"],[\"PermissionType\",2,\"\"],[\"CreateTs\",\"2024-09-06 12:29:27\",\"\"],[\"UpdateTs\",\"2024-10-21 15:04:27\",\"\"]]', 'DELETE FROM t_role_menu_map  WHERE RoleMenuId = :RoleMenuId', '{\"values\":{\"RoleMenuId\":98}}'),
+(160, '2025-07-12 14:15:56', '103.102.206.1', 1, 'DELETE', 't_role_menu_map', '[[\"RoleMenuId\",97,\"\"],[\"ClientId\",1,\"\"],[\"BranchId\",1,\"\"],[\"RoleId\",1,\"\"],[\"MenuId\",105,\"\"],[\"PermissionType\",2,\"\"],[\"CreateTs\",\"2024-09-06 12:29:25\",\"\"],[\"UpdateTs\",\"2024-10-21 15:04:27\",\"\"]]', 'DELETE FROM t_role_menu_map  WHERE RoleMenuId = :RoleMenuId', '{\"values\":{\"RoleMenuId\":97}}'),
+(161, '2025-07-12 14:15:57', '103.102.206.1', 1, 'DELETE', 't_role_menu_map', '[[\"RoleMenuId\",318,\"\"],[\"ClientId\",1,\"\"],[\"BranchId\",1,\"\"],[\"RoleId\",1,\"\"],[\"MenuId\",128,\"\"],[\"PermissionType\",2,\"\"],[\"CreateTs\",\"2024-11-06 16:49:54\",\"\"],[\"UpdateTs\",null,\"\"]]', 'DELETE FROM t_role_menu_map  WHERE RoleMenuId = :RoleMenuId', '{\"values\":{\"RoleMenuId\":318}}'),
+(162, '2025-07-12 14:15:59', '103.102.206.1', 1, 'DELETE', 't_role_menu_map', '[[\"RoleMenuId\",366,\"\"],[\"ClientId\",1,\"\"],[\"BranchId\",1,\"\"],[\"RoleId\",1,\"\"],[\"MenuId\",130,\"\"],[\"PermissionType\",2,\"\"],[\"CreateTs\",\"2024-12-19 23:22:59\",\"\"],[\"UpdateTs\",null,\"\"]]', 'DELETE FROM t_role_menu_map  WHERE RoleMenuId = :RoleMenuId', '{\"values\":{\"RoleMenuId\":366}}'),
+(163, '2025-07-12 14:16:00', '103.102.206.1', 1, 'DELETE', 't_role_menu_map', '[[\"RoleMenuId\",84,\"\"],[\"ClientId\",1,\"\"],[\"BranchId\",1,\"\"],[\"RoleId\",1,\"\"],[\"MenuId\",93,\"\"],[\"PermissionType\",2,\"\"],[\"CreateTs\",\"2024-09-06 12:13:31\",\"\"],[\"UpdateTs\",\"2024-10-21 15:04:27\",\"\"]]', 'DELETE FROM t_role_menu_map  WHERE RoleMenuId = :RoleMenuId', '{\"values\":{\"RoleMenuId\":84}}'),
+(164, '2025-07-12 14:16:01', '103.102.206.1', 1, 'DELETE', 't_role_menu_map', '[[\"RoleMenuId\",85,\"\"],[\"ClientId\",1,\"\"],[\"BranchId\",1,\"\"],[\"RoleId\",1,\"\"],[\"MenuId\",94,\"\"],[\"PermissionType\",2,\"\"],[\"CreateTs\",\"2024-09-06 12:13:33\",\"\"],[\"UpdateTs\",\"2024-10-21 15:04:27\",\"\"]]', 'DELETE FROM t_role_menu_map  WHERE RoleMenuId = :RoleMenuId', '{\"values\":{\"RoleMenuId\":85}}'),
+(165, '2025-07-12 14:16:02', '103.102.206.1', 1, 'DELETE', 't_role_menu_map', '[[\"RoleMenuId\",86,\"\"],[\"ClientId\",1,\"\"],[\"BranchId\",1,\"\"],[\"RoleId\",1,\"\"],[\"MenuId\",95,\"\"],[\"PermissionType\",2,\"\"],[\"CreateTs\",\"2024-09-06 12:13:33\",\"\"],[\"UpdateTs\",\"2024-10-21 15:04:27\",\"\"]]', 'DELETE FROM t_role_menu_map  WHERE RoleMenuId = :RoleMenuId', '{\"values\":{\"RoleMenuId\":86}}'),
+(166, '2025-07-12 14:16:06', '103.102.206.1', 1, 'DELETE', 't_role_menu_map', '[[\"RoleMenuId\",161,\"\"],[\"ClientId\",1,\"\"],[\"BranchId\",1,\"\"],[\"RoleId\",1,\"\"],[\"MenuId\",97,\"\"],[\"PermissionType\",2,\"\"],[\"CreateTs\",\"2024-10-22 00:42:15\",\"\"],[\"UpdateTs\",\"2024-10-21 15:04:27\",\"\"]]', 'DELETE FROM t_role_menu_map  WHERE RoleMenuId = :RoleMenuId', '{\"values\":{\"RoleMenuId\":161}}'),
+(167, '2025-07-12 14:16:08', '103.102.206.1', 1, 'DELETE', 't_role_menu_map', '[[\"RoleMenuId\",87,\"\"],[\"ClientId\",1,\"\"],[\"BranchId\",1,\"\"],[\"RoleId\",1,\"\"],[\"MenuId\",96,\"\"],[\"PermissionType\",2,\"\"],[\"CreateTs\",\"2024-09-06 12:13:34\",\"\"],[\"UpdateTs\",\"2024-10-21 15:04:27\",\"\"]]', 'DELETE FROM t_role_menu_map  WHERE RoleMenuId = :RoleMenuId', '{\"values\":{\"RoleMenuId\":87}}'),
+(168, '2025-07-12 14:16:09', '103.102.206.1', 1, 'DELETE', 't_role_menu_map', '[[\"RoleMenuId\",89,\"\"],[\"ClientId\",1,\"\"],[\"BranchId\",1,\"\"],[\"RoleId\",1,\"\"],[\"MenuId\",98,\"\"],[\"PermissionType\",2,\"\"],[\"CreateTs\",\"2024-09-06 12:13:35\",\"\"],[\"UpdateTs\",\"2024-10-21 15:04:27\",\"\"]]', 'DELETE FROM t_role_menu_map  WHERE RoleMenuId = :RoleMenuId', '{\"values\":{\"RoleMenuId\":89}}'),
+(169, '2025-07-12 14:16:10', '103.102.206.1', 1, 'DELETE', 't_role_menu_map', '[[\"RoleMenuId\",102,\"\"],[\"ClientId\",1,\"\"],[\"BranchId\",1,\"\"],[\"RoleId\",1,\"\"],[\"MenuId\",109,\"\"],[\"PermissionType\",2,\"\"],[\"CreateTs\",\"2024-09-06 12:29:25\",\"\"],[\"UpdateTs\",\"2024-10-21 15:04:27\",\"\"]]', 'DELETE FROM t_role_menu_map  WHERE RoleMenuId = :RoleMenuId', '{\"values\":{\"RoleMenuId\":102}}'),
+(170, '2025-07-12 14:16:11', '103.102.206.1', 1, 'DELETE', 't_role_menu_map', '[[\"RoleMenuId\",103,\"\"],[\"ClientId\",1,\"\"],[\"BranchId\",1,\"\"],[\"RoleId\",1,\"\"],[\"MenuId\",110,\"\"],[\"PermissionType\",2,\"\"],[\"CreateTs\",\"2024-09-06 12:29:25\",\"\"],[\"UpdateTs\",\"2024-10-21 15:04:27\",\"\"]]', 'DELETE FROM t_role_menu_map  WHERE RoleMenuId = :RoleMenuId', '{\"values\":{\"RoleMenuId\":103}}'),
+(171, '2025-07-12 14:16:12', '103.102.206.1', 1, 'DELETE', 't_role_menu_map', '[[\"RoleMenuId\",104,\"\"],[\"ClientId\",1,\"\"],[\"BranchId\",1,\"\"],[\"RoleId\",1,\"\"],[\"MenuId\",111,\"\"],[\"PermissionType\",2,\"\"],[\"CreateTs\",\"2024-09-06 12:29:25\",\"\"],[\"UpdateTs\",\"2024-10-21 15:04:27\",\"\"]]', 'DELETE FROM t_role_menu_map  WHERE RoleMenuId = :RoleMenuId', '{\"values\":{\"RoleMenuId\":104}}'),
+(172, '2025-07-12 14:16:13', '103.102.206.1', 1, 'DELETE', 't_role_menu_map', '[[\"RoleMenuId\",394,\"\"],[\"ClientId\",1,\"\"],[\"BranchId\",1,\"\"],[\"RoleId\",1,\"\"],[\"MenuId\",133,\"\"],[\"PermissionType\",2,\"\"],[\"CreateTs\",\"2025-04-08 09:51:01\",\"\"],[\"UpdateTs\",null,\"\"]]', 'DELETE FROM t_role_menu_map  WHERE RoleMenuId = :RoleMenuId', '{\"values\":{\"RoleMenuId\":394}}'),
+(173, '2025-07-12 14:16:15', '103.102.206.1', 1, 'DELETE', 't_role_menu_map', '[[\"RoleMenuId\",93,\"\"],[\"ClientId\",1,\"\"],[\"BranchId\",1,\"\"],[\"RoleId\",1,\"\"],[\"MenuId\",99,\"\"],[\"PermissionType\",2,\"\"],[\"CreateTs\",\"2024-09-06 12:13:38\",\"\"],[\"UpdateTs\",\"2024-10-21 15:04:27\",\"\"]]', 'DELETE FROM t_role_menu_map  WHERE RoleMenuId = :RoleMenuId', '{\"values\":{\"RoleMenuId\":93}}'),
+(174, '2025-07-12 14:16:44', '103.102.206.1', 1, 'INSERT', 't_role_menu_map', '[[\"RoleMenuId\",\"\",400],[\"ClientId\",\"\",1],[\"BranchId\",\"\",1],[\"RoleId\",\"\",1],[\"MenuId\",\"\",120],[\"PermissionType\",\"\",1],[\"CreateTs\",\"\",\"2025-07-12 14:16:44\"]]', 'INSERT INTO t_role_menu_map (ClientId,BranchId,RoleId,MenuId,PermissionType) values (:ClientId,:BranchId,:RoleId,:MenuId,:PermissionType)', '{\"values\":{\"ClientId\":\"1\",\"BranchId\":\"1\",\"RoleId\":\"1\",\"MenuId\":120,\"PermissionType\":1}}'),
+(175, '2025-07-12 14:16:46', '103.102.206.1', 1, 'UPDATE', 't_role_menu_map', '[[\"PermissionType\",1,2]]', 'UPDATE t_role_menu_map SET PermissionType = :PermissionType  WHERE RoleMenuId = :RoleMenuId', '{\"values\":{\"PermissionType\":2,\"RoleMenuId\":400}}');
+INSERT INTO `t_sqllog` (`LogId`, `LogDate`, `RemoteIP`, `UserId`, `QueryType`, `TableName`, `JsonText`, `SqlText`, `SqlParams`) VALUES
+(176, '2025-07-12 21:03:59', '103.89.26.13', 1, 'INSERT', 't_transaction', '[[\"TransactionId\",\"\",20],[\"ClientId\",\"\",1],[\"TransactionTypeId\",\"\",1],[\"TransactionDate\",\"\",\"2025-07-12 00:00:00\"],[\"InvoiceNo\",\"\",\"123\"],[\"CoverFilePages\",\"\",1],[\"CoverFileUrl\",\"\",\"1752332590415_2025_07_12_21_03_59__2576.pdf\"],[\"ManyImgPrefix\",\"\",\"1752332590415\"],[\"UserId\",\"\",1],[\"StatusId\",\"\",1],[\"UpdateTs\",\"\",\"2025-07-12 21:03:59\"],[\"CreateTs\",\"\",\"2025-07-12 21:03:59\"]]', 'INSERT INTO t_transaction (ClientId,TransactionTypeId,TransactionDate,InvoiceNo,CoverFilePages,CoverFileUrl,UserId,StatusId,ManyImgPrefix) values (:ClientId,:TransactionTypeId,:TransactionDate,:InvoiceNo,:CoverFilePages,:CoverFileUrl,:UserId,:StatusId,:ManyImgPrefix)', '{\"values\":{\"ClientId\":\"1\",\"TransactionTypeId\":1,\"TransactionDate\":\"2025-07-12\",\"InvoiceNo\":\"123\",\"CoverFilePages\":\"1\",\"CoverFileUrl\":\"1752332590415_2025_07_12_21_03_59__2576.pdf\",\"UserId\":\"1\",\"StatusId\":1,\"ManyImgPrefix\":1752332590415}}'),
+(177, '2025-07-12 21:04:17', '103.89.26.13', 1, 'DELETE', 't_transaction', '[[\"TransactionId\",20,\"\"],[\"ClientId\",1,\"\"],[\"TransactionTypeId\",1,\"\"],[\"TransactionDate\",\"2025-07-12 00:00:00\",\"\"],[\"InvoiceNo\",\"123\",\"\"],[\"CoverFilePages\",1,\"\"],[\"CoverFileUrl\",\"1752332590415_2025_07_12_21_03_59__2576.pdf\",\"\"],[\"ManyImgPrefix\",\"1752332590415\",\"\"],[\"UserId\",1,\"\"],[\"StatusId\",1,\"\"],[\"UpdateTs\",\"2025-07-12 21:03:59\",\"\"],[\"CreateTs\",\"2025-07-12 21:03:59\",\"\"]]', 'DELETE FROM t_transaction  WHERE TransactionId = :TransactionId', '{\"values\":{\"TransactionId\":20}}'),
+(178, '2025-07-12 21:04:41', '103.89.26.13', 1, 'INSERT', 't_transaction', '[[\"TransactionId\",\"\",21],[\"ClientId\",\"\",1],[\"TransactionTypeId\",\"\",1],[\"TransactionDate\",\"\",\"2025-07-12 00:00:00\"],[\"InvoiceNo\",\"\",\"123\"],[\"CoverFilePages\",\"\",1],[\"CoverFileUrl\",\"\",\"1752332669249_2025_07_12_21_04_41__2613.pdf\"],[\"ManyImgPrefix\",\"\",\"1752332669249\"],[\"UserId\",\"\",1],[\"StatusId\",\"\",1],[\"UpdateTs\",\"\",\"2025-07-12 21:04:41\"],[\"CreateTs\",\"\",\"2025-07-12 21:04:41\"]]', 'INSERT INTO t_transaction (ClientId,TransactionTypeId,TransactionDate,InvoiceNo,CoverFilePages,CoverFileUrl,UserId,StatusId,ManyImgPrefix) values (:ClientId,:TransactionTypeId,:TransactionDate,:InvoiceNo,:CoverFilePages,:CoverFileUrl,:UserId,:StatusId,:ManyImgPrefix)', '{\"values\":{\"ClientId\":\"1\",\"TransactionTypeId\":1,\"TransactionDate\":\"2025-07-12\",\"InvoiceNo\":\"123\",\"CoverFilePages\":\"1\",\"CoverFileUrl\":\"1752332669249_2025_07_12_21_04_41__2613.pdf\",\"UserId\":\"1\",\"StatusId\":1,\"ManyImgPrefix\":1752332669249}}'),
+(179, '2025-07-12 21:09:11', '103.89.26.13', 1, 'INSERT', 't_transaction_items', '[[\"TransactionItemId\",\"\",46],[\"TransactionId\",\"\",21],[\"RowNo\",\"\",\"reportcheckblock-width-half\"],[\"ColumnNo\",\"\",\"reportcheckblock-height-onethird\"],[\"PhotoUrl\",\"\",\"1752332669249_2025_07_12_21_09_11__8320.png\"],[\"SortOrder\",\"\",1],[\"UpdateTs\",\"\",\"2025-07-12 21:09:11\"],[\"CreateTs\",\"\",\"2025-07-12 21:09:11\"]]', 'INSERT INTO t_transaction_items (TransactionId,CheckId,RowNo,ColumnNo,PhotoUrl,SortOrder) values (:TransactionId,:CheckId,:RowNo,:ColumnNo,:PhotoUrl,:SortOrder)', '{\"values\":{\"TransactionId\":21,\"CheckId\":null,\"RowNo\":\"reportcheckblock-width-half\",\"ColumnNo\":\"reportcheckblock-height-onethird\",\"PhotoUrl\":\"1752332669249_2025_07_12_21_09_11__8320.png\",\"SortOrder\":1}}'),
+(180, '2025-07-14 00:00:05', '103.102.206.1', 1, 'INSERT', 't_role_menu_map', '[[\"RoleMenuId\",\"\",401],[\"ClientId\",\"\",1],[\"BranchId\",\"\",1],[\"RoleId\",\"\",1],[\"MenuId\",\"\",116],[\"PermissionType\",\"\",1],[\"CreateTs\",\"\",\"2025-07-14 00:00:05\"]]', 'INSERT INTO t_role_menu_map (ClientId,BranchId,RoleId,MenuId,PermissionType) values (:ClientId,:BranchId,:RoleId,:MenuId,:PermissionType)', '{\"values\":{\"ClientId\":\"1\",\"BranchId\":\"1\",\"RoleId\":\"1\",\"MenuId\":116,\"PermissionType\":1}}'),
+(181, '2025-07-14 00:02:00', '103.102.206.1', 1, 'INSERT', 't_role_menu_map', '[[\"RoleMenuId\",\"\",402],[\"ClientId\",\"\",1],[\"BranchId\",\"\",1],[\"RoleId\",\"\",1],[\"MenuId\",\"\",130],[\"PermissionType\",\"\",1],[\"CreateTs\",\"\",\"2025-07-14 00:02:00\"]]', 'INSERT INTO t_role_menu_map (ClientId,BranchId,RoleId,MenuId,PermissionType) values (:ClientId,:BranchId,:RoleId,:MenuId,:PermissionType)', '{\"values\":{\"ClientId\":\"1\",\"BranchId\":\"1\",\"RoleId\":\"1\",\"MenuId\":130,\"PermissionType\":1}}'),
+(182, '2025-07-14 00:02:01', '103.102.206.1', 1, 'INSERT', 't_role_menu_map', '[[\"RoleMenuId\",\"\",403],[\"ClientId\",\"\",1],[\"BranchId\",\"\",1],[\"RoleId\",\"\",1],[\"MenuId\",\"\",97],[\"PermissionType\",\"\",1],[\"CreateTs\",\"\",\"2025-07-14 00:02:01\"]]', 'INSERT INTO t_role_menu_map (ClientId,BranchId,RoleId,MenuId,PermissionType) values (:ClientId,:BranchId,:RoleId,:MenuId,:PermissionType)', '{\"values\":{\"ClientId\":\"1\",\"BranchId\":\"1\",\"RoleId\":\"1\",\"MenuId\":97,\"PermissionType\":1}}'),
+(183, '2025-07-14 00:02:05', '103.102.206.1', 1, 'INSERT', 't_role_menu_map', '[[\"RoleMenuId\",\"\",404],[\"ClientId\",\"\",1],[\"BranchId\",\"\",1],[\"RoleId\",\"\",1],[\"MenuId\",\"\",98],[\"PermissionType\",\"\",1],[\"CreateTs\",\"\",\"2025-07-14 00:02:05\"]]', 'INSERT INTO t_role_menu_map (ClientId,BranchId,RoleId,MenuId,PermissionType) values (:ClientId,:BranchId,:RoleId,:MenuId,:PermissionType)', '{\"values\":{\"ClientId\":\"1\",\"BranchId\":\"1\",\"RoleId\":\"1\",\"MenuId\":98,\"PermissionType\":1}}'),
+(184, '2025-07-14 00:02:06', '103.102.206.1', 1, 'INSERT', 't_role_menu_map', '[[\"RoleMenuId\",\"\",405],[\"ClientId\",\"\",1],[\"BranchId\",\"\",1],[\"RoleId\",\"\",1],[\"MenuId\",\"\",99],[\"PermissionType\",\"\",1],[\"CreateTs\",\"\",\"2025-07-14 00:02:06\"]]', 'INSERT INTO t_role_menu_map (ClientId,BranchId,RoleId,MenuId,PermissionType) values (:ClientId,:BranchId,:RoleId,:MenuId,:PermissionType)', '{\"values\":{\"ClientId\":\"1\",\"BranchId\":\"1\",\"RoleId\":\"1\",\"MenuId\":99,\"PermissionType\":1}}');
 
 -- --------------------------------------------------------
 
@@ -583,7 +592,7 @@ CREATE TABLE `t_status` (
   `StatusName` varchar(50) NOT NULL,
   `CreateTs` timestamp NULL DEFAULT NULL,
   `UpdateTs` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
 -- Dumping data for table `t_status`
@@ -604,7 +613,7 @@ CREATE TABLE `t_team` (
   `TeamName` varchar(50) NOT NULL,
   `CreateTs` timestamp NOT NULL DEFAULT current_timestamp(),
   `UpdateTs` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `t_team`
@@ -634,7 +643,7 @@ CREATE TABLE `t_transaction` (
   `StatusId` smallint(3) NOT NULL,
   `UpdateTs` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `CreateTs` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
 -- Dumping data for table `t_transaction`
@@ -650,7 +659,9 @@ INSERT INTO `t_transaction` (`TransactionId`, `ClientId`, `TransactionTypeId`, `
 (14, 1, 1, '2025-07-05 00:00:00', '88', 7, NULL, '222', 1, 1, '2025-07-04 18:33:40', '2025-07-04 18:21:48'),
 (15, 1, 1, '2025-07-05 00:00:00', '63', 2, NULL, '1751654068715', 1, 1, '2025-07-04 18:34:52', '2025-07-04 18:34:52'),
 (17, 1, 1, '2025-07-06 00:00:00', 'A01', 3, NULL, '1751825769466', 1, 1, '2025-07-06 18:16:23', '2025-07-06 18:16:23'),
-(18, 1, 1, '2025-07-08 00:00:00', 'B12', 5, '1751994414177_2025_07_09_20_52_46__952.pdf', '1751994414177', 1, 1, '2025-07-09 14:52:46', '2025-07-08 17:07:43');
+(18, 1, 1, '2025-07-08 00:00:00', 'B12', 5, '1751994414177_2025_07_09_20_52_46__952.pdf', '1751994414177', 1, 1, '2025-07-09 14:52:46', '2025-07-08 17:07:43'),
+(19, 1, 1, '2025-07-12 00:00:00', 'Sqwe415', 6, '1752307898565_2025_07_12_14_12_10__1612.pdf', '1752307898565', 1, 1, '2025-07-12 08:12:10', '2025-07-12 08:12:10'),
+(21, 1, 1, '2025-07-12 00:00:00', '123', 1, '1752332669249_2025_07_12_21_04_41__2613.pdf', '1752332669249', 1, 1, '2025-07-12 15:04:41', '2025-07-12 15:04:41');
 
 -- --------------------------------------------------------
 
@@ -668,7 +679,7 @@ CREATE TABLE `t_transaction_items` (
   `SortOrder` smallint(3) NOT NULL COMMENT 'Report image sort order',
   `UpdateTs` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `CreateTs` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
 -- Dumping data for table `t_transaction_items`
@@ -699,7 +710,11 @@ INSERT INTO `t_transaction_items` (`TransactionItemId`, `TransactionId`, `CheckI
 (33, 18, 5, 'reportcheckblock-width-full', 'reportcheckblock-height-onethird', '1751994414177_2025_07_08_23_08_24__8601.jpeg', 1, '2025-07-08 17:08:24', '2025-07-08 17:08:24'),
 (34, 18, 3, 'reportcheckblock-width-half', 'reportcheckblock-height-onethird', '1751994414177_2025_07_08_23_08_24__5174.jpeg', 2, '2025-07-08 17:08:24', '2025-07-08 17:08:24'),
 (35, 18, 8, 'reportcheckblock-width-half', 'reportcheckblock-height-onethird', '1751994414177_2025_07_08_23_08_24__7446.jpeg', 3, '2025-07-08 17:08:24', '2025-07-08 17:08:24'),
-(36, 18, NULL, 'reportcheckblock-width-half', 'reportcheckblock-height-full', '1751994414177_2025_07_09_20_44_52__5404.jpeg', 4, '2025-07-09 14:44:52', '2025-07-09 14:44:52');
+(36, 18, NULL, 'reportcheckblock-width-half', 'reportcheckblock-height-full', '1751994414177_2025_07_09_20_44_52__5404.jpeg', 4, '2025-07-09 14:44:52', '2025-07-09 14:44:52'),
+(37, 19, 4, 'reportcheckblock-width-half', 'reportcheckblock-height-onethird', '1752307898565_2025_07_12_14_12_41__4275.png', 1, '2025-07-12 08:13:31', '2025-07-12 08:12:41'),
+(41, 19, 7, 'reportcheckblock-width-half', 'reportcheckblock-height-onethird', '1752307898565_2025_07_12_14_13_33__522.jpeg', 3, '2025-07-12 08:13:33', '2025-07-12 08:13:33'),
+(42, 19, 1, 'reportcheckblock-width-half', 'reportcheckblock-height-onethird', '1752307898565_2025_07_12_14_13_34__6779.jpeg', 2, '2025-07-12 08:13:34', '2025-07-12 08:13:34'),
+(46, 21, NULL, 'reportcheckblock-width-half', 'reportcheckblock-height-onethird', '1752332669249_2025_07_12_21_09_11__8320.png', 1, '2025-07-12 15:09:11', '2025-07-12 15:09:11');
 
 -- --------------------------------------------------------
 
@@ -714,7 +729,7 @@ CREATE TABLE `t_transaction_type` (
   `IsPositive` tinyint(1) NOT NULL DEFAULT 1,
   `UpdateTs` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `CreateTs` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
 -- Dumping data for table `t_transaction_type`
@@ -733,9 +748,9 @@ CREATE TABLE `t_users` (
   `UserId` int(11) NOT NULL,
   `ClientId` smallint(6) NOT NULL,
   `BranchId` smallint(6) NOT NULL,
-  `UserCode` varchar(50) CHARACTER SET utf8 NOT NULL,
+  `UserCode` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
   `UserName` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `LoginName` varchar(50) CHARACTER SET utf8 NOT NULL,
+  `LoginName` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
   `Email` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `Password` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `DesignationId` smallint(3) NOT NULL,
@@ -744,13 +759,13 @@ CREATE TABLE `t_users` (
   `TeamId` smallint(3) DEFAULT NULL,
   `LinemanUserId` int(11) DEFAULT NULL COMMENT 'This is for team leader',
   `BusinessLineId` smallint(3) DEFAULT NULL,
-  `PhoneNo` varchar(30) CHARACTER SET utf8 DEFAULT NULL,
+  `PhoneNo` varchar(30) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `IsActive` tinyint(1) NOT NULL DEFAULT 0,
   `PhotoUrl` varchar(200) DEFAULT NULL,
   `CreateTs` timestamp NOT NULL DEFAULT current_timestamp(),
   `UpdateTs` timestamp NULL DEFAULT NULL,
   `LinemanUserIdTxt` varchar(300) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `t_users`
@@ -772,7 +787,7 @@ CREATE TABLE `t_user_role_map` (
   `RoleId` smallint(11) NOT NULL,
   `CreateTs` timestamp NOT NULL DEFAULT current_timestamp(),
   `UpdateTs` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `t_user_role_map`
@@ -793,7 +808,7 @@ CREATE TABLE `t_year` (
   `YearName` varchar(10) NOT NULL,
   `UpdateTs` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `CreateTs` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
 -- Dumping data for table `t_year`
@@ -976,7 +991,7 @@ ALTER TABLE `t_branch`
 -- AUTO_INCREMENT for table `t_checklist`
 --
 ALTER TABLE `t_checklist`
-  MODIFY `CheckId` smallint(3) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `CheckId` smallint(3) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `t_client`
@@ -1006,7 +1021,7 @@ ALTER TABLE `t_designation`
 -- AUTO_INCREMENT for table `t_errorlog`
 --
 ALTER TABLE `t_errorlog`
-  MODIFY `LogId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `LogId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `t_menu`
@@ -1030,13 +1045,13 @@ ALTER TABLE `t_roles`
 -- AUTO_INCREMENT for table `t_role_menu_map`
 --
 ALTER TABLE `t_role_menu_map`
-  MODIFY `RoleMenuId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=400;
+  MODIFY `RoleMenuId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=406;
 
 --
 -- AUTO_INCREMENT for table `t_sqllog`
 --
 ALTER TABLE `t_sqllog`
-  MODIFY `LogId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=119;
+  MODIFY `LogId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=185;
 
 --
 -- AUTO_INCREMENT for table `t_status`
@@ -1054,13 +1069,13 @@ ALTER TABLE `t_team`
 -- AUTO_INCREMENT for table `t_transaction`
 --
 ALTER TABLE `t_transaction`
-  MODIFY `TransactionId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `TransactionId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `t_transaction_items`
 --
 ALTER TABLE `t_transaction_items`
-  MODIFY `TransactionItemId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `TransactionItemId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
 
 --
 -- AUTO_INCREMENT for table `t_transaction_type`

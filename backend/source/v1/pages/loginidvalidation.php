@@ -11,10 +11,9 @@ try{
 		if($User_Id != "") {
 
 			$query = "SELECT 1 AS SysValue,'Successful' AS SysMessage, 
-			a.UserId AS UserInfoID, a.UserName, a.LoginName AS LoginID, '' AS LoginPassword, 
+			a.UserId, a.UserName, a.LoginName AS LoginID, '' AS LoginPassword, 
 			a.Email AS EmailAddress,ifnull(b.DesignationName,'') AS DesignationName,ifnull(c.DepartmentName,'') AS DepartmentName
-			,ifnull(a.Address,'') AS LocationName,ifnull(d.RoleId,'') AS PermissionGroupID, 0 AS CreatedBy, 
-			'' AS TerminalID,'' AS IPAddress,'' AS ContactNumber,'' AS DeviceLock
+			,ifnull(a.Address,'') AS LocationName,ifnull(d.RoleId,'') AS PermissionGroupID
 			FROM t_users a
 			INNER JOIN t_designation b on a.DesignationId=b.DesignationId
 			INNER JOIN t_department c on a.DepartmentId=c.DepartmentId

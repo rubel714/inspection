@@ -45,15 +45,13 @@ try{
 
 			$query = "SELECT 1 AS SysValue,'Successful' AS SysMessage, 
 			a.UserId AS UserInfoID, a.UserName, a.LoginName AS LoginID, '' AS LoginPassword, 
-			a.Email AS EmailAddress,b.DesignationName,c.DepartmentName
-			,ifnull(a.Address,'') AS LocationName,ifnull(d.RoleId,'') AS PermissionGroupID, 0 AS CreatedBy, 
-			'' AS TerminalID,'' AS IPAddress,'' AS ContactNumber,'' AS DeviceLock
+			a.Email AS EmailAddress, b.DesignationName, c.DepartmentName ,ifnull(a.Address,'') AS Address
+			,ifnull(d.RoleId,'') AS PermissionGroupID
 			FROM t_users a
 			INNER JOIN t_designation b on a.DesignationId=b.DesignationId
 			INNER JOIN t_department c on a.DepartmentId=c.DepartmentId
 			INNER JOIN t_user_role_map d on a.UserId=d.UserId
 			WHERE a.UserId = $User_Id and a.IsActive=1;";		
-			
 			$resultdata = $db->query($query);
 			
 			if (is_object($resultdata)) {
