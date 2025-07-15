@@ -14,7 +14,7 @@ $siteTitle = reportsitetitleeng;
 
 require_once('TCPDF-master/examples/tcpdf_include.php');
 
-$sqlf = "SELECT a.TransactionId,	DATE_FORMAT(a.TransactionDate, '%d-%m-%Y') AS TransactionDate
+$sqlf = "SELECT a.TransactionId, DATE_FORMAT(a.TransactionDate, '%d-%m-%Y') AS TransactionDate
 			,a.InvoiceNo,a.CoverFilePages,a.CoverFileUrl,a.ManyImgPrefix,a.UserId,a.StatusId,b.UserName
 			FROM t_transaction a
 			inner join t_users b on a.UserId=b.UserId
@@ -112,30 +112,107 @@ $pdf->SetAutoPageBreak(true, 5);
 $pdf->SetFont('helvetica', 'R', 10);//Global font size of this pdf
 $pdf->AddPage();
 
-$images = [
-    ['file' => '../../image/transaction/Weightcheck.jpg', 'type' => 'half-half', 'label' => 'Image 1: Half-Half'],
-    ['file' => '../../image/transaction/Weightcheck.jpg', 'type' => 'half-half', 'label' => 'Image 1: Half-Half'],
-    ['file' => '../../image/transaction/Weightcheck.jpg', 'type' => 'half-half', 'label' => 'Image 1: Half-Half'],
-    ['file' => '../../image/transaction/Weightcheck.jpg', 'type' => 'half-half', 'label' => 'Image 1: Half-Half'],
-    ['file' => '../../image/transaction/Weightcheck.jpg', 'type' => 'half-half', 'label' => 'Image 1: Half-Half'],
-    ['file' => '../../image/transaction/Weightcheck.jpg', 'type' => 'half-half', 'label' => 'Image 1: Half-Half'],
-    ['file' => '../../image/transaction/Weightcheck.jpg', 'type' => 'half-half', 'label' => 'Image 1: Half-Half'],
-    ['file' => '../../image/transaction/Weightcheck.jpg', 'type' => 'half-half', 'label' => 'Image 1: Half-Half'],
-    ['file' => '../../image/transaction/Weightcheck.jpg', 'type' => 'half-half', 'label' => 'Image 1: Half-Half'],
+$sqlmany = "SELECT a.TransactionItemId,a.CheckId,b.CheckName,a.RowNo,a.ColumnNo,a.PhotoUrl,a.SortOrder
+			FROM t_transaction_items a
+			left join t_checklist b on a.CheckId=b.CheckId
+			where a.TransactionId = $TransactionId
+			order by a.SortOrder;";
+$manyresult = $db->query($sqlmany);
+// 'half-one-third'
+// 'half-half'
+// 'full-full'
 
-    ['file' => '../../image/transaction/Weightcheck.jpg', 'type' => 'full-full', 'label' => 'Image 3: Full-Full'],
-    ['file' => '../../image/transaction/Weightcheck.jpg', 'type' => 'full-full', 'label' => 'Image 3: Full-Full'],
-    ['file' => '../../image/transaction/Weightcheck.jpg', 'type' => 'half-half', 'label' => 'Image 1: Half-Half'],
-    ['file' => '../../image/transaction/1751994414177_2025_07_08_23_08_24__5174.jpeg', 'type' => 'half-one-third', 'label' => 'Image 2: Half-One-Third'],
-    ['file' => '../../image/transaction/1751994414177_2025_07_08_23_08_24__8601.jpeg', 'type' => 'half-one-third', 'label' => 'Image 5: Half-One-Third'],
-    ['file' => '../../image/transaction/Weightcheck.jpg', 'type' => 'full-full', 'label' => 'Image 3: Full-Full'],
-	['file' => '../../image/transaction/2025_07_05_00_21_48_3018.png', 'type' => 'half-half', 'label' => 'Image 4: Half-Half'],
-	['file' => '../../image/transaction/2025_07_05_00_21_48_3018.png', 'type' => 'half-half', 'label' => 'Image 4: Half-Half'],
-	['file' => '../../image/transaction/2025_07_05_00_21_48_3018.png', 'type' => 'half-half', 'label' => 'Image 4: Half-Half'],
-	['file' => '../../image/transaction/2025_07_05_00_21_48_3018.png', 'type' => 'half-half', 'label' => 'Image 4: Half-Half'],
-    ['file' => '../../image/transaction/Weightcheck.jpg', 'type' => 'full-full', 'label' => 'Image 3: Full-Full'],
+// reportcheckblock-width-half
+// reportcheckblock-width-full
+
+// reportcheckblock-height-onethird
+// reportcheckblock-height-half
+// reportcheckblock-height-full
+
+$images = [];
+foreach ($manyresult as $result) {
+   $PhotoUrl = $result['PhotoUrl'];
+   $CheckName = $result['CheckName'];
+   $RowNo = $result['RowNo'];
+   $ColumnNo = $result['ColumnNo'];
+   
+   $type = "";
+   if($RowNo == 'reportcheckblock-width-half' && $ColumnNo == 'reportcheckblock-height-onethird'){
+	   $type = "half-one-third";
+   }
+   else if($RowNo == 'reportcheckblock-width-half' && $ColumnNo == 'reportcheckblock-height-half'){
+	   $type = "half-half";
+   }
+   // else if($RowNo == 'reportcheckblock-width-half' && $ColumnNo == 'reportcheckblock-height-full'){
+	   // $type = "half-half";
+   // }
+   // else if($RowNo == 'reportcheckblock-width-full' && $ColumnNo == 'reportcheckblock-height-onethird'){
+	   // $type = "half-half";
+   // } 
+   // else if($RowNo == 'reportcheckblock-width-full' && $ColumnNo == 'reportcheckblock-height-half'){
+	   // $type = "half-half";
+   // }
+   else if($RowNo == 'reportcheckblock-width-full' && $ColumnNo == 'reportcheckblock-height-full'){
+	   $type = "full-full";
+   }
+   
+   
+   
+   $images[] = [
+				'file' => '../../image/transaction/'.$PhotoUrl, 
+				'type' => $type, 
+				'label' => $CheckName
+			];
+   
+   
+}
+
+// echo "<pre>";
+// print_r($images);
+// exit;
+
+// $images = [
+
+    // ['file' => '../../image/transaction/1751994414177_2025_07_08_23_08_24__5174.jpeg', 'type' => 'half-one-third', 'label' => 'Image 2: Half-One-Third'],
+    // ['file' => '../../image/transaction/1751994414177_2025_07_08_23_08_24__8601.jpeg', 'type' => 'half-one-third', 'label' => 'Image 5: Half-One-Third'],
+    // ['file' => '../../image/transaction/1751994414177_2025_07_08_23_08_24__8601.jpeg', 'type' => 'half-one-third', 'label' => 'Image 5: Half-One-Third'],
+    // ['file' => '../../image/transaction/1751994414177_2025_07_08_23_08_24__8601.jpeg', 'type' => 'half-one-third', 'label' => 'Image 5: Half-One-Third'],
+    // ['file' => '../../image/transaction/1751994414177_2025_07_08_23_08_24__8601.jpeg', 'type' => 'half-one-third', 'label' => 'Image 5: Half-One-Third'],
+    // ['file' => '../../image/transaction/1751994414177_2025_07_08_23_08_24__8601.jpeg', 'type' => 'half-one-third', 'label' => 'Image 5: Half-One-Third'],
+
+    // ['file' => '../../image/transaction/Weightcheck.jpg', 'type' => 'half-half', 'label' => 'Image 1: Half-Half'],
+    // ['file' => '../../image/transaction/Weightcheck.jpg', 'type' => 'half-half', 'label' => 'Image 1: Half-Half'],
+    // ['file' => '../../image/transaction/Weightcheck.jpg', 'type' => 'half-half', 'label' => 'Image 1: Half-Half'],
+    // ['file' => '../../image/transaction/Weightcheck.jpg', 'type' => 'half-half', 'label' => 'Image 1: Half-Half'],
+    // ['file' => '../../image/transaction/Weightcheck.jpg', 'type' => 'half-half', 'label' => 'Image 1: Half-Half'],
+    // ['file' => '../../image/transaction/Weightcheck.jpg', 'type' => 'half-half', 'label' => 'Image 1: Half-Half'],
+    // ['file' => '../../image/transaction/Weightcheck.jpg', 'type' => 'half-half', 'label' => 'Image 1: Half-Half'],
+    // ['file' => '../../image/transaction/Weightcheck.jpg', 'type' => 'half-half', 'label' => 'Image 1: Half-Half'],
+    // ['file' => '../../image/transaction/Weightcheck.jpg', 'type' => 'half-half', 'label' => 'Image 1: Half-Half'],
+
+    // ['file' => '../../image/transaction/Weightcheck.jpg', 'type' => 'full-full', 'label' => 'Image 3: Full-Full'],
+    // ['file' => '../../image/transaction/Weightcheck.jpg', 'type' => 'full-full', 'label' => 'Image 3: Full-Full'],
+    // ['file' => '../../image/transaction/Weightcheck.jpg', 'type' => 'half-half', 'label' => 'Image 1: Half-Half'],
+    // ['file' => '../../image/transaction/1751994414177_2025_07_08_23_08_24__5174.jpeg', 'type' => 'half-one-third', 'label' => 'Image 2: Half-One-Third'],
+    // ['file' => '../../image/transaction/1751994414177_2025_07_08_23_08_24__8601.jpeg', 'type' => 'half-one-third', 'label' => 'Image 5: Half-One-Third'],
+    // ['file' => '../../image/transaction/Weightcheck.jpg', 'type' => 'full-full', 'label' => 'Image 3: Full-Full'],
+	// ['file' => '../../image/transaction/2025_07_05_00_21_48_3018.png', 'type' => 'half-half', 'label' => 'Image 4: Half-Half'],
+	// ['file' => '../../image/transaction/2025_07_05_00_21_48_3018.png', 'type' => 'half-half', 'label' => 'Image 4: Half-Half'],
+	// ['file' => '../../image/transaction/2025_07_05_00_21_48_3018.png', 'type' => 'half-half', 'label' => 'Image 4: Half-Half'],
+	// ['file' => '../../image/transaction/2025_07_05_00_21_48_3018.png', 'type' => 'half-half', 'label' => 'Image 4: Half-Half'],
+    // ['file' => '../../image/transaction/Weightcheck.jpg', 'type' => 'full-full', 'label' => 'Image 3: Full-Full'],
 	
-];
+// ];
+
+
+
+
+
+
+
+
+
+
 
 $margin = 5;
 $label_height = 6;
@@ -154,18 +231,17 @@ $row_height = 0;
 // echo "=======";
 // echo $y;
 // exit;
+
 foreach ($images as $img) {
 	
     switch ($img['type']) {
         case 'full-full':
             $w = $page_width; // 200
             $h = $page_height - 60; // 224 // allow room for label 
-            // $h = $page_height / 1.3; // 224 // allow room for label 
-            // $h = $page_height - $label_height; // allow room for label
             break;
         case 'half-half':
             $w = $page_width / 2 - $margin;
-            $h = $page_height / 2 - $margin - 60;
+            $h = ($page_height / 2 - $margin) - 30;
 			// echo $w;
 			// echo "=======";
 			// echo $h;
@@ -173,11 +249,11 @@ foreach ($images as $img) {
             break;
         case 'half-one-third':
             $w = $page_width / 2 - $margin;
-            $h = $page_height / 3 - $margin;
+            $h = ($page_height / 3 - $margin)- 23;
             break;
         default:
-            $w = $page_width / 2;
-            $h = $page_height / 2;
+            $w = $page_width / 2 - $margin;
+            $h = ($page_height / 2 - $margin) - 60;
     }
 
     $total_height = $h + $label_height; //224+6 = 230
