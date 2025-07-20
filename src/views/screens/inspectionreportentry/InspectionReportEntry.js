@@ -583,7 +583,7 @@ const InspectionReportEntry = (props) => {
                               }
                             >
                               <img
-                                src={`${baseUrl}image/transaction/${Item.PhotoUrl}`}
+                                src={`${baseUrl}image/transaction/${currentRow.ManyImgPrefix}/${Item.PhotoUrl}`}
                                 // src={
                                 //     Item.PhotoUrl
                                 //       ? `${baseUrl}image/transaction/${Item.PhotoUrl}`
@@ -605,7 +605,7 @@ const InspectionReportEntry = (props) => {
                               src={
                                 Item.PhotoUrlPreview
                                   ? Item.PhotoUrlPreview
-                                  : `${baseUrl}image/transaction/${Item.PhotoUrl}`
+                                  : `${baseUrl}image/transaction/${currentRow.ManyImgPrefix}/${Item.PhotoUrl}`
                               }
                               alt="Photo"
                               className="preview-image"
