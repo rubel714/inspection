@@ -549,12 +549,15 @@ const InspectionReportEntry = (props) => {
             {/* <!-- Modal content --> */}
             <div class="modal-content-reportblock">
               <div class="modalHeader">
-                <h4>Add/Edit Inspection Check List - {currentRow.InvoiceNo}</h4>
-                {/* <Button
+     
+                <Button
                   label={"Back to List"}
                   class={"btnClose"}
                   onClick={manyPanelCallback}
-                /> */}
+                />
+
+                <h4>Add/Edit Inspection Check List - {currentRow.InvoiceNo}</h4>
+
               </div>
 
               {currentRow.Items &&
@@ -583,7 +586,12 @@ const InspectionReportEntry = (props) => {
                               }
                             >
                               <img
-                                src={`${baseUrl}image/transaction/${currentRow.ManyImgPrefix}/${Item.PhotoUrl}`}
+                                src={
+                                  Item.PhotoUrl=='placeholder.jpg'?
+                                  `${baseUrl}image/transaction/${Item.PhotoUrl}`:
+                                  `${baseUrl}image/transaction/${currentRow.ManyImgPrefix}/${Item.PhotoUrl}`
+                                
+                                }
                                 // src={
                                 //     Item.PhotoUrl
                                 //       ? `${baseUrl}image/transaction/${Item.PhotoUrl}`
@@ -605,7 +613,9 @@ const InspectionReportEntry = (props) => {
                               src={
                                 Item.PhotoUrlPreview
                                   ? Item.PhotoUrlPreview
-                                  : `${baseUrl}image/transaction/${currentRow.ManyImgPrefix}/${Item.PhotoUrl}`
+                                  : (Item.PhotoUrl=='placeholder.jpg'?                                    
+                                    `${baseUrl}image/transaction/${Item.PhotoUrl}`:
+                                  `${baseUrl}image/transaction/${currentRow.ManyImgPrefix}/${Item.PhotoUrl}`)
                               }
                               alt="Photo"
                               className="preview-image"

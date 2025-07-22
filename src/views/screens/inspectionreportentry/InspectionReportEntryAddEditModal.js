@@ -50,7 +50,7 @@ const InspectionReportEntryAddEditModal = (props) => {
   const handleChangeMasterFile = (e) => {
     // const { name, value } = e.target;
     let file = e.target.files[0];
-    console.log('file: ', file);
+    // console.log('file: ', file);
     if (file) {
 
       let data = { ...currentRow };

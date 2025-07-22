@@ -45,8 +45,15 @@ foreach ($sqlLoop1result as $result) {
    $UserId = $result['UserId'];
    $UserName = $result['UserName'];
 }
+
+$NoImageDirectory = dirname(__FILE__) . '/../../image/transaction/';
 $FileDirectory = dirname(__FILE__) . '/../../image/transaction/'.$ManyImgPrefix.'/';
 
+/*check the director is available. If not, then create*/
+$path = "../../image/transaction/".$ManyImgPrefix;
+if (!file_exists($path)) {
+	mkdir($path, 0777, true);
+}
 
 class MYPDF extends TCPDF
 {
@@ -168,9 +175,16 @@ foreach ($manyresult as $result) {
    
    
 	// 'file' => '../../image/transaction/'.$PhotoUrl, 
-
+	$ImageURL="";
+	 if($PhotoUrl=='placeholder.jpg'){
+		 $ImageURL = $NoImageDirectory.$PhotoUrl;
+	 }else{
+		 $ImageURL = $FileDirectory.$PhotoUrl;
+	 }
+	 
+	 
    $images[] = [
-				'file' => $FileDirectory.$PhotoUrl, 
+				'file' => $ImageURL, 
 				'type' => $type, 
 				'label' => $CheckName
 			];
@@ -323,7 +337,7 @@ use setasign\Fpdi\Tcpdf\Fpdi;
 	
 //when Cover file is not available
 if($CoverFileUrl == ""){
-	echo "There are no cover file.";
+	$pdf->Output($SecondFileName, 'I');//show file
 }else{
 	//when Cover file is available
 
