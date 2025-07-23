@@ -80,12 +80,10 @@ function dataAddEdit($data)
 	if ($_SERVER["REQUEST_METHOD"] != "POST") {
 		return $returnData = msg(0, 404, 'Page Not Found!');
 	} else {
-		// echo "<pre>";
-		// print_r($data);
+
 		$lan = trim($data->lan);
 		$UserId = trim($data->UserId);
 		$ClientId = trim($data->ClientId);
-		// $BranchId = trim($data->BranchId);
 
 		$id = $data->rowData->id;
 		$TransactionTypeId = $data->rowData->TransactionTypeId;
@@ -95,17 +93,9 @@ function dataAddEdit($data)
 		$TransactionDate = $data->rowData->TransactionDate;
 		$CoverFilePages = $data->rowData->CoverFilePages;
 		$ManyImgPrefix = $data->rowData->ManyImgPrefix;
-
 		$CoverFileUrl = $data->rowData->CoverFileUrlUpload ? ConvertFile($data->rowData->CoverFileUrlUpload,$ManyImgPrefix) : null;
-
-		// $Items = $data->rowData->Items;
-		// $PhotoUrl =  $data->rowData->PhotoUrl? $data->rowData->PhotoUrl : "placeholder.png";
-		// echo "<pre>";
-		// print_r($Items);
 		try {
-			// $dbh = new Db();
 			$aQuerys = array();
-
 			if ($id == "") {
 				$q = new insertq();
 				$q->table = 't_transaction';
