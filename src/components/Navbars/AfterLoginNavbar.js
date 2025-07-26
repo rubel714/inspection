@@ -321,7 +321,7 @@ function AfterLoginNavbar(props) {
                   Reports
                   <ul class="dropdownList">
 
-                    {menuShowPermision("customervisitpunchledger") === 1 && (
+                    {/* {menuShowPermision("customervisitpunchledger") === 1 && (
                       <li>
                         <a
                           href="javascript:void(0)"
@@ -332,7 +332,9 @@ function AfterLoginNavbar(props) {
                           Report 01
                         </a>
                       </li>
-                    )}
+                    )} */}
+
+                    
 {/* 
                     {menuShowPermision("customervisitpunchsummary") === 1 && (
                       <li>

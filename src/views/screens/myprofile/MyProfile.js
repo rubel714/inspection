@@ -371,15 +371,15 @@ const MyProfile = (props) => {
                 onChange={(e) => handleChange(e)}
               ></input>
 
-              <label>Business Line</label>
+                 <label>Lineman (N+1)</label>
               <input
                 type="text"
-                id="BusinessLineName"
-                name="BusinessLineName"
+                id="LinemanUserName"
+                name="LinemanUserName"
                 disabled={true}
-                placeholder="Enter BusinessLineName"
-                // class={errorObject.BusinessLineName}
-                value={currentRow.BusinessLineName}
+                placeholder="Enter LinemanUserName"
+                // class={errorObject.LinemanUserName}
+                value={currentRow.LinemanUserName}
                 onChange={(e) => handleChange(e)}
               ></input>
 
@@ -394,17 +394,7 @@ const MyProfile = (props) => {
             </div>
 
             <div class="contactmodalBody pt-10">
-              <label>Lineman (N+1)</label>
-              <input
-                type="text"
-                id="LinemanUserName"
-                name="LinemanUserName"
-                disabled={true}
-                placeholder="Enter LinemanUserName"
-                // class={errorObject.LinemanUserName}
-                value={currentRow.LinemanUserName}
-                onChange={(e) => handleChange(e)}
-              ></input>
+           
 
               <label>Address</label>
               <input

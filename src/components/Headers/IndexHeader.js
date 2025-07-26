@@ -31,7 +31,7 @@ function IndexHeader() {
 
   return (
     <>
-      <h1>Inspection</h1>
+      <h1>Inspection Management System</h1>
       <h3>Integrated visit plan management</h3>
 
       {/* {loading ? (

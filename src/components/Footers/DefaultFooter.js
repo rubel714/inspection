@@ -16,7 +16,7 @@ function DefaultFooter() {
             <ul>
               <li>
                 <a href="#" target="_blank" className="text-capitalize">
-                Inspection
+                Inspection Management System
                 </a>
               </li>
             </ul>

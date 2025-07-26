@@ -202,11 +202,13 @@ const InspectionReportEntry = (props) => {
     return (
       <>
         <PictureAsPdf
+          titleAccess="Export"
           className={"table-generate-icon"}
           onClick={() => {
             PDFGenerate(rowData.id);
           }}
-        />
+        ><span>fdsfs</span>
+          </PictureAsPdf>
 
         <AddAPhoto
           className={"table-addimg-icon"}
@@ -549,12 +551,12 @@ const InspectionReportEntry = (props) => {
             {/* <!-- Modal content --> */}
             <div class="modal-content-reportblock">
               <div class="modalHeader">
-     
+{/*      
                 <Button
                   label={"Back to List"}
-                  class={"btnClose"}
+                  class={"btnClose chosen_dropdown_fon"}
                   onClick={manyPanelCallback}
-                />
+                /> */}
 
                 <h4>Add/Edit Inspection Check List - {currentRow.InvoiceNo}</h4>
 
