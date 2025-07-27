@@ -91,7 +91,7 @@ function dataAddEdit($data)
 		// $CoverFileUrl = $data->rowData->CoverFileUrl ? $data->rowData->CoverFileUrl : null;
 		$InvoiceNo = $data->rowData->InvoiceNo;
 		$TransactionDate = $data->rowData->TransactionDate;
-		$CoverFilePages = $data->rowData->CoverFilePages;
+		$CoverFilePages = $data->rowData->CoverFilePages? $data->rowData->CoverFilePages : null;
 		$ManyImgPrefix = $data->rowData->ManyImgPrefix;
 		$CoverFileUrl = $data->rowData->CoverFileUrlUpload ? ConvertFile($data->rowData->CoverFileUrlUpload,$ManyImgPrefix) : null;
 		try {

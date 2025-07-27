@@ -124,7 +124,7 @@ const InspectionReportEntryAddEditModal = (props) => {
 
   const validateForm = () => {
     let validateFields = [];
-    validateFields = ["InvoiceNo", "TransactionDate", "CoverFilePages"];
+    validateFields = ["InvoiceNo", "TransactionDate"];
     let errorData = {};
     let isValid = true;
     validateFields.map((field) => {
@@ -230,7 +230,7 @@ const InspectionReportEntryAddEditModal = (props) => {
           </div>
 
           <div class="contactmodalBody pt-10">
-            <label>Cover File *</label>
+            <label>Cover File</label>
             <input
               type="file"
               id="PhotoUrl"
@@ -242,12 +242,12 @@ const InspectionReportEntryAddEditModal = (props) => {
               onChange={(e) => handleChangeMasterFile(e)}
             />
 
-            <label>Cover File Page Count *</label>
+            <label>Cover File Page Count</label>
             <input
               type="text"
               id="CoverFilePages"
               name="CoverFilePages"
-              class={errorObject.CoverFilePages}
+              // class={errorObject.CoverFilePages}
               placeholder="Enter Cover File Page Count"
               value={currentRow.CoverFilePages}
               onChange={(e) => handleChange(e)}

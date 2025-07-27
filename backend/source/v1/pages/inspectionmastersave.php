@@ -6,10 +6,10 @@ try {
 
 	$db = new Db();
 	$TransactionId = isset($data['TransactionId']) ? checkNull($data['TransactionId']) : "";
-	$TransactionDate = isset($data['TransactionDate']) ? convertAppToDBDateTime(checkNull($data['TransactionDate'])) : ""; //21-Aug-2024 5:15 AM
+	$TransactionDate = isset($data['TransactionDate']) ? convertAppToDBDate(checkNull($data['TransactionDate'])) : ""; //21-Aug-2024 5:15 AM
 	$InvoiceNo = isset($data['InvoiceNo']) ? checkNull($data['InvoiceNo']) : "";
 	$CoverFilePages = isset($data['CoverFilePages']) ? checkNull($data['CoverFilePages']) : "";
-	$CoverFileUrl = "";// isset($data['CoverFileUrl']) ? checkNull($data['CoverFileUrl']) : "";/////////////////
+	$CoverFileUrl = null;// isset($data['CoverFileUrl']) ? checkNull($data['CoverFileUrl']) : "";/////////////////
 	$UserId = isset($data['UserInfoID']) ? checkNull($data['UserInfoID']) : "";
 	$ManyImgPrefix = isset($data['ManyImgPrefix']) ? checkNull($data['ManyImgPrefix']) : "";
 	$CurrentDate = date('Y-m-d H:i:s');
@@ -33,12 +33,12 @@ try {
 		return;
 	}
 	
-	if ($CoverFilePages == "" ) {
-		$apiResponse = json_encode(recordNotFoundMsg(0, "Cover File Page Count param is missing"));
-		apiLogWrite("Output (" . date('Y_m_d_H_i_s') . "): " . $apiResponse);
-		echo $apiResponse;
-		return;
-	}
+	// if ($CoverFilePages == "" ) {
+	// 	$apiResponse = json_encode(recordNotFoundMsg(0, "Cover File Page Count param is missing"));
+	// 	apiLogWrite("Output (" . date('Y_m_d_H_i_s') . "): " . $apiResponse);
+	// 	echo $apiResponse;
+	// 	return;
+	// }
 	
 	// if ($CoverFileUrl == "" ) {
 	// 	$apiResponse = json_encode(recordNotFoundMsg(0, "Cover File param is missing"));
