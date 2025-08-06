@@ -21,6 +21,7 @@ import {
 import ExecuteQueryHook from "../../../components/hooks/ExecuteQueryHook";
 import moment from "moment";
 import InspectionReportEntryAddEditModal from "./InspectionReportEntryAddEditModal";
+import CheckListModal from "./CheckListModal";
 
 const InspectionReportEntry = (props) => {
   const serverpage = "inspectionreportentry"; // this is .php server page
@@ -30,11 +31,11 @@ const InspectionReportEntry = (props) => {
   const [currentRow, setCurrentRow] = useState([]);
   const [currentRowDelete, setCurrentRowDelete] = useState([]);
   const [showModal, setShowModal] = useState(false); //true=show modal, false=hide modal
+  const [showCheckListModal, setShowCheckListModal] = useState(false); //true=show modal, false=hide modal
   const [showMany, setShowMany] = useState(false); //true=show, false=hide many panel
   const [CheckList, setCheckList] = useState(null);
-  
 
-// handleChangeWidthHeight
+  // handleChangeWidthHeight
   const { isLoading, data: dataList, error, ExecuteQuery } = ExecuteQueryHook(); //Fetch data
   const UserInfo = LoginUserInfo();
   const [selectedDate, setSelectedDate] = useState(
@@ -56,7 +57,6 @@ const InspectionReportEntry = (props) => {
     );
   };
 
-
   // backend\report\ReportGenerate_pdf.php
   function PDFGenerate1(TransactionId) {
     let params = {
@@ -67,40 +67,40 @@ const InspectionReportEntry = (props) => {
     };
 
     // apiCall.post("productgroup", { params }, apiOption()).then((res) => {
-    apiCallReport.post('ReportGenerate_pdf.php', { params }, apiOption()).then((res) => {
-      console.log("res: ", res);
+    apiCallReport
+      .post("ReportGenerate_pdf.php", { params }, apiOption())
+      .then((res) => {
+        console.log("res: ", res);
 
-      // window.open(finalUrl + "?TransactionId=" + TransactionId + "&TimeStamp=" + Date.now());
-      // props.openNoticeModal({
-      //   isOpen: true,
-      //   msg: res.data.message,
-      //   msgtype: res.data.success,
-      // });
-      // getDataList();
-    });
+        // window.open(finalUrl + "?TransactionId=" + TransactionId + "&TimeStamp=" + Date.now());
+        // props.openNoticeModal({
+        //   isOpen: true,
+        //   msg: res.data.message,
+        //   msgtype: res.data.success,
+        // });
+        // getDataList();
+      });
   }
 
-
   // 	$.ajax({
-	// 	type: "POST",
-	// 	url: baseUrl + "monthlylogisticsreportwizardserver.php",
-	// 	data: {
-	// 		operation: 'combineLogisticsReport',
-	// 		baseUrl: baseUrl,
-	// 		lan: lan,
-	// 		MonthId :MonthId,
-	// 		MonthName : monthList[parseInt(MonthId)-1],
-	// 		YearId : YearId,
-	// 		CountryId : CountryId
-	// 	},
-	// 	success: function(response) {
-	// 		//console.log(response);
-	// 		$("#tab9loader").hide();
-	// 		window.open( baseUrl + 'report/pdfslice/Health_Commodity_Dashboard_Monthly_Logistics_Report_'+CountryId+'_'+monthList[parseInt(MonthId)-1]+'_'+YearId+'.pdf');
-	// 	}
-		
-	// });
+  // 	type: "POST",
+  // 	url: baseUrl + "monthlylogisticsreportwizardserver.php",
+  // 	data: {
+  // 		operation: 'combineLogisticsReport',
+  // 		baseUrl: baseUrl,
+  // 		lan: lan,
+  // 		MonthId :MonthId,
+  // 		MonthName : monthList[parseInt(MonthId)-1],
+  // 		YearId : YearId,
+  // 		CountryId : CountryId
+  // 	},
+  // 	success: function(response) {
+  // 		//console.log(response);
+  // 		$("#tab9loader").hide();
+  // 		window.open( baseUrl + 'report/pdfslice/Health_Commodity_Dashboard_Monthly_Logistics_Report_'+CountryId+'_'+monthList[parseInt(MonthId)-1]+'_'+YearId+'.pdf');
+  // 	}
 
+  // });
 
   // const PrintPDFExcelExportFunction = (reportType) => {
   //   let finalUrl = EXCEL_EXPORT_URL + "report/print_pdf_excel_server.php";
@@ -207,8 +207,9 @@ const InspectionReportEntry = (props) => {
           onClick={() => {
             PDFGenerate(rowData.id);
           }}
-        ><span>fdsfs</span>
-          </PictureAsPdf>
+        >
+          <span>fdsfs</span>
+        </PictureAsPdf>
 
         <AddAPhoto
           className={"table-addimg-icon"}
@@ -449,9 +450,9 @@ const InspectionReportEntry = (props) => {
     let data = { ...currentRow };
 
     let dataDelete = { ...currentRowDelete };
-    dataDelete[data.Items[Idx].TransactionItemId]=data.Items[Idx];
+    dataDelete[data.Items[Idx].TransactionItemId] = data.Items[Idx];
     setCurrentRowDelete(dataDelete);
-    
+
     delete data.Items[Idx];
     setCurrentRow(data);
     console.log("dataDelete: ", dataDelete);
@@ -504,17 +505,18 @@ const InspectionReportEntry = (props) => {
 
   return (
     <>
-      {!showMany && (<div class="bodyContainer">
-        {/* <!-- ######-----TOP HEADER-----####### --> */}
-        <div class="topHeader">
-          <h4>Home ❯ Report Entry ❯ Inspection Report Entry</h4>
-        </div>
+      {!showMany && (
+        <div class="bodyContainer">
+          {/* <!-- ######-----TOP HEADER-----####### --> */}
+          <div class="topHeader">
+            <h4>Home ❯ Report Entry ❯ Inspection Report Entry</h4>
+          </div>
 
-        {/* <!-- TABLE SEARCH AND GROUP ADD --> */}
-        <div class="searchAdd">
-          {/* <input type="text" placeholder="Search Product Group"/> */}
-          {/* <label></label> */}
-          {/* <button
+          {/* <!-- TABLE SEARCH AND GROUP ADD --> */}
+          <div class="searchAdd">
+            {/* <input type="text" placeholder="Search Product Group"/> */}
+            {/* <label></label> */}
+            {/* <button
             onClick={() => {
               addData();
             }}
@@ -523,25 +525,26 @@ const InspectionReportEntry = (props) => {
             ADD
           </button> */}
 
-          {/* <Button
+            {/* <Button
             label={"Export"}
             class={"btnPrint"}
             onClick={PrintPDFExcelExportFunction}
           /> */}
-          <Button label={"ADD"} class={"btnAdd"} onClick={addData} />
-        </div>
+            <Button label={"ADD"} class={"btnAdd"} onClick={addData} />
+          </div>
 
-        {/* <!-- ####---THIS CLASS IS USE FOR TABLE GRID PRODUCT INFORMATION---####s --> */}
-        <div class="subContainer tableHeight">
-          <div className="App">
-            <CustomTable
-              columns={columnList}
-              rows={dataList ? dataList : {}}
-              actioncontrol={actioncontrol}
-            />
+          {/* <!-- ####---THIS CLASS IS USE FOR TABLE GRID PRODUCT INFORMATION---####s --> */}
+          <div class="subContainer tableHeight">
+            <div className="App">
+              <CustomTable
+                columns={columnList}
+                rows={dataList ? dataList : {}}
+                actioncontrol={actioncontrol}
+              />
+            </div>
           </div>
         </div>
-      </div>)}
+      )}
       {/* <!-- BODY CONTAINER END --> */}
 
       {showMany && (
@@ -551,7 +554,7 @@ const InspectionReportEntry = (props) => {
             {/* <!-- Modal content --> */}
             <div class="modal-content-reportblock">
               <div class="modalHeader">
-{/*      
+                {/*      
                 <Button
                   label={"Back to List"}
                   class={"btnClose chosen_dropdown_fon"}
@@ -559,7 +562,6 @@ const InspectionReportEntry = (props) => {
                 /> */}
 
                 <h4>Add/Edit Inspection Check List - {currentRow.InvoiceNo}</h4>
-
               </div>
 
               {currentRow.Items &&
@@ -589,10 +591,9 @@ const InspectionReportEntry = (props) => {
                             >
                               <img
                                 src={
-                                  Item.PhotoUrl=='placeholder.jpg'?
-                                  `${baseUrl}image/transaction/${Item.PhotoUrl}`:
-                                  `${baseUrl}image/transaction/${currentRow.ManyImgPrefix}/${Item.PhotoUrl}`
-                                
+                                  Item.PhotoUrl == "placeholder.jpg"
+                                    ? `${baseUrl}image/transaction/${Item.PhotoUrl}`
+                                    : `${baseUrl}image/transaction/${currentRow.ManyImgPrefix}/${Item.PhotoUrl}`
                                 }
                                 // src={
                                 //     Item.PhotoUrl
@@ -615,15 +616,41 @@ const InspectionReportEntry = (props) => {
                               src={
                                 Item.PhotoUrlPreview
                                   ? Item.PhotoUrlPreview
-                                  : (Item.PhotoUrl=='placeholder.jpg'?                                    
-                                    `${baseUrl}image/transaction/${Item.PhotoUrl}`:
-                                  `${baseUrl}image/transaction/${currentRow.ManyImgPrefix}/${Item.PhotoUrl}`)
+                                  : Item.PhotoUrl == "placeholder.jpg"
+                                  ? `${baseUrl}image/transaction/${Item.PhotoUrl}`
+                                  : `${baseUrl}image/transaction/${currentRow.ManyImgPrefix}/${Item.PhotoUrl}`
                               }
                               alt="Photo"
                               className="preview-image"
                             />
                           </div>
                         )}
+
+                        <div class="inspectionChecklistBody pt-10">
+                          {/* <label>Report Number *</label> */}
+                          <input
+                            type="text"
+                            id="InvoiceNo"
+                            name="InvoiceNo"
+                            style={{height:"30px"}}
+                            // class={errorObject.InvoiceNo}
+                            placeholder="Enter Check Name"
+                            // value={currentRow.InvoiceNo}
+                            // onChange={(e) => handleChange(e)}
+                          />
+
+                          <Button
+                            label={"..."}
+                            class={"btnChkList"}
+                            onClick={(i) =>
+                              handleChangeWidthHeight(
+                                "width",
+                                "reportcheckblock-width-full",
+                                Idx
+                              )
+                            }
+                          />
+                        </div>
 
                         {/* <label>CNC label</label> */}
                         <Autocomplete
@@ -671,7 +698,12 @@ const InspectionReportEntry = (props) => {
                           <label>Width</label>
                           <Button
                             label={"2/1"}
-                            class={"btnreportcheckblockheight " + (Item.RowNo=='reportcheckblock-width-half'?'bgselect':'')}
+                            class={
+                              "btnreportcheckblockheight " +
+                              (Item.RowNo == "reportcheckblock-width-half"
+                                ? "bgselect"
+                                : "")
+                            }
                             // onClick={addEditAPICall}
                             onClick={(i) =>
                               handleChangeWidthHeight(
@@ -683,7 +715,12 @@ const InspectionReportEntry = (props) => {
                           />
                           <Button
                             label={"1/1"}
-                            class={"btnreportcheckblockheight " + (Item.RowNo=='reportcheckblock-width-full'?'bgselect':'')}
+                            class={
+                              "btnreportcheckblockheight " +
+                              (Item.RowNo == "reportcheckblock-width-full"
+                                ? "bgselect"
+                                : "")
+                            }
                             onClick={(i) =>
                               handleChangeWidthHeight(
                                 "width",
@@ -696,7 +733,13 @@ const InspectionReportEntry = (props) => {
                           <label>Height</label>
                           <Button
                             label={"1/3"}
-                            class={"btnreportcheckblockheight " + (Item.ColumnNo=='reportcheckblock-height-onethird'?'bgselect':'')}
+                            class={
+                              "btnreportcheckblockheight " +
+                              (Item.ColumnNo ==
+                              "reportcheckblock-height-onethird"
+                                ? "bgselect"
+                                : "")
+                            }
                             onClick={(i) =>
                               handleChangeWidthHeight(
                                 "height",
@@ -707,7 +750,12 @@ const InspectionReportEntry = (props) => {
                           />
                           <Button
                             label={"2/1"}
-                            class={"btnreportcheckblockheight " + (Item.ColumnNo=='reportcheckblock-height-half'?'bgselect':'')}
+                            class={
+                              "btnreportcheckblockheight " +
+                              (Item.ColumnNo == "reportcheckblock-height-half"
+                                ? "bgselect"
+                                : "")
+                            }
                             onClick={(i) =>
                               handleChangeWidthHeight(
                                 "height",
@@ -718,7 +766,12 @@ const InspectionReportEntry = (props) => {
                           />
                           <Button
                             label={"1/1"}
-                            class={"btnreportcheckblockheight " + (Item.ColumnNo=='reportcheckblock-height-full'?'bgselect':'')}
+                            class={
+                              "btnreportcheckblockheight " +
+                              (Item.ColumnNo == "reportcheckblock-height-full"
+                                ? "bgselect"
+                                : "")
+                            }
                             onClick={(i) =>
                               handleChangeWidthHeight(
                                 "height",
@@ -781,6 +834,14 @@ const InspectionReportEntry = (props) => {
 
       {showModal && (
         <InspectionReportEntryAddEditModal
+          masterProps={props}
+          currentRow={currentRow}
+          modalCallback={modalCallback}
+        />
+      )}
+
+      {showCheckListModal && (
+        <CheckListModal
           masterProps={props}
           currentRow={currentRow}
           modalCallback={modalCallback}

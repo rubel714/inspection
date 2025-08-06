@@ -132,6 +132,12 @@
 
 }
 
+.inspectionChecklistBody {
+    display: grid;
+    grid-template-columns: 85% 30% 20% 30%;
+    row-gap: 8px;
+}
+
 /* MANUFACTURER MODAL EXTENSION */
 .contactmodalBody {
     display: grid;
@@ -374,6 +380,13 @@
     min-width: 30px;
     font-size: 10px;
     color:darkblue;
+}
+
+.btnChkList {
+    min-width: 30px;
+    font-size: 10px;
+    color:darkblue;
+    width: 30px;
 }
 
 
