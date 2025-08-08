@@ -31,7 +31,10 @@ const InspectionReportEntry = (props) => {
   const [currentRow, setCurrentRow] = useState([]);
   const [currentRowDelete, setCurrentRowDelete] = useState([]);
   const [showModal, setShowModal] = useState(false); //true=show modal, false=hide modal
+  
   const [showCheckListModal, setShowCheckListModal] = useState(false); //true=show modal, false=hide modal
+  const [currentCheckIdx, setCurrentCheckIdx] = useState('');
+
   const [showMany, setShowMany] = useState(false); //true=show, false=hide many panel
   const [CheckList, setCheckList] = useState(null);
 
@@ -208,7 +211,6 @@ const InspectionReportEntry = (props) => {
             PDFGenerate(rowData.id);
           }}
         >
-          <span>fdsfs</span>
         </PictureAsPdf>
 
         <AddAPhoto
@@ -256,6 +258,32 @@ const InspectionReportEntry = (props) => {
     setCurrentRow(rowData);
     openModal();
   };
+
+
+
+ function handleCheckListModal(Idx) {
+    setCurrentCheckIdx(Idx);
+    setShowCheckListModal(true); //true=modal show, false=modal hide
+  }
+
+  function modalCallbackCheckList(response) {
+    // console.log('response: ', response);
+    // console.log('response.CheckName: ', response.CheckName);
+
+    let data = { ...currentRow };
+    data.Items[currentCheckIdx].CheckName = response.CheckName;
+
+    setCurrentRow(data);
+    setShowCheckListModal(false); //true=modal show, false=modal hide
+  }
+
+
+
+
+
+
+
+
 
   function openModal() {
     setShowModal(true); //true=modal show, false=modal hide
@@ -393,21 +421,40 @@ const InspectionReportEntry = (props) => {
     // setCurrentRow(data);
     // console.log('data for PHOTO---------------: ', data);
     // setManyFiles(dataManyFiles);
+    // e.target.value = "";
   };
 
-  const handleChangeManyDropDown = (name, value, Idx) => {
+    const handleChangeManyText = (e, Idx) => {
+
+    const { name, value } = e.target;
+
     // console.log("Idx: ", Idx);
     // console.log("value: ", value);
     // console.log("name: ", name);
     let data = { ...currentRow };
-    if (name === "CheckId") {
-      data.Items[Idx].CheckId = value;
+    if (name === "CheckName") {
+      data.Items[Idx].CheckName = value;
     }
 
     // setErrorObject({ ...errorObject, [name]: null });
     setCurrentRow(data);
     // console.log("data: ", data);
   };
+
+
+  // const handleChangeManyDropDown = (name, value, Idx) => {
+  //   // console.log("Idx: ", Idx);
+  //   // console.log("value: ", value);
+  //   // console.log("name: ", name);
+  //   let data = { ...currentRow };
+  //   if (name === "CheckId") {
+  //     data.Items[Idx].CheckId = value;
+  //   }
+
+  //   // setErrorObject({ ...errorObject, [name]: null });
+  //   setCurrentRow(data);
+  //   // console.log("data: ", data);
+  // };
 
   const handleChangeWidthHeight = (type, classname, Idx) => {
     // console.log("type: ", type);
@@ -426,7 +473,8 @@ const InspectionReportEntry = (props) => {
     let data = { ...currentRow };
     let currTime = Date.now();
     let newCheck = {
-      CheckId: 0,
+      CheckId: "",
+      CheckName: "",
       ColumnNo: "reportcheckblock-height-onethird",
       PhotoUrl: "placeholder.jpg",
       PhotoUrlChanged: "",
@@ -576,6 +624,8 @@ const InspectionReportEntry = (props) => {
                           id="PhotoUrl"
                           name="PhotoUrl"
                           accept="image/*"
+                          // style={{opacity: 0 }}
+                          // onchange="this.value=null"
                           //onChange={handleFileChange}
                           // onChange={(e) => handleFileChangeManyFile(e, "PhotoUrl")}
                           onChange={(e) => handleFileChangeManyFile(e, Idx)}
@@ -630,30 +680,26 @@ const InspectionReportEntry = (props) => {
                           {/* <label>Report Number *</label> */}
                           <input
                             type="text"
-                            id="InvoiceNo"
-                            name="InvoiceNo"
+                            id="CheckName"
+                            name="CheckName"
                             style={{height:"30px"}}
                             // class={errorObject.InvoiceNo}
                             placeholder="Enter Check Name"
-                            // value={currentRow.InvoiceNo}
-                            // onChange={(e) => handleChange(e)}
+                            value={Item.CheckName}
+                            onChange={(e) => handleChangeManyText(e, Idx)}
                           />
 
                           <Button
                             label={"..."}
                             class={"btnChkList"}
                             onClick={(i) =>
-                              handleChangeWidthHeight(
-                                "width",
-                                "reportcheckblock-width-full",
-                                Idx
-                              )
+                              handleCheckListModal(Idx)
                             }
                           />
                         </div>
 
                         {/* <label>CNC label</label> */}
-                        <Autocomplete
+                        {/* <Autocomplete
                           autoHighlight
                           disableClearable
                           className="chosen_dropdown"
@@ -692,9 +738,9 @@ const InspectionReportEntry = (props) => {
                               fullWidth
                             />
                           )}
-                        />
+                        /> */}
 
-                        <div className="">
+                        <div className="pt-10 pb-10">
                           <label>Width</label>
                           <Button
                             label={"2/1"}
@@ -783,6 +829,7 @@ const InspectionReportEntry = (props) => {
 
                           <Button
                             label={"X"}
+                            title={"Delete"}
                             class={"btnreportcheckblockdelete"}
                             onClick={(i) => deleteCheckBlock(Idx)}
                           />
@@ -811,20 +858,12 @@ const InspectionReportEntry = (props) => {
                   class={"btnClose"}
                   onClick={manyPanelCallback}
                 />
-                {currentRow.id && (
                   <Button
-                    label={"Update"}
+                    label={"Save"}
                     class={"btnUpdate"}
                     onClick={addEditAPICall}
                   />
-                )}
-                {!currentRow.id && (
-                  <Button
-                    label={"Save"}
-                    class={"btnSave"}
-                    onClick={addEditAPICall}
-                  />
-                )}
+          
               </div>
             </div>
           </div>
@@ -844,7 +883,7 @@ const InspectionReportEntry = (props) => {
         <CheckListModal
           masterProps={props}
           currentRow={currentRow}
-          modalCallback={modalCallback}
+          modalCallback={modalCallbackCheckList}
         />
       )}
     </>

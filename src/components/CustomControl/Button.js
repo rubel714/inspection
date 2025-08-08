@@ -4,6 +4,7 @@ export const Button = (props) => {
   // console.log('virtualize props from button: ', props);
   return (
     <button
+    title={props.title ? props.title : ""}
       onClick={() => {
         props.onClick();
       }}

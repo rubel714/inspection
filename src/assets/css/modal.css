@@ -136,6 +136,7 @@
     display: grid;
     grid-template-columns: 85% 30% 20% 30%;
     row-gap: 8px;
+    padding-left: 5%;
 }
 
 /* MANUFACTURER MODAL EXTENSION */
@@ -324,15 +325,27 @@
 
 
 /* Modal Content */
-.modal-content-reportblock {
+.modal-content-checklist {
     background-color: var(--secondary-color);
     margin: auto;
     /* padding: 4px; */
     border: 1px solid black;
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.4);
     border-radius: 8px;
+    width: 25%;
+    /* word-wrap: break-word; */
+    /* margin-bottom: 35px; */
+}
+
+.modal-content-reportblock {
+    /* background-color: var(--secondary-color); */
+    margin: auto;
+    /* padding: 4px; */
+    border: 1px solid black;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.4);
+    border-radius: 8px;
     width: 40%;
-    word-wrap: break-word;
+    /* word-wrap: break-word; */
     margin-bottom: 35px;
 }
 .reportcheckblock {

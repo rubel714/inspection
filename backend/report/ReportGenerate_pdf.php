@@ -129,9 +129,8 @@ $pdf->SetAutoPageBreak(true, 5);
 $pdf->SetFont('helvetica', 'R', 10);//Global font size of this pdf
 $pdf->AddPage();
 
-$sqlmany = "SELECT a.TransactionItemId,a.CheckId,b.CheckName,a.RowNo,a.ColumnNo,a.PhotoUrl,a.SortOrder
+$sqlmany = "SELECT a.TransactionItemId,a.CheckId,a.CheckName,a.RowNo,a.ColumnNo,a.PhotoUrl,a.SortOrder
 			FROM t_transaction_items a
-			left join t_checklist b on a.CheckId=b.CheckId
 			where a.TransactionId = $TransactionId
 			order by a.SortOrder;";
 $manyresult = $db->query($sqlmany);

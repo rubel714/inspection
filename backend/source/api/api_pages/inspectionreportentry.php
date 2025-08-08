@@ -26,10 +26,6 @@ switch ($task) {
 
 function getDataList($data)
 {
-
-	// $ClientId = trim($data->ClientId); 
-	// $BranchId = trim($data->BranchId); 
-
 	try {
 		$dbh = new Db();
 
@@ -48,7 +44,7 @@ function getDataList($data)
 			$TransactionId = $row['id'];
 
 
-			$query = "SELECT a.TransactionItemId as autoId,a.`TransactionItemId`, a.`TransactionId`, a.`CheckId`,
+			$query = "SELECT a.TransactionItemId as autoId,a.`TransactionItemId`, a.`TransactionId`, a.`CheckId`,a.CheckName,
 			a.RowNo,a.ColumnNo,a.PhotoUrl,'' PhotoUrlChanged, '' PhotoUrlPreview, '' PhotoUrlUpload, a.SortOrder
 			FROM t_transaction_items a
 			where a.TransactionId=$TransactionId
@@ -182,7 +178,7 @@ function dataAddEditMany($data)
 			foreach ($Items as $Item) {
 					$TransactionItemId = $Item->TransactionItemId;
 					$autoId = $Item->autoId;
-					$CheckId = $Item->CheckId ? $Item->CheckId : null; //$Item->CheckId;
+					$CheckName = $Item->CheckName ? $Item->CheckName : null; //$Item->CheckName;
 					$RowNo = $Item->RowNo;
 					$ColumnNo = $Item->ColumnNo;
 					//$PhotoUrl = $Item->PhotoUrlChanged ? $Item->PhotoUrlChanged : $Item->PhotoUrl;
@@ -192,8 +188,8 @@ function dataAddEditMany($data)
 					if($autoId == -1){
 						$q = new insertq();
 						$q->table = 't_transaction_items';
-						$q->columns = ['TransactionId', 'CheckId', 'RowNo', 'ColumnNo', 'PhotoUrl', 'SortOrder'];
-						$q->values = [$id, $CheckId, $RowNo, $ColumnNo, $PhotoUrl, $SortOrder];
+						$q->columns = ['TransactionId', 'CheckName', 'RowNo', 'ColumnNo', 'PhotoUrl', 'SortOrder'];
+						$q->values = [$id, $CheckName, $RowNo, $ColumnNo, $PhotoUrl, $SortOrder];
 						$q->pks = ['TransactionItemId'];
 						$q->bUseInsetId = false;
 						$q->build_query();
@@ -201,8 +197,8 @@ function dataAddEditMany($data)
 					}else{
 						$u = new updateq();
 						$u->table = 't_transaction_items';
-						$u->columns = ['CheckId', 'RowNo', 'ColumnNo', 'PhotoUrl', 'SortOrder'];
-						$u->values = [$CheckId, $RowNo, $ColumnNo, $PhotoUrl, $SortOrder];
+						$u->columns = ['CheckName', 'RowNo', 'ColumnNo', 'PhotoUrl', 'SortOrder'];
+						$u->values = [$CheckName, $RowNo, $ColumnNo, $PhotoUrl, $SortOrder];
 						$u->pks = ['TransactionItemId'];
 						$u->pk_values = [$TransactionItemId];
 						$u->build_query();
@@ -211,83 +207,7 @@ function dataAddEditMany($data)
 					
 				}
 
-			// if ($id == "") {
-			// 	$q = new insertq();
-			// 	$q->table = 't_transaction';
-			// 	$q->columns = ['ClientId', 'TransactionTypeId', 'TransactionDate', 'InvoiceNo', 'CoverFilePages', 'CoverFileUrl', 'UserId', 'StatusId','ManyImgPrefix'];
-			// 	$q->values = [$ClientId, $TransactionTypeId, $TransactionDate, $InvoiceNo, $CoverFilePages, $CoverFileUrl, $UserId, $StatusId,$ManyImgPrefix];
-			// 	$q->pks = ['TransactionId'];
-			// 	$q->bUseInsetId = true;
-			// 	$q->build_query();
-			// 	$aQuerys[] = $q;
-
-			// 	foreach ($Items as $Item) {
-
-			// 		$CheckId = $Item->CheckId ? $Item->CheckId : null; //$Item->CheckId;
-			// 		$RowNo = $Item->RowNo;
-			// 		$ColumnNo = $Item->ColumnNo;
-			// 		// $PhotoUrl = $Item->PhotoUrlChanged ? $Item->PhotoUrlChanged : $Item->PhotoUrl;
-			// 		$PhotoUrl = $Item->PhotoUrlPreview ? ConvertImage($Item->PhotoUrlPreview,$ManyImgPrefix) : $Item->PhotoUrl;
-
-			// 		$SortOrder = $Item->SortOrder;
-			// 		// echo $CheckId."====";
-			// 		$q = new insertq();
-			// 		$q->table = 't_transaction_items';
-			// 		$q->columns = ['TransactionId', 'CheckId', 'RowNo', 'ColumnNo', 'PhotoUrl', 'SortOrder'];
-			// 		$q->values = ['[LastInsertedId]', $CheckId, $RowNo, $ColumnNo, $PhotoUrl, $SortOrder];
-			// 		$q->pks = ['TransactionItemId'];
-			// 		$q->bUseInsetId = false;
-			// 		$q->build_query();
-			// 		$aQuerys[] = $q;
-			// 	}
-			// } else {
-			// 	$u = new updateq();
-			// 	$u->table = 't_transaction';
-			// 	$u->columns = ['TransactionDate', 'InvoiceNo', 'CoverFilePages', 'CoverFileUrl', 'StatusId'];
-			// 	$u->values = [$TransactionDate, $InvoiceNo, $CoverFilePages, $CoverFileUrl, $StatusId];
-			// 	$u->pks = ['TransactionId'];
-			// 	$u->pk_values = [$id];
-			// 	$u->build_query();
-			// 	$aQuerys[] = $u;
-
-			// 	foreach ($Items as $Item) {
-			// 		$TransactionItemId = $Item->TransactionItemId;
-			// 		$autoId = $Item->autoId;
-			// 		$CheckId = $Item->CheckId ? $Item->CheckId : null; //$Item->CheckId;
-			// 		$RowNo = $Item->RowNo;
-			// 		$ColumnNo = $Item->ColumnNo;
-			// 		//$PhotoUrl = $Item->PhotoUrlChanged ? $Item->PhotoUrlChanged : $Item->PhotoUrl;
-			// 		$PhotoUrl = $Item->PhotoUrlPreview ? ConvertImage($Item->PhotoUrlPreview,$ManyImgPrefix) : $Item->PhotoUrl;
-			// 		$SortOrder = $Item->SortOrder;
-
-			// 		if($autoId == -1){
-			// 			$q = new insertq();
-			// 			$q->table = 't_transaction_items';
-			// 			$q->columns = ['TransactionId', 'CheckId', 'RowNo', 'ColumnNo', 'PhotoUrl', 'SortOrder'];
-			// 			$q->values = [$id, $CheckId, $RowNo, $ColumnNo, $PhotoUrl, $SortOrder];
-			// 			$q->pks = ['TransactionItemId'];
-			// 			$q->bUseInsetId = false;
-			// 			$q->build_query();
-			// 			$aQuerys[] = $q;
-			// 		}else{
-			// 			$u = new updateq();
-			// 			$u->table = 't_transaction_items';
-			// 			$u->columns = ['CheckId', 'RowNo', 'ColumnNo', 'PhotoUrl', 'SortOrder'];
-			// 			$u->values = [$CheckId, $RowNo, $ColumnNo, $PhotoUrl, $SortOrder];
-			// 			$u->pks = ['TransactionItemId'];
-			// 			$u->pk_values = [$TransactionItemId];
-			// 			$u->build_query();
-			// 			$aQuerys[] = $u;
-			// 		}
-					
-
-					
-			// 	}
-
-			
-			// }
-
-
+				
 
 			$res = exec_query($aQuerys, $UserId, $lan);
 			$success = ($res['msgType'] == 'success') ? 1 : 0;
