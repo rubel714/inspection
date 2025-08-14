@@ -740,10 +740,12 @@ const InspectionReportEntry = (props) => {
                           )}
                         /> */}
 
-                        <div className="pt-10 pb-10">
+                        <div className=" checkblockselector">
+
+                          <div className="checkblocksize">
                           <label>Width</label>
                           <Button
-                            label={"2/1"}
+                            label={"1/2"}
                             class={
                               "btnreportcheckblockheight " +
                               (Item.RowNo == "reportcheckblock-width-half"
@@ -775,7 +777,10 @@ const InspectionReportEntry = (props) => {
                               )
                             }
                           />
+</div>
 
+
+ <div className="checkblocksize">
                           <label>Height</label>
                           <Button
                             label={"1/3"}
@@ -795,7 +800,7 @@ const InspectionReportEntry = (props) => {
                             }
                           />
                           <Button
-                            label={"2/1"}
+                            label={"1/2"}
                             class={
                               "btnreportcheckblockheight " +
                               (Item.ColumnNo == "reportcheckblock-height-half"
@@ -826,7 +831,7 @@ const InspectionReportEntry = (props) => {
                               )
                             }
                           />
-
+</div>
                           <Button
                             label={"X"}
                             title={"Delete"}
