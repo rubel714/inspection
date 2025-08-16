@@ -31,8 +31,9 @@ function IndexHeader() {
 
   return (
     <>
-      <h1>Inspection Management System</h1>
-      <h3>Integrated visit plan management</h3>
+      {/* <h1>Inspection Management System</h1> */}
+      <h3>Inspection Management System</h3>
+      <h4>Validating the specifications, value and safety of your raw materials, products and assets.</h4>
 
       {/* {loading ? (
         <div className="loader-div">

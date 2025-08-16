@@ -1442,16 +1442,16 @@ const TransactionReport = (props) => {
             <Button label={"PDF"} class={"btnClose"} onClick={PDFGenerate} />
           </div>
         </div>
-
+{/* 
         <div class="subContainer ">
-          <div className="App">
+          <div className="App"> */}
             <CustomTable
               columns={columnList}
               rows={dataList ? dataList : {}}
               // actioncontrol={actioncontrol}
             />
-          </div>
-        </div>
+          {/* </div>
+        </div> */}
       </div>
       {/* <!-- BODY CONTAINER END --> */}
     </>

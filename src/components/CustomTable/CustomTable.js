@@ -123,7 +123,9 @@ function CustomTable({
         </h4>
       </div> */}
 
-      <div class="">
+  <div class="subContainer tableHeight">
+      <div className="App">
+
         <table id="salesitemtbl" class="tableGlobal">
           <thead>
             <tr>
@@ -241,7 +243,29 @@ function CustomTable({
           </tbody>
         </table>
         {/* isPagination */}
-        {ispagination && (
+        {/* {ispagination && (
+          <>
+            {count > 0 ? (
+              <Pagination
+                activePage={activePage}
+                count={count}
+                rowsPerPage={rowsPerPage}
+                totalPages={totalPages}
+                setActivePage={setActivePage}
+                clearAll={clearAll}
+              />
+            ) : (
+              <p>No data found</p>
+            )}
+          </>
+        )} */}
+      </div>
+  </div>
+
+        {/* isPagination */}
+
+      <div>
+       {ispagination && (
           <>
             {count > 0 ? (
               <Pagination
@@ -258,7 +282,12 @@ function CustomTable({
           </>
         )}
       </div>
-      {/* </div> */}
+
+
+
+
+
+
     </>
   );
 }

@@ -34,6 +34,7 @@ function AfterLoginNavbar(props) {
         {/* <!-- LOGO --> */}
         <div class="logo">
           <img alt="..." src={require("assets/img/logo.png")}></img>
+          <label >IMS</label>
         </div>
 
         {/* <!-- MENUE LIST  BAR --> */}
