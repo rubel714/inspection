@@ -87,16 +87,16 @@ function dataAddEdit($data)
 		// $CoverFileUrl = $data->rowData->CoverFileUrl ? $data->rowData->CoverFileUrl : null;
 		$InvoiceNo = $data->rowData->InvoiceNo;
 		$TransactionDate = $data->rowData->TransactionDate;
-		$CoverFilePages = $data->rowData->CoverFilePages? $data->rowData->CoverFilePages : null;
+		$CoverFilePages = $data->rowData->CoverFilePages ? $data->rowData->CoverFilePages : null;
 		$ManyImgPrefix = $data->rowData->ManyImgPrefix;
-		$CoverFileUrl = $data->rowData->CoverFileUrlUpload ? ConvertFile($data->rowData->CoverFileUrlUpload,$ManyImgPrefix) : null;
+		$CoverFileUrl = $data->rowData->CoverFileUrlUpload ? ConvertFile($data->rowData->CoverFileUrlUpload, $ManyImgPrefix) : null;
 		try {
 			$aQuerys = array();
 			if ($id == "") {
 				$q = new insertq();
 				$q->table = 't_transaction';
-				$q->columns = ['ClientId', 'TransactionTypeId', 'TransactionDate', 'InvoiceNo', 'CoverFilePages', 'CoverFileUrl', 'UserId', 'StatusId','ManyImgPrefix'];
-				$q->values = [$ClientId, $TransactionTypeId, $TransactionDate, $InvoiceNo, $CoverFilePages, $CoverFileUrl, $UserId, $StatusId,$ManyImgPrefix];
+				$q->columns = ['ClientId', 'TransactionTypeId', 'TransactionDate', 'InvoiceNo', 'CoverFilePages', 'CoverFileUrl', 'UserId', 'StatusId', 'ManyImgPrefix'];
+				$q->values = [$ClientId, $TransactionTypeId, $TransactionDate, $InvoiceNo, $CoverFilePages, $CoverFileUrl, $UserId, $StatusId, $ManyImgPrefix];
 				$q->pks = ['TransactionId'];
 				$q->bUseInsetId = true;
 				$q->build_query();
@@ -164,7 +164,7 @@ function dataAddEditMany($data)
 			$aQuerys = array();
 
 			foreach ($currentRowDelete as $DelItem) {
-				if($DelItem->autoId != -1){
+				if ($DelItem->autoId != -1) {
 					$d = new deleteq();
 					$d->table = 't_transaction_items';
 					$d->pks = ['TransactionItemId'];
@@ -172,42 +172,40 @@ function dataAddEditMany($data)
 					$d->build_query();
 					$aQuerys[] = $d;
 				}
-				
 			}
 
 			foreach ($Items as $Item) {
-					$TransactionItemId = $Item->TransactionItemId;
-					$autoId = $Item->autoId;
-					$CheckName = $Item->CheckName ? $Item->CheckName : null; //$Item->CheckName;
-					$RowNo = $Item->RowNo;
-					$ColumnNo = $Item->ColumnNo;
-					//$PhotoUrl = $Item->PhotoUrlChanged ? $Item->PhotoUrlChanged : $Item->PhotoUrl;
-					$PhotoUrl = $Item->PhotoUrlPreview ? ConvertImage($Item->PhotoUrlPreview,$ManyImgPrefix) : $Item->PhotoUrl;
-					$SortOrder = $Item->SortOrder;
+				$TransactionItemId = $Item->TransactionItemId;
+				$autoId = $Item->autoId;
+				$CheckName = $Item->CheckName ? $Item->CheckName : null; //$Item->CheckName;
+				$RowNo = $Item->RowNo;
+				$ColumnNo = $Item->ColumnNo;
+				//$PhotoUrl = $Item->PhotoUrlChanged ? $Item->PhotoUrlChanged : $Item->PhotoUrl;
+				$PhotoUrl = $Item->PhotoUrlPreview ? ConvertImage($Item->PhotoUrlPreview, $ManyImgPrefix) : $Item->PhotoUrl;
+				$SortOrder = $Item->SortOrder;
 
-					if($autoId == -1){
-						$q = new insertq();
-						$q->table = 't_transaction_items';
-						$q->columns = ['TransactionId', 'CheckName', 'RowNo', 'ColumnNo', 'PhotoUrl', 'SortOrder'];
-						$q->values = [$id, $CheckName, $RowNo, $ColumnNo, $PhotoUrl, $SortOrder];
-						$q->pks = ['TransactionItemId'];
-						$q->bUseInsetId = false;
-						$q->build_query();
-						$aQuerys[] = $q;
-					}else{
-						$u = new updateq();
-						$u->table = 't_transaction_items';
-						$u->columns = ['CheckName', 'RowNo', 'ColumnNo', 'PhotoUrl', 'SortOrder'];
-						$u->values = [$CheckName, $RowNo, $ColumnNo, $PhotoUrl, $SortOrder];
-						$u->pks = ['TransactionItemId'];
-						$u->pk_values = [$TransactionItemId];
-						$u->build_query();
-						$aQuerys[] = $u;
-					}
-					
+				if ($autoId == -1) {
+					$q = new insertq();
+					$q->table = 't_transaction_items';
+					$q->columns = ['TransactionId', 'CheckName', 'RowNo', 'ColumnNo', 'PhotoUrl', 'SortOrder'];
+					$q->values = [$id, $CheckName, $RowNo, $ColumnNo, $PhotoUrl, $SortOrder];
+					$q->pks = ['TransactionItemId'];
+					$q->bUseInsetId = false;
+					$q->build_query();
+					$aQuerys[] = $q;
+				} else {
+					$u = new updateq();
+					$u->table = 't_transaction_items';
+					$u->columns = ['CheckName', 'RowNo', 'ColumnNo', 'PhotoUrl', 'SortOrder'];
+					$u->values = [$CheckName, $RowNo, $ColumnNo, $PhotoUrl, $SortOrder];
+					$u->pks = ['TransactionItemId'];
+					$u->pk_values = [$TransactionItemId];
+					$u->build_query();
+					$aQuerys[] = $u;
 				}
+			}
 
-				
+
 
 			$res = exec_query($aQuerys, $UserId, $lan);
 			$success = ($res['msgType'] == 'success') ? 1 : 0;
@@ -228,45 +226,6 @@ function dataAddEditMany($data)
 }
 
 
-
-function ConvertFile($base64_string, $prefix)
-{
-
-	$path = "../../../image/transaction/".$prefix;
-
-	if (!file_exists($path)) {
-		mkdir($path, 0777, true);
-	}
-
-	$targetDir = '../../../image/transaction/'.$prefix;
-	$exploded = explode(',', $base64_string, 2);
-	$extention = explode(';', explode('/', $exploded[0])[1])[0];
-	$decoded = base64_decode($exploded[1]);
-	$output_file = $prefix . "_cover_" . date("Y_m_d_H_i_s") . "_" . rand(1, 9999) . "." . $extention;
-	file_put_contents($targetDir . "/" . $output_file, $decoded);
-	return $output_file;
-}
-
-
-function ConvertImage($base64_string, $prefix)
-{
-
-	$path = "../../../image/transaction/".$prefix;
-
-	if (!file_exists($path)) {
-		mkdir($path, 0777, true);
-	}
-	
-	$targetDir = '../../../image/transaction/'.$prefix;
-	$exploded = explode(',', $base64_string, 2);
-	$extention = explode(';', explode('/', $exploded[0])[1])[0];
-	$decoded = base64_decode($exploded[1]);
-	$output_file = $prefix . "_" . date("Y_m_d_H_i_s") . "_" . rand(1, 9999) . "." . $extention;
-	// $output_file = date("Y_m_d_H_i_s") . rand(1, 9999) . "." . $extention;
-	/**Image file name */
-	file_put_contents($targetDir . "/" . $output_file, $decoded);
-	return $output_file;
-}
 
 
 function deleteData($data)
@@ -319,4 +278,48 @@ function deleteData($data)
 
 		return $returnData;
 	}
+}
+
+
+
+
+function ConvertFile($base64_string, $prefix, $extention = null)
+{
+
+	$path = "../../../image/transaction/" . $prefix;
+
+	if (!file_exists($path)) {
+		mkdir($path, 0777, true);
+	}
+
+	$targetDir = '../../../image/transaction/' . $prefix;
+	$exploded = explode(',', $base64_string, 2);
+	if (!$extention) {
+		$extention = explode(';', explode('/', $exploded[0])[1])[0];
+	}
+	$decoded = base64_decode($exploded[1]);
+	$output_file = $prefix . "_cover_" . date("Y_m_d_H_i_s") . "_" . rand(1, 9999) . "." . $extention;
+	file_put_contents($targetDir . "/" . $output_file, $decoded);
+	return $output_file;
+}
+
+
+function ConvertImage($base64_string, $prefix)
+{
+
+	$path = "../../../image/transaction/" . $prefix;
+
+	if (!file_exists($path)) {
+		mkdir($path, 0777, true);
+	}
+
+	$targetDir = '../../../image/transaction/' . $prefix;
+	$exploded = explode(',', $base64_string, 2);
+	$extention = explode(';', explode('/', $exploded[0])[1])[0];
+	$decoded = base64_decode($exploded[1]);
+	$output_file = $prefix . "_" . date("Y_m_d_H_i_s") . "_" . rand(1, 9999) . "." . $extention;
+	// $output_file = date("Y_m_d_H_i_s") . rand(1, 9999) . "." . $extention;
+	/**Image file name */
+	file_put_contents($targetDir . "/" . $output_file, $decoded);
+	return $output_file;
 }

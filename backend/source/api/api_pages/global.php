@@ -48,3 +48,6 @@ function getNextInvoiceNumber($ClientId,$BranchId,$TransactionTypeId) {
 	
 	return $NextNo;
 }
+
+
+
