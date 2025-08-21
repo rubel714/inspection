@@ -12,7 +12,8 @@ try{
 		$sWhere=" where a.InvoiceNo like '%$Search%' ";
 	}
 	
-	$query = "SELECT 1 AS SysValue,'Successful' AS SysMessage, a.TransactionId AS id,a.TransactionTypeId,DATE(a.`TransactionDate`) TransactionDate, 
+	$query = "SELECT a.TransactionId AS id,a.TransactionTypeId,
+	DATE_FORMAT(a.TransactionDate, '%d-%b-%Y %h:%i:%s %p') AS TransactionDate,
 		a.InvoiceNo,a.CoverFilePages,
 		a.`UserId`, a.StatusId, b.`UserName`,c.`StatusName`, a.CoverFileUrl,'' CoverFileUrlUpload,
 		case when a.CoverFileUrl is null then '' else 'Yes' end as CoverFileUrlStatus,a.ManyImgPrefix,'' Items
@@ -39,7 +40,7 @@ try{
 		$resultdata = array();
 		foreach ($resultdatalist as $row) {
 			$TransactionId = $row['id'];
-			$query = "SELECT a.TransactionItemId as autoId,a.`TransactionItemId`, a.`TransactionId`, a.`CheckId`,
+			$query = "SELECT a.TransactionItemId as autoId,a.`TransactionItemId`, a.`TransactionId`, a.`CheckName`,
 			a.RowNo,a.ColumnNo,a.PhotoUrl,'' PhotoUrlChanged, '' PhotoUrlPreview, '' PhotoUrlUpload, a.SortOrder
 			FROM t_transaction_items a
 			where a.TransactionId=$TransactionId

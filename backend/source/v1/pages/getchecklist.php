@@ -14,8 +14,7 @@ try{
 		$sWhere=" where CheckName like '%$Search%' ";
 	}
 	
-	$query = "SELECT 1 AS SysValue,'Successful' AS SysMessage, 
-	CheckId, CheckName
+	$query = "SELECT CheckId, CheckName
 	FROM t_checklist
 	$sWhere
 	ORDER BY CheckName ASC;";		
