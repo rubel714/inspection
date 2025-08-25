@@ -81,16 +81,33 @@ try {
 			'ManyImgPrefix' => $ManyImgPrefix
 		);
 	} else {
-		$query = "UPDATE t_transaction set TransactionDate=:TransactionDate, InvoiceNo=:InvoiceNo, CoverFilePages=:CoverFilePages, CoverFileUrl=:CoverFileUrl
-		where TransactionId=:TransactionId;";
 
-		$pList = array(
-			'TransactionDate' => $TransactionDate,
-			'InvoiceNo' => $InvoiceNo,
-			'CoverFilePages' => $CoverFilePages,
-			'CoverFileUrl' => $CoverFileUrl,
-			'TransactionId' => $TransactionId
-		);
+
+		if ($CoverFileUrl) {
+			$query = "UPDATE t_transaction set TransactionDate=:TransactionDate, InvoiceNo=:InvoiceNo, CoverFilePages=:CoverFilePages, CoverFileUrl=:CoverFileUrl
+			where TransactionId=:TransactionId;";
+
+			$pList = array(
+				'TransactionDate' => $TransactionDate,
+				'InvoiceNo' => $InvoiceNo,
+				'CoverFilePages' => $CoverFilePages,
+				'CoverFileUrl' => $CoverFileUrl,
+				'TransactionId' => $TransactionId
+			);
+		}else{
+			$query = "UPDATE t_transaction set TransactionDate=:TransactionDate, InvoiceNo=:InvoiceNo, CoverFilePages=:CoverFilePages
+			where TransactionId=:TransactionId;";
+
+			$pList = array(
+				'TransactionDate' => $TransactionDate,
+				'InvoiceNo' => $InvoiceNo,
+				'CoverFilePages' => $CoverFilePages,
+				'TransactionId' => $TransactionId
+			);
+		}
+
+		
+		
 	}
 
 	$db->bindMore($pList);

@@ -104,8 +104,14 @@ function dataAddEdit($data)
 			} else {
 				$u = new updateq();
 				$u->table = 't_transaction';
-				$u->columns = ['TransactionDate', 'InvoiceNo', 'CoverFilePages', 'CoverFileUrl', 'StatusId'];
-				$u->values = [$TransactionDate, $InvoiceNo, $CoverFilePages, $CoverFileUrl, $StatusId];
+				if($CoverFileUrl){
+					$u->columns = ['TransactionDate', 'InvoiceNo', 'CoverFilePages', 'CoverFileUrl', 'StatusId'];
+					$u->values = [$TransactionDate, $InvoiceNo, $CoverFilePages, $CoverFileUrl, $StatusId];
+				}else{
+					$u->columns = ['TransactionDate', 'InvoiceNo', 'CoverFilePages', 'StatusId'];
+					$u->values = [$TransactionDate, $InvoiceNo, $CoverFilePages, $StatusId];
+				}
+
 				$u->pks = ['TransactionId'];
 				$u->pk_values = [$id];
 				$u->build_query();

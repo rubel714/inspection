@@ -74,39 +74,34 @@ try {
 			'SortOrder' => $SortOrder
 		);
 	} else {
-		//, SortOrder=:SortOrder
-		//	'SortOrder' => $SortOrder,
 		
-		$query = "UPDATE t_transaction_items set CheckName=:CheckName, RowNo=:RowNo, ColumnNo=:ColumnNo, 
-			PhotoUrl=:PhotoUrl WHERE TransactionItemId=:TransactionItemId;";
+		if ($PhotoUrl) {
+			$query = "UPDATE t_transaction_items set CheckName=:CheckName, RowNo=:RowNo, ColumnNo=:ColumnNo, 
+				PhotoUrl=:PhotoUrl WHERE TransactionItemId=:TransactionItemId;";
 
-		$pList = array(
-			'CheckName' => $CheckName,
-			'RowNo' => $RowNo,
-			'ColumnNo' => $ColumnNo,
-			'PhotoUrl' => $PhotoUrl,
-			'TransactionItemId' => $TransactionItemId
-		);
+			$pList = array(
+				'CheckName' => $CheckName,
+				'RowNo' => $RowNo,
+				'ColumnNo' => $ColumnNo,
+				'PhotoUrl' => $PhotoUrl,
+				'TransactionItemId' => $TransactionItemId
+			);
+
+		}else {
+			$query = "UPDATE t_transaction_items set CheckName=:CheckName, RowNo=:RowNo, ColumnNo=:ColumnNo
+					  WHERE TransactionItemId=:TransactionItemId;";
+
+			$pList = array(
+				'CheckName' => $CheckName,
+				'RowNo' => $RowNo,
+				'ColumnNo' => $ColumnNo,
+				'TransactionItemId' => $TransactionItemId
+			);
+
+		}
+		
+		
 	}
-
-
-
-	/**Delete item first */
-	// foreach ($currentRowDelete as $DelItem) {
-	// 	if ($DelItem->TransactionItemId) {
-	// 		$query = "DELETE FROM t_transaction_items where TransactionItemId=:TransactionItemId;";
-	// 		$pList = array(
-	// 			'TransactionItemId' => $TransactionItemId
-	// 		);
-	// 		$db->bindMore($pList);
-	// 		$resultdata = $db->query($query);
-	// 	}
-	// }
-
-
-
-	// echo $query;
-	// print_r($pList);
 
 	$db->bindMore($pList);
 	$resultdata = $db->query($query);
