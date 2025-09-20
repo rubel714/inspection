@@ -42,10 +42,17 @@ const CheckList = (props) => {
 
   const columnList = [
     { field: "rownumber", label: "SL", align: "center", width: "5%" },
-    // { field: 'SL', label: 'SL',width:'10%',align:'center',visible:true,sort:false,filter:false },
     {
       field: "CheckName",
       label: "Check Name",
+      align: "left",
+      visible: true,
+      sort: true,
+      filter: true,
+    },
+    {
+      field: "CategoryName",
+      label: "Category",
       align: "left",
       visible: true,
       sort: true,
@@ -81,13 +88,10 @@ const CheckList = (props) => {
   /**Get data for table list */
   function getDataList() {
 
-
     let params = {
       action: "getDataList",
       lan: language(),
       UserId: UserInfo.UserId,
-      ClientId: UserInfo.ClientId,
-      BranchId: UserInfo.BranchId,
     };
     // console.log('LoginUserInfo params: ', params);
 
@@ -122,6 +126,7 @@ const CheckList = (props) => {
     setCurrentRow({
       id: "",
       CheckName: "",
+      CategoryId: "",
     });
     openModal();
   };
@@ -178,14 +183,10 @@ const CheckList = (props) => {
 
   function deleteApi(rowData) {
 
-
-
     let params = {
       action: "deleteData",
       lan: language(),
       UserId: UserInfo.UserId,
-      ClientId: UserInfo.ClientId,
-      BranchId: UserInfo.BranchId,
       rowData: rowData,
     };
 
@@ -209,7 +210,7 @@ const CheckList = (props) => {
         {/* <!-- ######-----TOP HEADER-----####### --> */}
         <div class="topHeader">
           <h4>
-            <a href="#">Home</a> ❯ Settings ❯ CheckList
+            <a href="#">Home</a> ❯ Settings ❯ Check List
           </h4>
         </div>
 

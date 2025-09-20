@@ -13,6 +13,9 @@ switch ($task) {
 	case "UserList":
 		$returnData = UserList($data);
 		break;
+			case "CategoryList":
+		$returnData = CategoryList($data);
+		break;
 	case "CheckList":
 		$returnData = CheckList($data);
 		break;
@@ -190,12 +193,33 @@ function UserList($data)
 	return $returnData;
 }
 
+function CategoryList($data)
+{
+	try {
+ 
+		$dbh = new Db();
+		$query = "SELECT `CategoryId` id,`CategoryName` `name`
+	 			 	FROM `t_category` 
+					ORDER BY CategoryName;";
+
+		$resultdata = $dbh->query($query);
+
+		$returnData = [
+			"success" => 1,
+			"status" => 200,
+			"message" => "",
+			"datalist" => $resultdata
+		];
+	} catch (PDOException $e) {
+		$returnData = msg(0, 500, $e->getMessage());
+	}
+
+	return $returnData;
+}
+
 function CheckList($data)
 {
 	try {
-
-		$ClientId = trim($data->ClientId);
-		$BranchId = trim($data->BranchId);
 
 		$dbh = new Db();
 

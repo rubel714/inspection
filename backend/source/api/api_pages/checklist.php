@@ -27,14 +27,12 @@ switch($task){
 function getDataList($data){
 
 	
-	$ClientId = trim($data->ClientId); 
-	//$BranchId = trim($data->BranchId); 
-
 	try{
 		$dbh = new Db();
-		$query = "SELECT CheckId AS id, CheckName
+		$query = "SELECT CheckId AS id, CheckName,t_checklist.CategoryId, Sequence, CategoryName
 		FROM t_checklist 
-		ORDER BY `CheckName` ASC;";		
+		inner join t_category on t_category.CategoryId=t_checklist.CategoryId
+		ORDER BY `Sequence` ASC;";		
 		
 		$resultdata = $dbh->query($query);
 		
@@ -62,23 +60,24 @@ function dataAddEdit($data) {
 		
 		
 		$lan = trim($data->lan); 
-		$UserId = trim($data->UserId); 
-		$ClientId = trim($data->ClientId); 
-		//$BranchId = trim($data->BranchId); 
+		$UserId = trim($data->UserId);
 
 		$CheckId = $data->rowData->id;
 		$CheckName = $data->rowData->CheckName;
+		$CategoryId = $data->rowData->CategoryId;
+		// $Sequence = $data->rowData->Sequence;
 
 		try{
 
-			$dbh = new Db();
+			// $dbh = new Db();
 			$aQuerys = array();
 
 			if($CheckId == ""){
+				$Sequence = time(); //inser time as sequence if new record
 				$q = new insertq();
 				$q->table = 't_checklist';
-				$q->columns = ['CheckName'];
-				$q->values = [$CheckName];
+				$q->columns = ['CheckName','CategoryId','Sequence'];
+				$q->values = [$CheckName,$CategoryId,$Sequence];
 				$q->pks = ['CheckId'];
 				$q->bUseInsetId = false;
 				$q->build_query();
@@ -86,8 +85,8 @@ function dataAddEdit($data) {
 			}else{
 				$u = new updateq();
 				$u->table = 't_checklist';
-				$u->columns = ['CheckName'];
-				$u->values = [$CheckName];
+				$u->columns = ['CheckName','CategoryId'];
+				$u->values = [$CheckName,$CategoryId];
 				$u->pks = ['CheckId'];
 				$u->pk_values = [$CheckId];
 				$u->build_query();
