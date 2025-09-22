@@ -252,7 +252,7 @@ const AuditLog = (props) => {
         {/* <!-- ######-----TOP HEADER-----####### --> */}
         <div class="topHeader">
           <h4>
-            <a href="#">Home</a> ❯ Settings ❯ Audit Log
+            <a href="#">Home</a> ❯ Basic Setup ❯ Audit Log
           </h4>
         </div>
 

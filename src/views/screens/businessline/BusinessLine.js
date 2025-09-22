@@ -209,7 +209,7 @@ const BusinessLine = (props) => {
         {/* <!-- ######-----TOP HEADER-----####### --> */}
         <div class="topHeader">
           <h4>
-            <a href="#">Home</a> ❯ Settings ❯ Business Line
+            <a href="#">Home</a> ❯ Basic Setup ❯ Business Line
           </h4>
         </div>
 

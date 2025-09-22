@@ -240,7 +240,7 @@ const Client = (props) => {
         {/* <!-- ######-----TOP HEADER-----####### --> */}
         <div class="topHeader">
           <h4>
-            <a href="#">Home</a> ❯ Settings ❯ Client
+            <a href="#">Home</a> ❯ Basic Setup ❯ Client
           </h4>
         </div>
 

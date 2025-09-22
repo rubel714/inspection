@@ -209,7 +209,7 @@ const Designation = (props) => {
         {/* <!-- ######-----TOP HEADER-----####### --> */}
         <div class="topHeader">
           <h4>
-            <a href="#">Home</a> ❯ Settings ❯ Designation
+            <a href="#">Home</a> ❯ Basic Setup ❯ Designation
           </h4>
         </div>
 

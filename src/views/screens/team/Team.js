@@ -209,7 +209,7 @@ const Team = (props) => {
         {/* <!-- ######-----TOP HEADER-----####### --> */}
         <div class="topHeader">
           <h4>
-            <a href="#">Home</a> ❯ Settings ❯ Team
+            <a href="#">Home</a> ❯ Basic Setup ❯ Team
           </h4>
         </div>
 

@@ -210,7 +210,7 @@ const CheckList = (props) => {
         {/* <!-- ######-----TOP HEADER-----####### --> */}
         <div class="topHeader">
           <h4>
-            <a href="#">Home</a> ❯ Settings ❯ Check List
+            <a href="#">Home</a> ❯ Basic Setup ❯ Check List
           </h4>
         </div>
 

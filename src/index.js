@@ -23,6 +23,7 @@ import UserEntry from "views/screens/userentry/index.js";
 import Team from "views/screens/team/index.js";
 import Designation from "views/screens/designation/index.js";
 import Department from "views/screens/department/index.js";
+import Categories from "views/screens/categories/index.js";
 import CheckList from "views/screens/checklist/index.js";
 import UserRole from "views/screens/userrole/index.js";
 import RoleToMenuPermission from "views/screens/roletomenupermission/index.js";
@@ -72,6 +73,7 @@ ReactDOM.render(
             <Route path="/team" render={(props) => <Team {...props} />} />
             <Route path="/designation" render={(props) => <Designation {...props} />} />
             <Route path="/department" render={(props) => <Department {...props} />} />
+            <Route path="/categories" render={(props) => <Categories {...props} />} />
             <Route path="/checklist" render={(props) => <CheckList {...props} />} />
             <Route path="/userrole" render={(props) => <UserRole {...props} />} />
             <Route path="/roletomenupermission" render={(props) => <RoleToMenuPermission {...props} />} />

@@ -231,7 +231,7 @@ const Branch = (props) => {
         {/* <!-- ######-----TOP HEADER-----####### --> */}
         <div class="topHeader">
           <h4>
-            <a href="#">Home</a> ❯ Settings ❯ Branch
+            <a href="#">Home</a> ❯ Basic Setup ❯ Branch
           </h4>
         </div>
 
