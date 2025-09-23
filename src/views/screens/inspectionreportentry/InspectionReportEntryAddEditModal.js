@@ -20,7 +20,7 @@ const InspectionReportEntryAddEditModal = (props) => {
 
   // const [CheckList, setCheckList] = useState(null);
   // const [currCheckId, setCurrCheckId] = useState(null);
- 
+
   const baseUrl = process.env.REACT_APP_FRONT_URL;
   const [previewImage, setPreviewImage] = useState(
     `${baseUrl}image/transaction/placeholder.jpg`
@@ -30,14 +30,9 @@ const InspectionReportEntryAddEditModal = (props) => {
   const PDFGenerate = () => {
     let finalUrl = EXCEL_EXPORT_URL + "report/ReportGenerate_pdf.php";
     window.open(
-      finalUrl +
-      "?TransactionId=" +
-      currentRow.id +
-      "&TimeStamp=" +
-      Date.now()
+      finalUrl + "?TransactionId=" + currentRow.id + "&TimeStamp=" + Date.now()
     );
   };
-
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -52,19 +47,17 @@ const InspectionReportEntryAddEditModal = (props) => {
     let file = e.target.files[0];
     // console.log('file: ', file);
     if (file) {
-
       let data = { ...currentRow };
       // data['CoverFileUrlUpload'] = file;
       // setCurrentRow(data);
       // console.log('data: ', data);
-
 
       let reader = new FileReader();
       // reader.onload = () => setPreview(reader.result);
       reader.readAsDataURL(file);
       reader.onload = (event) => {
         // setPreview(event.target.result);
-        data['CoverFileUrlUpload'] = event.target.result;
+        data["CoverFileUrlUpload"] = event.target.result;
         //  console.log('event.target.result: ', event.target.result);
         // console.log('From onload');
         setCurrentRow(data);
@@ -139,9 +132,7 @@ const InspectionReportEntryAddEditModal = (props) => {
 
   function addEditAPICall() {
     if (validateForm()) {
-
-        console.log('currentRow: ', currentRow);
-
+      console.log("currentRow: ", currentRow);
 
       let params = {
         action: "dataAddEdit",
@@ -194,7 +185,6 @@ const InspectionReportEntryAddEditModal = (props) => {
   //   }
   // };
 
-
   return (
     <>
       {/* <!-- GROUP MODAL START --> */}
@@ -204,8 +194,9 @@ const InspectionReportEntryAddEditModal = (props) => {
           <div class="modalHeader">
             <h4>Add/Edit Inspection Report</h4>
           </div>
+          
           <div class="contactmodalBody pt-10">
-            <label>Report Number *</label>
+            <label>Report Number</label>
             <input
               type="text"
               id="InvoiceNo"
@@ -216,7 +207,7 @@ const InspectionReportEntryAddEditModal = (props) => {
               onChange={(e) => handleChange(e)}
             />
 
-            <label>Report Date *</label>
+            <label>Report Date</label>
             <input
               type="date"
               id="TransactionDate"
@@ -230,13 +221,48 @@ const InspectionReportEntryAddEditModal = (props) => {
           </div>
 
           <div class="contactmodalBody pt-10">
+            <label>Buyer Name</label>
+            <input
+              type="text"
+              id="BuyerName"
+              name="BuyerName"
+              // class={errorObject.BuyerName}
+              placeholder="Enter Buyer Name"
+              value={currentRow.BuyerName}
+              onChange={(e) => handleChange(e)}
+            />
+
+            <label>Supplier Name</label>
+            <input
+              type="text"
+              id="SupplierName"
+              name="SupplierName"
+              // class={errorObject.SupplierName}
+              placeholder="Enter Supplier Name"
+              value={currentRow.SupplierName}
+              onChange={(e) => handleChange(e)}
+            />
+          </div>
+          <div class="contactmodalBody pt-10">
+            <label>Factory Name</label>
+            <input
+              type="text"
+              id="FactoryName"
+              name="FactoryName"
+              // class={errorObject.FactoryName}
+              placeholder="Enter Factory Name"
+              value={currentRow.FactoryName}
+              onChange={(e) => handleChange(e)}
+            />
+          </div>
+          <div class="contactmodalBody pt-10">
             <label>Cover File</label>
             <input
               type="file"
               id="PhotoUrl"
               name="PhotoUrl"
               accept="application/pdf"
-              style={{"color": "transparent"}}
+              style={{ color: "transparent" }}
               //onChange={handleFileChange}
               //onChange={(e) => handleFileChange(e, "PhotoUrl")}
               onChange={(e) => handleChangeMasterFile(e)}

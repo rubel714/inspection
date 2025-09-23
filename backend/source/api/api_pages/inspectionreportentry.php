@@ -30,7 +30,7 @@ function getDataList($data)
 		$dbh = new Db();
 
 		$query = "SELECT a.TransactionId AS id,a.TransactionTypeId,DATE(a.`TransactionDate`) TransactionDate, 
-		a.InvoiceNo,a.CoverFilePages,
+		a.InvoiceNo,a.BuyerName,a.SupplierName,a.FactoryName,a.CoverFilePages,
 		a.`UserId`, a.StatusId, b.`UserName`,c.`StatusName`, a.CoverFileUrl,'' CoverFileUrlUpload,
 		case when a.CoverFileUrl is null then '' else 'Yes' end as CoverFileUrlStatus,a.ManyImgPrefix,'' Items
 	   FROM `t_transaction` a
@@ -86,6 +86,10 @@ function dataAddEdit($data)
 		$StatusId = $data->rowData->StatusId;
 		// $CoverFileUrl = $data->rowData->CoverFileUrl ? $data->rowData->CoverFileUrl : null;
 		$InvoiceNo = $data->rowData->InvoiceNo;
+		$BuyerName = $data->rowData->BuyerName ? $data->rowData->BuyerName : null;
+		$SupplierName = $data->rowData->SupplierName ? $data->rowData->SupplierName : null;
+		$FactoryName = $data->rowData->FactoryName ? $data->rowData->FactoryName : null;
+
 		$TransactionDate = $data->rowData->TransactionDate;
 		$CoverFilePages = $data->rowData->CoverFilePages ? $data->rowData->CoverFilePages : null;
 		$ManyImgPrefix = $data->rowData->ManyImgPrefix;
@@ -95,8 +99,8 @@ function dataAddEdit($data)
 			if ($id == "") {
 				$q = new insertq();
 				$q->table = 't_transaction';
-				$q->columns = ['ClientId', 'TransactionTypeId', 'TransactionDate', 'InvoiceNo', 'CoverFilePages', 'CoverFileUrl', 'UserId', 'StatusId', 'ManyImgPrefix'];
-				$q->values = [$ClientId, $TransactionTypeId, $TransactionDate, $InvoiceNo, $CoverFilePages, $CoverFileUrl, $UserId, $StatusId, $ManyImgPrefix];
+				$q->columns = ['ClientId', 'TransactionTypeId', 'TransactionDate', 'InvoiceNo','BuyerName','SupplierName','FactoryName', 'CoverFilePages', 'CoverFileUrl', 'UserId', 'StatusId', 'ManyImgPrefix'];
+				$q->values = [$ClientId, $TransactionTypeId, $TransactionDate, $InvoiceNo,$BuyerName,$SupplierName,$FactoryName, $CoverFilePages, $CoverFileUrl, $UserId, $StatusId, $ManyImgPrefix];
 				$q->pks = ['TransactionId'];
 				$q->bUseInsetId = true;
 				$q->build_query();
@@ -105,11 +109,11 @@ function dataAddEdit($data)
 				$u = new updateq();
 				$u->table = 't_transaction';
 				if($CoverFileUrl){
-					$u->columns = ['TransactionDate', 'InvoiceNo', 'CoverFilePages', 'CoverFileUrl', 'StatusId'];
-					$u->values = [$TransactionDate, $InvoiceNo, $CoverFilePages, $CoverFileUrl, $StatusId];
+					$u->columns = ['TransactionDate', 'InvoiceNo','BuyerName','SupplierName','FactoryName', 'CoverFilePages', 'CoverFileUrl', 'StatusId'];
+					$u->values = [$TransactionDate, $InvoiceNo,$BuyerName,$SupplierName,$FactoryName, $CoverFilePages, $CoverFileUrl, $StatusId];
 				}else{
-					$u->columns = ['TransactionDate', 'InvoiceNo', 'CoverFilePages', 'StatusId'];
-					$u->values = [$TransactionDate, $InvoiceNo, $CoverFilePages, $StatusId];
+					$u->columns = ['TransactionDate', 'InvoiceNo','BuyerName','SupplierName','FactoryName', 'CoverFilePages', 'StatusId'];
+					$u->values = [$TransactionDate, $InvoiceNo,$BuyerName,$SupplierName,$FactoryName, $CoverFilePages, $StatusId];
 				}
 
 				$u->pks = ['TransactionId'];
