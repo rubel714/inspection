@@ -115,7 +115,16 @@ function AfterLoginNavbar(props) {
                         </a>
                       </li>
                     )}
-
+                    {menuShowPermision("template") === 1 && (
+                      <li>
+                        <a
+                          href="javascript:void(0)"
+                          onClick={() => props.history.push("template")}
+                        >
+                          Template
+                        </a>
+                      </li>
+                    )}
                     {menuShowPermision("designation") === 1 && (
                       <li>
                         <a
