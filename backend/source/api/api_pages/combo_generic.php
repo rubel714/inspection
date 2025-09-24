@@ -19,6 +19,9 @@ switch ($task) {
 	case "CheckList":
 		$returnData = CheckList($data);
 		break;
+	case "TemplateList":
+		$returnData = TemplateList($data);
+		break;
 
 
 
@@ -225,7 +228,7 @@ function CheckList($data)
 
 		$query = "SELECT `CheckId` id,`CheckName` `name`
 	 			 	FROM `t_checklist` 
-					ORDER BY CheckName;";
+					ORDER BY Sequence;";
 
 		$resultdata = $dbh->query($query);
 
@@ -242,6 +245,30 @@ function CheckList($data)
 	return $returnData;
 }
 
+
+function TemplateList($data)
+{
+	try {
+
+		$dbh = new Db();
+		$query = "SELECT `TemplateId` id,`TemplateName` `name`
+	 			 	FROM `t_template` 
+					ORDER BY TemplateName;";
+
+		$resultdata = $dbh->query($query);
+
+		$returnData = [
+			"success" => 1,
+			"status" => 200,
+			"message" => "",
+			"datalist" => $resultdata
+		];
+	} catch (PDOException $e) {
+		$returnData = msg(0, 500, $e->getMessage());
+	}
+
+	return $returnData;
+}
 
 function CustomerList($data)
 {

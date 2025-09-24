@@ -31,15 +31,18 @@ const InspectionReportEntry = (props) => {
   const [currentRow, setCurrentRow] = useState([]);
   const [currentRowDelete, setCurrentRowDelete] = useState([]);
   const [showModal, setShowModal] = useState(false); //true=show modal, false=hide modal
-  
+
   const [showCheckListModal, setShowCheckListModal] = useState(false); //true=show modal, false=hide modal
-  const [currentCheckIdx, setCurrentCheckIdx] = useState('');
+  const [currentCheckIdx, setCurrentCheckIdx] = useState("");
 
   const [showMany, setShowMany] = useState(false); //true=show, false=hide many panel
-  const [CheckList, setCheckList] = useState(null);
+  // const [CheckList, setCheckList] = useState(null);
+  const [TemplateList, setTemplateList] = useState(null);
+  const [currTemplateId, setCurrTemplateId] = useState(0);
 
   // handleChangeWidthHeight
   const { isLoading, data: dataList, error, ExecuteQuery } = ExecuteQueryHook(); //Fetch data
+  const { isLoading:isLoadingCategory, data: categoryDataList, error:errorCategory, ExecuteQuery:ExecuteQueryCategory } = ExecuteQueryHook(); //Fetch data
   const UserInfo = LoginUserInfo();
   const [selectedDate, setSelectedDate] = useState(
     //new Date()
@@ -152,7 +155,7 @@ const InspectionReportEntry = (props) => {
       filter: true,
       // width: "12%",
     },
-        {
+    {
       field: "SupplierName",
       label: "Supplier",
       align: "left",
@@ -161,7 +164,7 @@ const InspectionReportEntry = (props) => {
       filter: true,
       // width: "12%",
     },
-        {
+    {
       field: "FactoryName",
       label: "Factory",
       align: "left",
@@ -179,7 +182,7 @@ const InspectionReportEntry = (props) => {
     //   filter: true,
     //   width: "10%",
     // },
-    
+
     {
       field: "CoverFileUrlStatus",
       label: "Cover File Uploaded",
@@ -221,8 +224,7 @@ const InspectionReportEntry = (props) => {
       action: "getDataList",
       lan: language(),
       UserId: UserInfo.UserId,
-      ClientId: UserInfo.ClientId,
-      BranchId: UserInfo.BranchId,
+      TransactionId: 0 /**0=ALL */
     };
     // console.log('LoginUserInfo params: ', params);
 
@@ -239,8 +241,7 @@ const InspectionReportEntry = (props) => {
           onClick={() => {
             PDFGenerate(rowData.id);
           }}
-        >
-        </PictureAsPdf>
+        ></PictureAsPdf>
 
         <AddAPhoto
           className={"table-addimg-icon"}
@@ -277,23 +278,24 @@ const InspectionReportEntry = (props) => {
       CoverFilePages: "",
       StatusId: 1,
       ManyImgPrefix: Date.now(),
-      BuyerName:"",
-      SupplierName:"",
-      FactoryName:"",
+      BuyerName: "",
+      SupplierName: "",
+      FactoryName: "",
       FormData: null,
+      TemplateId:"",
       Items: [],
     });
     openModal();
   };
 
   const editData = (rowData) => {
+    console.log('rowData editData: ', rowData);
     setCurrentRow(rowData);
+  
     openModal();
   };
 
-
-
- function handleCheckListModal(Idx) {
+  function handleCheckListModal(Idx) {
     setCurrentCheckIdx(Idx);
     setShowCheckListModal(true); //true=modal show, false=modal hide
   }
@@ -309,14 +311,6 @@ const InspectionReportEntry = (props) => {
     setShowCheckListModal(false); //true=modal show, false=modal hide
   }
 
-
-
-
-
-
-
-
-
   function openModal() {
     setShowModal(true); //true=modal show, false=modal hide
   }
@@ -327,7 +321,9 @@ const InspectionReportEntry = (props) => {
   }
 
   const editDataForCheck = (rowData) => {
+    console.log('rowData: ', rowData);
     setCurrentRow(rowData);
+    setCurrTemplateId(rowData.TemplateId);
     openManyPanel();
   };
 
@@ -392,32 +388,200 @@ const InspectionReportEntry = (props) => {
   }
 
   React.useEffect(() => {
-    getCheck();
+    getTemplateList();
   }, []);
 
-  function getCheck() {
+  
+  function getTemplateList() {
     let params = {
-      action: "CheckList",
+      action: "TemplateList",
       lan: language(),
       UserId: UserInfo.UserId,
-      ClientId: UserInfo.ClientId,
-      BranchId: UserInfo.BranchId,
     };
 
     apiCall.post("combo_generic", { params }, apiOption()).then((res) => {
-      setCheckList(
-        [{ id: "", name: "Select Check Name" }].concat(res.data.datalist)
+      setTemplateList(
+        [{ id: 0, name: "Select Template" }].concat(res.data.datalist)
       );
-
-      // setCurrCheckId(selectCheckId);
+ 
     });
   }
 
+  const handleChangeMasterDropDown = (name, value) => {
+    let data = { ...currentRow };
+    if (name === "TemplateId") {
+      data["TemplateId"] = value;
+      setCurrTemplateId(value);
+      console.log('value: ', value);
+    }
+    setCurrentRow(data);
+  };
+
+
+
+  function addEditMasterAPICall() {
+    if(!currTemplateId){
+      props.openNoticeModal({
+        isOpen: true,
+        msg: "Select Template",
+        msgtype: 0
+      });
+
+      return;
+    }
+
+      let params = {
+        action: "updateMasterPartial",
+        lan: language(),
+        UserId: UserInfo.UserId,
+        rowData: currentRow,
+        TemplateId: currTemplateId,
+      };
+
+      apiCall.post(serverpage, { params }, apiOption()).then((res) => {
+        props.openNoticeModal({
+          isOpen: true,
+          msg: res.data.message,
+          msgtype: res.data.success,
+        });
+
+        // if (res.data.success === 1) {
+        //   props.modalCallback("addedit");
+        // }
+      });
+    // }
+  }
+
+
+
+
+
+
+
+
+
+
+  const columnListCategory = [
+    { field: "rownumber", label: "SL", align: "center", width: "3%" },
+    {
+      field: "CategoryName",
+      label: "Category",
+      align: "left",
+      visible: true,
+      sort: true,
+      filter: true,
+      // width: "10%",
+    },
+    {
+      field: "custom",
+      label: "Action",
+      width: "8%",
+      align: "center",
+      visible: true,
+      sort: false,
+      filter: false,
+    },
+  ];
+
+ 
+
+  /**Get data for table list */
+  function getCategoryDataList() {
+    let params = {
+      action: "getCategoryList",
+      lan: language(),
+      UserId: UserInfo.UserId,
+    };
+    // console.log('LoginUserInfo params: ', params);
+
+    ExecuteQueryCategory(serverpage, params);
+  }
+
+  /** Action from table row buttons*/
+  function actioncontrolcategory(rowData) {
+    return (
+      <>
+        <Edit
+          className={"table-edit-icon"}
+          onClick={() => {
+           bulkInsertCheckDataAPICall(rowData);
+          }}
+        />
+      </>
+    );
+  }
+
+
+  function bulkInsertCheckDataAPICall(rowData) {
+   
+      let params = {
+        action: "bulkInsertCheckData",
+        lan: language(),
+        UserId: UserInfo.UserId,
+        TransactionId: currentRow.id,
+        CategoryId: rowData.CategoryId,
+      };
+
+      apiCall.post(serverpage, { params }, apiOption()).then((res) => {
+        props.openNoticeModal({
+          isOpen: true,
+          msg: res.data.message,
+          msgtype: res.data.success,
+        });
+
+        getDataListSingle(currentRow.id,rowData.CategoryId);
+ 
+      });
+    // }
+  }
+
+
+
+    /**Get data for single report */
+  function getDataListSingle(pTransactionId,pCategoryId) {
+    let params = {
+      action: "getDataList",
+      lan: language(),
+      UserId: UserInfo.UserId,
+      TransactionId: pTransactionId, /**0=ALL */
+      CategoryId: pCategoryId
+    };
+
+    apiCall.post(serverpage, { params }, apiOption()).then((res) => {
+      console.log('res: ', res.data.datalist[0]);
+      setCurrentRow(res.data.datalist[0]); 
+    });
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   const handleFileChangeManyFile = (e, Idx) => {
-    // console.log("e.target",e.target);
-    // console.log("e.target",e.target.files);
-    // console.log("e.target",e.target.files[0]);
-    // console.log("==========================");
 
     let data = { ...currentRow };
     // let dataManyFiles = { ...manyFiles };
@@ -456,8 +620,7 @@ const InspectionReportEntry = (props) => {
     // e.target.value = "";
   };
 
-    const handleChangeManyText = (e, Idx) => {
-
+  const handleChangeManyText = (e, Idx) => {
     const { name, value } = e.target;
 
     // console.log("Idx: ", Idx);
@@ -472,7 +635,6 @@ const InspectionReportEntry = (props) => {
     setCurrentRow(data);
     // console.log("data: ", data);
   };
-
 
   // const handleChangeManyDropDown = (name, value, Idx) => {
   //   // console.log("Idx: ", Idx);
@@ -616,17 +778,129 @@ const InspectionReportEntry = (props) => {
           {/* <!-- ####---THIS CLASS IS USE FOR TABLE GRID PRODUCT INFORMATION---####s --> */}
           {/* <div class="subContainer tableHeight">
             <div className="App"> */}
-              <CustomTable
-                columns={columnList}
-                rows={dataList ? dataList : {}}
-                actioncontrol={actioncontrol}
-              />
-            {/* </div>
+          <CustomTable
+            columns={columnList}
+            rows={dataList ? dataList : {}}
+            actioncontrol={actioncontrol}
+          />
+          {/* </div>
           </div> */}
         </div>
       )}
       {/* <!-- BODY CONTAINER END --> */}
+      {/* {showMany && ( */}
 
+
+      <div class="bodyContainer">
+        {/* <!-- GROUP MODAL START --> */}
+        <div id="groupModal" class="modalz">
+          {/* <!-- Modal content --> */}
+          <div class="modal-content-reportblock">
+            <div class="modalHeader">
+              <h4>Add/Edit Inspection Template - {currentRow.InvoiceNo}</h4>
+            </div>
+
+            <div class="contactmodalBody pt-10">
+              <label>Template *</label>
+              <Autocomplete
+                autoHighlight
+                disableClearable
+                className="chosen_dropdown"
+                id="TemplateId"
+                name="TemplateId"
+                autoComplete
+                //class={errorObject.TemplateId}
+                options={TemplateList ? TemplateList : []}
+                getOptionLabel={(option) => option.name}
+                defaultValue={{ id: 0, name: "Select Template" }}
+                value={
+                  TemplateList
+                    ? TemplateList[
+                        TemplateList.findIndex(
+                          (list) => list.id === currTemplateId
+                        )
+                      ]
+                    : null
+                }
+                onChange={(event, valueobj) =>
+                  handleChangeMasterDropDown(
+                    "TemplateId",
+                    valueobj ? valueobj.id : ""
+                  )
+                }
+                renderOption={(option) => (
+                  <Typography className="chosen_dropdown_font">
+                    {option.name}
+                  </Typography>
+                )}
+                renderInput={(params) => (
+                  <TextField {...params} variant="standard" fullWidth />
+                )}
+              />
+            </div>
+
+            <div class="modalItem">
+              <Button
+                label={"Back to List"}
+                class={"btnClose"}
+                onClick={manyPanelCallback}
+              />
+              <Button
+                label={"Save"}
+                class={"btnUpdate"}
+                onClick={addEditMasterAPICall}
+              />
+
+               <Button
+                label={"Next"}
+                class={"btnUpdate"}
+                onClick={getCategoryDataList}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      
+      <div class="bodyContainer">
+        {/* <!-- GROUP MODAL START --> */}
+        <div id="groupModal" class="modalz">
+          {/* <!-- Modal content --> */}
+          <div class="modal-content-reportblock">
+            <div class="modalHeader">
+              <h4>Add/Edit Inspection Category List - {currentRow.InvoiceNo}</h4>
+            </div>
+
+            <div class="contactmodalBodyx pt-10">
+
+                <CustomTable
+                  columns={columnListCategory}
+                  rows={categoryDataList ? categoryDataList : {}}
+                  actioncontrol={actioncontrolcategory}
+                  ispagination={false}
+                />
+
+            </div>
+
+            <div class="modalItem">
+              <Button
+                label={"Back to List"}
+                class={"btnClose"}
+                onClick={manyPanelCallback}
+              />
+              <Button
+                label={"Save"}
+                class={"btnUpdate"}
+                onClick={addEditMasterAPICall}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      {/* // )} */}
       {showMany && (
         <div class="bodyContainer">
           {/* <!-- GROUP MODAL START --> */}
@@ -714,7 +988,7 @@ const InspectionReportEntry = (props) => {
                             type="text"
                             id="CheckName"
                             name="CheckName"
-                            style={{height:"30px"}}
+                            style={{ height: "30px" }}
                             // class={errorObject.InvoiceNo}
                             placeholder="Enter Check Name"
                             value={Item.CheckName}
@@ -724,9 +998,7 @@ const InspectionReportEntry = (props) => {
                           <Button
                             label={"..."}
                             class={"btnChkList"}
-                            onClick={(i) =>
-                              handleCheckListModal(Idx)
-                            }
+                            onClick={(i) => handleCheckListModal(Idx)}
                           />
                         </div>
 
@@ -773,97 +1045,95 @@ const InspectionReportEntry = (props) => {
                         /> */}
 
                         <div className=" checkblockselector">
+                          <div className="checkblocksize">
+                            <label>Width</label>
+                            <Button
+                              label={"1/2"}
+                              class={
+                                "btnreportcheckblockheight " +
+                                (Item.RowNo == "reportcheckblock-width-half"
+                                  ? "bgselect"
+                                  : "")
+                              }
+                              // onClick={addEditAPICall}
+                              onClick={(i) =>
+                                handleChangeWidthHeight(
+                                  "width",
+                                  "reportcheckblock-width-half",
+                                  Idx
+                                )
+                              }
+                            />
+                            <Button
+                              label={"1/1"}
+                              class={
+                                "btnreportcheckblockheight " +
+                                (Item.RowNo == "reportcheckblock-width-full"
+                                  ? "bgselect"
+                                  : "")
+                              }
+                              onClick={(i) =>
+                                handleChangeWidthHeight(
+                                  "width",
+                                  "reportcheckblock-width-full",
+                                  Idx
+                                )
+                              }
+                            />
+                          </div>
 
                           <div className="checkblocksize">
-                          <label>Width</label>
-                          <Button
-                            label={"1/2"}
-                            class={
-                              "btnreportcheckblockheight " +
-                              (Item.RowNo == "reportcheckblock-width-half"
-                                ? "bgselect"
-                                : "")
-                            }
-                            // onClick={addEditAPICall}
-                            onClick={(i) =>
-                              handleChangeWidthHeight(
-                                "width",
-                                "reportcheckblock-width-half",
-                                Idx
-                              )
-                            }
-                          />
-                          <Button
-                            label={"1/1"}
-                            class={
-                              "btnreportcheckblockheight " +
-                              (Item.RowNo == "reportcheckblock-width-full"
-                                ? "bgselect"
-                                : "")
-                            }
-                            onClick={(i) =>
-                              handleChangeWidthHeight(
-                                "width",
-                                "reportcheckblock-width-full",
-                                Idx
-                              )
-                            }
-                          />
-</div>
-
-
- <div className="checkblocksize">
-                          <label>Height</label>
-                          <Button
-                            label={"1/3"}
-                            class={
-                              "btnreportcheckblockheight " +
-                              (Item.ColumnNo ==
-                              "reportcheckblock-height-onethird"
-                                ? "bgselect"
-                                : "")
-                            }
-                            onClick={(i) =>
-                              handleChangeWidthHeight(
-                                "height",
-                                "reportcheckblock-height-onethird",
-                                Idx
-                              )
-                            }
-                          />
-                          <Button
-                            label={"1/2"}
-                            class={
-                              "btnreportcheckblockheight " +
-                              (Item.ColumnNo == "reportcheckblock-height-half"
-                                ? "bgselect"
-                                : "")
-                            }
-                            onClick={(i) =>
-                              handleChangeWidthHeight(
-                                "height",
-                                "reportcheckblock-height-half",
-                                Idx
-                              )
-                            }
-                          />
-                          <Button
-                            label={"1/1"}
-                            class={
-                              "btnreportcheckblockheight " +
-                              (Item.ColumnNo == "reportcheckblock-height-full"
-                                ? "bgselect"
-                                : "")
-                            }
-                            onClick={(i) =>
-                              handleChangeWidthHeight(
-                                "height",
-                                "reportcheckblock-height-full",
-                                Idx
-                              )
-                            }
-                          />
-</div>
+                            <label>Height</label>
+                            <Button
+                              label={"1/3"}
+                              class={
+                                "btnreportcheckblockheight " +
+                                (Item.ColumnNo ==
+                                "reportcheckblock-height-onethird"
+                                  ? "bgselect"
+                                  : "")
+                              }
+                              onClick={(i) =>
+                                handleChangeWidthHeight(
+                                  "height",
+                                  "reportcheckblock-height-onethird",
+                                  Idx
+                                )
+                              }
+                            />
+                            <Button
+                              label={"1/2"}
+                              class={
+                                "btnreportcheckblockheight " +
+                                (Item.ColumnNo == "reportcheckblock-height-half"
+                                  ? "bgselect"
+                                  : "")
+                              }
+                              onClick={(i) =>
+                                handleChangeWidthHeight(
+                                  "height",
+                                  "reportcheckblock-height-half",
+                                  Idx
+                                )
+                              }
+                            />
+                            <Button
+                              label={"1/1"}
+                              class={
+                                "btnreportcheckblockheight " +
+                                (Item.ColumnNo == "reportcheckblock-height-full"
+                                  ? "bgselect"
+                                  : "")
+                              }
+                              onClick={(i) =>
+                                handleChangeWidthHeight(
+                                  "height",
+                                  "reportcheckblock-height-full",
+                                  Idx
+                                )
+                              }
+                            />
+                          </div>
                           <Button
                             label={"X"}
                             title={"Delete"}
@@ -895,19 +1165,17 @@ const InspectionReportEntry = (props) => {
                   class={"btnClose"}
                   onClick={manyPanelCallback}
                 />
-                  <Button
-                    label={"Save"}
-                    class={"btnUpdate"}
-                    onClick={addEditAPICall}
-                  />
-          
+                <Button
+                  label={"Save"}
+                  class={"btnUpdate"}
+                  onClick={addEditAPICall}
+                />
               </div>
             </div>
           </div>
           {/* <!-- GROUP MODAL END --> */}
         </div>
       )}
-
       {showModal && (
         <InspectionReportEntryAddEditModal
           masterProps={props}
@@ -915,7 +1183,6 @@ const InspectionReportEntry = (props) => {
           modalCallback={modalCallback}
         />
       )}
-
       {showCheckListModal && (
         <CheckListModal
           masterProps={props}

@@ -14,10 +14,11 @@ try{
 		$sWhere=" where CheckName like '%$Search%' ";
 	}
 	
-	$query = "SELECT CheckId, CheckName
+	$query = "SELECT t_checklist.CheckId, t_checklist.CheckName,t_checklist.CategoryId, Sequence, CategoryName
 	FROM t_checklist
+	inner join t_category on t_category.CategoryId=t_checklist.CategoryId
 	$sWhere
-	ORDER BY CheckName ASC;";		
+	ORDER BY Sequence ASC;";		
 	$resultdata = $dbh->query($query);
 	
 	if (is_object($resultdata)) {
