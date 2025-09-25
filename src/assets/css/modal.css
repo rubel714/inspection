@@ -418,7 +418,8 @@
 }
 .checkblockselector{
     padding:4px;
-    display: flex;
+    /* display: flex; */
+    display: inline-flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;

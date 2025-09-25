@@ -307,6 +307,7 @@ function dataAddEditMany($data)
 		$lan = trim($data->lan);
 		$UserId = trim($data->UserId);
 
+		$CategoryId = trim($data->CategoryId);
 		$id = $data->rowData->id;
 		$ManyImgPrefix = $data->rowData->ManyImgPrefix;
 		$Items = $data->rowData->Items;
@@ -344,8 +345,8 @@ function dataAddEditMany($data)
 				if ($autoId == -1) {
 					$q = new insertq();
 					$q->table = 't_transaction_items';
-					$q->columns = ['TransactionId', 'CheckName', 'RowNo', 'ColumnNo', 'PhotoUrl', 'SortOrder','CheckType'];
-					$q->values = [$id, $CheckName, $RowNo, $ColumnNo, $PhotoUrl, $SortOrder,$CheckType];
+					$q->columns = ['TransactionId','CategoryId', 'CheckName', 'RowNo', 'ColumnNo', 'PhotoUrl', 'SortOrder','CheckType'];
+					$q->values = [$id,$CategoryId, $CheckName, $RowNo, $ColumnNo, $PhotoUrl, $SortOrder,$CheckType];
 					$q->pks = ['TransactionItemId'];
 					$q->bUseInsetId = false;
 					$q->build_query();

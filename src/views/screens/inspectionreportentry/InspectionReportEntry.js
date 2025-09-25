@@ -35,10 +35,11 @@ const InspectionReportEntry = (props) => {
   const [showCheckListModal, setShowCheckListModal] = useState(false); //true=show modal, false=hide modal
   const [currentCheckIdx, setCurrentCheckIdx] = useState("");
 
-  const [showMany, setShowMany] = useState(false); //true=show, false=hide many panel
+  const [ShowHidePanelFlag, setShowHidePanelFlag] = useState(1); //1=show master table, 2=show template panel, 3=show category panel, 4=show checklist and image block panel
   // const [CheckList, setCheckList] = useState(null);
   const [TemplateList, setTemplateList] = useState(null);
   const [currTemplateId, setCurrTemplateId] = useState(0);
+  const [currCategoryId, setCurrCategoryId] = useState(0);
 
   // handleChangeWidthHeight
   const { isLoading, data: dataList, error, ExecuteQuery } = ExecuteQueryHook(); //Fetch data
@@ -324,17 +325,18 @@ const InspectionReportEntry = (props) => {
     console.log('rowData: ', rowData);
     setCurrentRow(rowData);
     setCurrTemplateId(rowData.TemplateId);
-    openManyPanel();
+    panelShowHide(2);//1=show master table, 2=show template panel, 3=show category panel, 4=show checklist and image block panel
   };
 
-  function openManyPanel() {
-    setShowMany(true); //true= show, false= hide many panel
+  function panelShowHide(Idx) {
+    setShowHidePanelFlag(Idx); //1=show master table, 2=show template panel, 3=show category panel, 4=show checklist and image block panel
+
+    if(Idx == 1){
+      getDataList(); //refresh master table
+    }
+
   }
 
-  function manyPanelCallback(response) {
-    getDataList();
-    setShowMany(false); //true= show, false= hide many panel
-  }
 
   const deleteData = (rowData) => {
     swal({
@@ -377,7 +379,7 @@ const InspectionReportEntry = (props) => {
 
     // apiCall.post("productgroup", { params }, apiOption()).then((res) => {
     apiCall.post(serverpage, { params }, apiOption()).then((res) => {
-      console.log("res: ", res);
+      // console.log("res: ", res);
       props.openNoticeModal({
         isOpen: true,
         msg: res.data.message,
@@ -483,7 +485,6 @@ const InspectionReportEntry = (props) => {
     },
   ];
 
- 
 
   /**Get data for table list */
   function getCategoryDataList() {
@@ -495,6 +496,8 @@ const InspectionReportEntry = (props) => {
     // console.log('LoginUserInfo params: ', params);
 
     ExecuteQueryCategory(serverpage, params);
+
+    panelShowHide(3); //1=show master table, 2=show template panel, 3=show category panel, 4=show checklist and image block panel
   }
 
   /** Action from table row buttons*/
@@ -514,6 +517,8 @@ const InspectionReportEntry = (props) => {
 
   function bulkInsertCheckDataAPICall(rowData) {
    
+      setCurrCategoryId(rowData.CategoryId);
+
       let params = {
         action: "bulkInsertCheckData",
         lan: language(),
@@ -523,13 +528,17 @@ const InspectionReportEntry = (props) => {
       };
 
       apiCall.post(serverpage, { params }, apiOption()).then((res) => {
-        props.openNoticeModal({
-          isOpen: true,
-          msg: res.data.message,
-          msgtype: res.data.success,
-        });
-
-        getDataListSingle(currentRow.id,rowData.CategoryId);
+        // console.log('res: ', res);
+        
+        if(res.data.success == 1){
+          getDataListSingle(currentRow.id,rowData.CategoryId);
+        }else{
+          props.openNoticeModal({
+            isOpen: true,
+            msg: res.data.message,
+            msgtype: res.data.success,
+          });
+        }
  
       });
     // }
@@ -548,8 +557,10 @@ const InspectionReportEntry = (props) => {
     };
 
     apiCall.post(serverpage, { params }, apiOption()).then((res) => {
-      console.log('res: ', res.data.datalist[0]);
+      // console.log('res: ', res.data.datalist[0]);
       setCurrentRow(res.data.datalist[0]); 
+
+      panelShowHide(4);
     });
   }
 
@@ -602,8 +613,6 @@ const InspectionReportEntry = (props) => {
       reader.onload = (event) => {
         // setPreview(event.target.result);
         data.Items[Idx].PhotoUrlPreview = event.target.result;
-        //  console.log('event.target.result: ', event.target.result);
-        // console.log('From onload');
         setCurrentRow(data);
       };
     } else {
@@ -612,12 +621,7 @@ const InspectionReportEntry = (props) => {
       data.Items[Idx].PhotoUrlChanged = "";
       setCurrentRow(data);
     }
-    // console.log('after end');
 
-    // setCurrentRow(data);
-    // console.log('data for PHOTO---------------: ', data);
-    // setManyFiles(dataManyFiles);
-    // e.target.value = "";
   };
 
   const handleChangeManyText = (e, Idx) => {
@@ -636,31 +640,23 @@ const InspectionReportEntry = (props) => {
     // console.log("data: ", data);
   };
 
-  // const handleChangeManyDropDown = (name, value, Idx) => {
-  //   // console.log("Idx: ", Idx);
-  //   // console.log("value: ", value);
-  //   // console.log("name: ", name);
-  //   let data = { ...currentRow };
-  //   if (name === "CheckId") {
-  //     data.Items[Idx].CheckId = value;
-  //   }
-
-  //   // setErrorObject({ ...errorObject, [name]: null });
-  //   setCurrentRow(data);
-  //   // console.log("data: ", data);
-  // };
-
   const handleChangeWidthHeight = (type, classname, Idx) => {
-    // console.log("type: ", type);
-    // console.log("classname: ", classname);
     let data = { ...currentRow };
+    console.log('data: ', data);
     if (type === "width") {
       data.Items[Idx].RowNo = classname;
     } else if (type === "height") {
       data.Items[Idx].ColumnNo = classname;
     }
     setCurrentRow(data);
-    // console.log("data: ", data);
+  };
+
+  const handleChangeCheckType = (CheckType, Idx) => {
+    let data = { ...currentRow };
+    console.log('data: ', data);
+    data.Items[Idx].CheckType = CheckType;
+ 
+    setCurrentRow(data);
   };
 
   function addCheckBlock() {
@@ -675,7 +671,7 @@ const InspectionReportEntry = (props) => {
       PhotoUrlPreview: "",
       PhotoUrlUpload: "",
       RowNo: "reportcheckblock-width-half",
-      SortOrder: data.Items.length + 1,
+      SortOrder: currTime,// data.Items.length + 1,
       TransactionId: currTime,
       TransactionItemId: currTime,
       autoId: -1,
@@ -698,35 +694,14 @@ const InspectionReportEntry = (props) => {
     delete data.Items[Idx];
     setCurrentRow(data);
     console.log("dataDelete: ", dataDelete);
-    // console.log("data: ", data.Items);
   }
 
-  // const validateForm = () => {
-  //   let validateFields = [];
-  //   validateFields = ["InvoiceNo", "TransactionDate", "CoverFilePages"];
-  //   let errorData = {};
-  //   let isValid = true;
-  //   validateFields.map((field) => {
-  //     if (!currentRow[field]) {
-  //       errorData[field] = "validation-style";
-  //       isValid = false;
-  //     }
-  //   });
-  //   setErrorObject(errorData);
-  //   // console.log('errorData: ', errorData);
-  //   return isValid;
-  // };
-
   function addEditAPICall() {
-    // if (validateForm()) {
-    //uploadManyFiles(); /////////////////////////////////////////////////////
-
     let params = {
       action: "dataAddEditMany",
       lan: language(),
       UserId: UserInfo.UserId,
-      ClientId: UserInfo.ClientId,
-      BranchId: UserInfo.BranchId,
+      CategoryId: currCategoryId,
       rowData: currentRow,
       currentRowDelete: currentRowDelete,
     };
@@ -739,15 +714,14 @@ const InspectionReportEntry = (props) => {
       });
 
       if (res.data.success === 1) {
-        manyPanelCallback("addeditMany");
+        getCategoryDataList();
       }
     });
-    // }
   }
 
   return (
     <>
-      {!showMany && (
+      {(ShowHidePanelFlag == 1) && (
         <div class="bodyContainer">
           {/* <!-- ######-----TOP HEADER-----####### --> */}
           <div class="topHeader">
@@ -788,9 +762,9 @@ const InspectionReportEntry = (props) => {
         </div>
       )}
       {/* <!-- BODY CONTAINER END --> */}
-      {/* {showMany && ( */}
+      {/* {ShowHidePanelFlag && ( */}
 
-
+ {(ShowHidePanelFlag == 2) && (
       <div class="bodyContainer">
         {/* <!-- GROUP MODAL START --> */}
         <div id="groupModal" class="modalz">
@@ -843,7 +817,7 @@ const InspectionReportEntry = (props) => {
               <Button
                 label={"Back to List"}
                 class={"btnClose"}
-                onClick={manyPanelCallback}
+                onClick={()=>panelShowHide(1)}
               />
               <Button
                 label={"Save"}
@@ -859,10 +833,10 @@ const InspectionReportEntry = (props) => {
             </div>
           </div>
         </div>
-      </div>
+      </div>)}
 
 
-      
+       {(ShowHidePanelFlag == 3) && (
       <div class="bodyContainer">
         {/* <!-- GROUP MODAL START --> */}
         <div id="groupModal" class="modalz">
@@ -887,35 +861,24 @@ const InspectionReportEntry = (props) => {
               <Button
                 label={"Back to List"}
                 class={"btnClose"}
-                onClick={manyPanelCallback}
+                onClick={()=>panelShowHide(2)}
               />
-              <Button
-                label={"Save"}
-                class={"btnUpdate"}
-                onClick={addEditMasterAPICall}
-              />
+
             </div>
           </div>
         </div>
       </div>
+      )}
 
 
-      {/* // )} */}
-      {showMany && (
+      {(ShowHidePanelFlag == 4) && (
         <div class="bodyContainer">
           {/* <!-- GROUP MODAL START --> */}
           <div id="groupModal" class="modalz">
             {/* <!-- Modal content --> */}
             <div class="modal-content-reportblock">
               <div class="modalHeader">
-                {/*      
-                <Button
-                  label={"Back to List"}
-                  class={"btnClose chosen_dropdown_fon"}
-                  onClick={manyPanelCallback}
-                /> */}
-
-                <h4>Add/Edit Inspection Check List - {currentRow.InvoiceNo}</h4>
+                  <h4>Add/Edit Inspection Check List - {currentRow.InvoiceNo}</h4>
               </div>
 
               {currentRow.Items &&
@@ -981,6 +944,79 @@ const InspectionReportEntry = (props) => {
                             />
                           </div>
                         )}
+
+
+                        
+                        <div className=" checkblockselector">
+                          <div className="checkblocksize">
+                            <Button
+                              label={"R"}
+                              class={
+                                "btnreportcheckblockheight " +
+                                (Item.CheckType ==
+                                "R"
+                                  ? "bgselect"
+                                  : "")
+                              }
+                              onClick={(i) =>
+                                handleChangeCheckType(
+                                  "R",
+                                  Idx
+                                )
+                              }
+                            />
+                            <Button
+                              label={"C"}
+                              class={
+                                "btnreportcheckblockheight " +
+                                (Item.CheckType == "C"
+                                  ? "bgselect"
+                                  : "")
+                              }
+                              onClick={(i) =>
+                                handleChangeCheckType(
+                                  "C",
+                                  Idx
+                                )
+                              }
+                            />
+                            <Button
+                              label={"M"}
+                              class={
+                                "btnreportcheckblockheight " +
+                                (Item.CheckType == "M"
+                                  ? "bgselect"
+                                  : "")
+                              }
+                              onClick={(i) =>
+                                handleChangeCheckType(
+                                  "M",
+                                  Idx
+                                )
+                              }
+                            />
+
+                             <Button
+                              label={"m"}
+                              class={
+                                "btnreportcheckblockheight " +
+                                (Item.CheckType == "m"
+                                  ? "bgselect"
+                                  : "")
+                              }
+                              onClick={(i) =>
+                                handleChangeCheckType(
+                                  "m",
+                                  Idx
+                                )
+                              }
+                            />
+                            
+                          </div>
+                      
+                        </div>
+
+
 
                         <div class="inspectionChecklistBody pt-10">
                           {/* <label>Report Number *</label> */}
@@ -1141,6 +1177,10 @@ const InspectionReportEntry = (props) => {
                             onClick={(i) => deleteCheckBlock(Idx)}
                           />
                         </div>
+
+
+
+
                       </div>
                     </>
                   );
@@ -1163,7 +1203,7 @@ const InspectionReportEntry = (props) => {
                 <Button
                   label={"Back to List"}
                   class={"btnClose"}
-                  onClick={manyPanelCallback}
+                  onClick={()=>panelShowHide(3)}
                 />
                 <Button
                   label={"Save"}

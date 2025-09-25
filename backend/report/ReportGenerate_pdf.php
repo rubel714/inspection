@@ -129,7 +129,7 @@ $pdf->SetAutoPageBreak(true, 5);
 $pdf->SetFont('helvetica', 'R', 10);//Global font size of this pdf
 $pdf->AddPage();
 
-$sqlmany = "SELECT a.TransactionItemId,a.CheckId,a.CheckName,a.RowNo,a.ColumnNo,a.PhotoUrl,a.SortOrder
+$sqlmany = "SELECT a.TransactionItemId,a.CheckId,a.CheckName,a.RowNo,a.ColumnNo,a.PhotoUrl,a.SortOrder,a.CheckType
 			FROM t_transaction_items a
 			where a.TransactionId = $TransactionId
 			order by a.SortOrder;";
@@ -148,7 +148,8 @@ $manyresult = $db->query($sqlmany);
 $images = [];
 foreach ($manyresult as $result) {
    $PhotoUrl = $result['PhotoUrl'];
-   $CheckName = $result['CheckName'];
+   $CheckType = $result['CheckType'];
+   $CheckName = $result['CheckName']." - ".$CheckType;
    $RowNo = $result['RowNo'];
    $ColumnNo = $result['ColumnNo'];
    
