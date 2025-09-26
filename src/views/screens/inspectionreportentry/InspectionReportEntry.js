@@ -21,6 +21,7 @@ import {
 } from "../../../actions/api";
 import ExecuteQueryHook from "../../../components/hooks/ExecuteQueryHook";
 import moment from "moment";
+import InspectionReportImportModal from "./InspectionReportImportModal";
 import InspectionReportEntryAddEditModal from "./InspectionReportEntryAddEditModal";
 import CheckListModal from "./CheckListModal";
 
@@ -32,6 +33,7 @@ const InspectionReportEntry = (props) => {
   const [currentRow, setCurrentRow] = useState([]);
   const [currentRowDelete, setCurrentRowDelete] = useState([]);
   const [showModal, setShowModal] = useState(false); //true=show modal, false=hide modal
+  const [showImportModal, setShowImportModal] = useState(false); //true=show import modal, false=hide import modal
 
   const [showCheckListModal, setShowCheckListModal] = useState(false); //true=show modal, false=hide modal
   const [currentCheckIdx, setCurrentCheckIdx] = useState("");
@@ -270,6 +272,10 @@ const InspectionReportEntry = (props) => {
     );
   }
 
+  const importData = () => {
+setShowImportModal(true);
+  }
+
   const addData = () => {
     setCurrentRow({
       id: "",
@@ -322,6 +328,11 @@ const InspectionReportEntry = (props) => {
   function modalCallback(response) {
     getDataList();
     setShowModal(false); //true=modal show, false=modal hide
+  }
+
+  function importModalCallback(response) {
+    getDataList();
+    setShowImportModal(false); //true=import modal show, false=import modal hide
   }
 
   const editDataForCheck = (rowData) => {
@@ -667,16 +678,26 @@ const InspectionReportEntry = (props) => {
     // console.log("data: ", data);
   };
 
-  const handleChangeWidthHeight = (type, classname, Idx) => {
+    const handleChangeWidthHeight = (classnamewidth, classnameheight, Idx) => {
     let data = { ...currentRow };
-    console.log('data: ', data);
-    if (type === "width") {
-      data.Items[Idx].RowNo = classname;
-    } else if (type === "height") {
-      data.Items[Idx].ColumnNo = classname;
-    }
+
+    data.Items[Idx].RowNo = classnamewidth;
+    data.Items[Idx].ColumnNo = classnameheight;
+ 
     setCurrentRow(data);
   };
+
+
+  // const handleChangeWidthHeight = (type, classname, Idx) => {
+  //   let data = { ...currentRow };
+  //   console.log('data: ', data);
+  //   if (type === "width") {
+  //     data.Items[Idx].RowNo = classname;
+  //   } else if (type === "height") {
+  //     data.Items[Idx].ColumnNo = classname;
+  //   }
+  //   setCurrentRow(data);
+  // };
 
   const handleChangeCheckType = (CheckType, Idx) => {
     let data = { ...currentRow };
@@ -774,6 +795,7 @@ const InspectionReportEntry = (props) => {
             class={"btnPrint"}
             onClick={PrintPDFExcelExportFunction}
           /> */}
+            <Button label={"IMPORT"} class={"btnClose"} onClick={importData} />
             <Button label={"ADD"} class={"btnAdd"} onClick={addData} />
           </div>
 
@@ -1112,6 +1134,81 @@ const InspectionReportEntry = (props) => {
                         /> */}
 
                         <div className=" checkblockselector">
+
+
+
+
+
+
+                         <div className="checkblocksize">
+                            <label>Size</label>
+                            <Button
+                              label={"1P"}
+                              class={
+                                "btnreportcheckblockheight " +
+                                ((Item.RowNo == "reportcheckblock-width-full" && Item.ColumnNo == "reportcheckblock-height-full")
+                                  ? "bgselect"
+                                  : "")
+                              }
+                              onClick={(i) =>
+                                handleChangeWidthHeight(
+                                  "reportcheckblock-width-full",
+                                  "reportcheckblock-height-full",
+                                  Idx
+                                )
+                              }
+                            />
+                            <Button
+                              label={"2P"}
+                              class={
+                                "btnreportcheckblockheight " +
+                                ((Item.RowNo == "reportcheckblock-width-full" && Item.ColumnNo == "reportcheckblock-height-half")
+                                  ? "bgselect"
+                                  : "")
+                              }
+                              onClick={(i) =>
+                                handleChangeWidthHeight(
+                                  "reportcheckblock-width-full",
+                                  "reportcheckblock-height-half",
+                                  Idx
+                                )
+                              }
+                            />
+                            <Button
+                              label={"4P"}
+                              class={
+                                "btnreportcheckblockheight " +
+                                ((Item.RowNo == "reportcheckblock-width-half" && Item.ColumnNo == "reportcheckblock-height-half")
+                                  ? "bgselect"
+                                  : "")
+                              }
+                              onClick={(i) =>
+                                handleChangeWidthHeight(
+                                  "reportcheckblock-width-half",
+                                  "reportcheckblock-height-half",
+                                  Idx
+                                )
+                              }
+                            />
+                            <Button
+                              label={"6P"}
+                              class={
+                                "btnreportcheckblockheight " +
+                                ((Item.RowNo == "reportcheckblock-width-half" && Item.ColumnNo == "reportcheckblock-height-onethird")
+                                  ? "bgselect"
+                                  : "")
+                              }
+                              onClick={(i) =>
+                                handleChangeWidthHeight(
+                                  "reportcheckblock-width-half",
+                                  "reportcheckblock-height-onethird",
+                                  Idx
+                                )
+                              }
+                            />
+                          </div>
+
+ {/*
                           <div className="checkblocksize">
                             <label>Width</label>
                             <Button
@@ -1122,7 +1219,6 @@ const InspectionReportEntry = (props) => {
                                   ? "bgselect"
                                   : "")
                               }
-                              // onClick={addEditAPICall}
                               onClick={(i) =>
                                 handleChangeWidthHeight(
                                   "width",
@@ -1201,6 +1297,12 @@ const InspectionReportEntry = (props) => {
                               }
                             />
                           </div>
+*/}
+
+
+
+
+
                           <Button
                             label={"X"}
                             title={"Delete"}
@@ -1247,6 +1349,15 @@ const InspectionReportEntry = (props) => {
           {/* <!-- GROUP MODAL END --> */}
         </div>
       )}
+
+      {showImportModal && (
+        <InspectionReportImportModal
+          masterProps={props}
+          currentRow={currentRow}
+          importModalCallback={importModalCallback}
+        />
+      )}
+
       {showModal && (
         <InspectionReportEntryAddEditModal
           masterProps={props}
@@ -1261,6 +1372,10 @@ const InspectionReportEntry = (props) => {
           modalCallback={modalCallbackCheckList}
         />
       )}
+
+
+      
+
     </>
   );
 };
