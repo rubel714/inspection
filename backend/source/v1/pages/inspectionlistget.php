@@ -14,7 +14,7 @@ try{
 	
 	$query = "SELECT a.TransactionId AS id,a.TransactionTypeId,
 	DATE_FORMAT(a.TransactionDate, '%d-%b-%Y') AS TransactionDate,
-		a.InvoiceNo,a.CoverFilePages,
+		a.InvoiceNo,a.BuyerName,a.SupplierName,a.FactoryName,a.CoverFilePages,ifnull(a.TemplateId,0) as TemplateId,
 		a.`UserId`, a.StatusId, b.`UserName`,c.`StatusName`, a.CoverFileUrl,'' CoverFileUrlUpload,
 		case when a.CoverFileUrl is null then '' else 'Yes' end as CoverFileUrlStatus,a.ManyImgPrefix,'' Items
 	   FROM `t_transaction` a

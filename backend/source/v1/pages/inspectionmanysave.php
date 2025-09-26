@@ -10,13 +10,13 @@ try {
 	$CheckName = isset($data['CheckName']) ? checkNull($data['CheckName']) : "";
 	$RowNo = isset($data['RowNo']) ? checkNull($data['RowNo']) : "";
 	$ColumnNo = isset($data['ColumnNo']) ? checkNull($data['ColumnNo']) : "";
+	$CheckType = isset($data['CheckType']) ? checkNull($data['CheckType']) : "";
 	$ManyImgPrefix = isset($data['ManyImgPrefix']) ? checkNull($data['ManyImgPrefix']) : "";
 	// $CoverFileUrl = isset($data['CoverFileUrl']) ? checkNull($data['CoverFileUrl']) : null; /////////////////
 	// $PhotoUrl = "placeholder.jpg"; // isset($data['PhotoUrl']) ? ConvertImageAPI($data['PhotoUrl'], $ManyImgPrefix) : $data['PhotoUrl'];
 	// $PhotoUrl = isset($data['PhotoUrl']) ? ConvertImageAPI($data['PhotoUrl'], $ManyImgPrefix) : $data['PhotoUrl'];
 	$PhotoUrl = isset($data['PhotoUrl']) ? checkNull($data['PhotoUrl']) : "";;
 	$SortOrder = isset($data['SortOrder']) ? checkNull($data['SortOrder']) : "";
-
 
 	if ($TransactionId == "") {
 		$apiResponse = json_encode(recordNotFoundMsg(0, "TransactionId param is missing"));
@@ -34,6 +34,12 @@ try {
 
 	if ($ColumnNo == "") {
 		$apiResponse = json_encode(recordNotFoundMsg(0, "Column style param is missing"));
+		apiLogWrite("Output (" . date('Y_m_d_H_i_s') . "): " . $apiResponse);
+		echo $apiResponse;
+		return;
+	}
+	if ($CheckType == "") {
+		$apiResponse = json_encode(recordNotFoundMsg(0, "CheckType param is missing"));
 		apiLogWrite("Output (" . date('Y_m_d_H_i_s') . "): " . $apiResponse);
 		echo $apiResponse;
 		return;
@@ -62,39 +68,42 @@ try {
 		}
 		
 
-		$query = "INSERT INTO t_transaction_items (TransactionId,CheckName,RowNo,ColumnNo,PhotoUrl,SortOrder) 
-		VALUES (:TransactionId, :CheckName, :RowNo, :ColumnNo, :PhotoUrl, :SortOrder);";
+		$query = "INSERT INTO t_transaction_items (TransactionId,CheckName,RowNo,ColumnNo,CheckType,PhotoUrl,SortOrder) 
+		VALUES (:TransactionId, :CheckName, :RowNo, :ColumnNo,:CheckType, :PhotoUrl, :SortOrder);";
 
 		$pList = array(
 			'TransactionId' => $TransactionId,
 			'CheckName' => $CheckName,
 			'RowNo' => $RowNo,
 			'ColumnNo' => $ColumnNo,
+			'CheckType' => $CheckType,
 			'PhotoUrl' => $PhotoUrl,
 			'SortOrder' => $SortOrder
 		);
 	} else {
 		
 		if ($PhotoUrl) {
-			$query = "UPDATE t_transaction_items set CheckName=:CheckName, RowNo=:RowNo, ColumnNo=:ColumnNo, 
+			$query = "UPDATE t_transaction_items set CheckName=:CheckName, RowNo=:RowNo, ColumnNo=:ColumnNo, CheckType=:CheckType,
 				PhotoUrl=:PhotoUrl WHERE TransactionItemId=:TransactionItemId;";
 
 			$pList = array(
 				'CheckName' => $CheckName,
 				'RowNo' => $RowNo,
 				'ColumnNo' => $ColumnNo,
+				'CheckType' => $CheckType,
 				'PhotoUrl' => $PhotoUrl,
 				'TransactionItemId' => $TransactionItemId
 			);
 
 		}else {
-			$query = "UPDATE t_transaction_items set CheckName=:CheckName, RowNo=:RowNo, ColumnNo=:ColumnNo
+			$query = "UPDATE t_transaction_items set CheckName=:CheckName, RowNo=:RowNo, ColumnNo=:ColumnNo,CheckType=:CheckType
 					  WHERE TransactionItemId=:TransactionItemId;";
 
 			$pList = array(
 				'CheckName' => $CheckName,
 				'RowNo' => $RowNo,
 				'ColumnNo' => $ColumnNo,
+				'CheckType' => $CheckType,
 				'TransactionItemId' => $TransactionItemId
 			);
 

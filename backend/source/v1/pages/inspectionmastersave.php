@@ -8,6 +8,10 @@ try {
 	$TransactionId = isset($data['TransactionId']) ? checkNull($data['TransactionId']) : "";
 	$TransactionDate = isset($data['TransactionDate']) ? convertAppToDBDate(checkNull($data['TransactionDate'])) : ""; //21-Aug-2024 5:15 AM
 	$InvoiceNo = isset($data['InvoiceNo']) ? checkNull($data['InvoiceNo']) : "";
+	$BuyerName = isset($data['BuyerName']) ? checkNull($data['BuyerName']) : null;
+	$SupplierName = isset($data['SupplierName']) ? checkNull($data['SupplierName']) : null;
+	$FactoryName = isset($data['FactoryName']) ? checkNull($data['FactoryName']) : null;
+
 	$CoverFilePages = isset($data['CoverFilePages']) ? checkNull($data['CoverFilePages']) : "";
 	$CoverFileUrl = isset($data['CoverFileUrl']) ? checkNull($data['CoverFileUrl']) : null; /////////////////
 	$UserId = isset($data['UserInfoID']) ? checkNull($data['UserInfoID']) : "";
@@ -65,15 +69,19 @@ try {
 		return;
 	}
 
+	
 	if ($TransactionId == "") {
-		$query = "INSERT INTO t_transaction(ClientId, TransactionTypeId, TransactionDate, InvoiceNo, CoverFilePages, CoverFileUrl, UserId, StatusId,ManyImgPrefix) 
-			VALUES (:ClientId, :TransactionTypeId, :TransactionDate, :InvoiceNo, :CoverFilePages, :CoverFileUrl, :UserId, :StatusId, :ManyImgPrefix);";
+		$query = "INSERT INTO t_transaction(ClientId, TransactionTypeId, TransactionDate, InvoiceNo,BuyerName,SupplierName,FactoryName, CoverFilePages, CoverFileUrl, UserId, StatusId,ManyImgPrefix) 
+			VALUES (:ClientId, :TransactionTypeId, :TransactionDate, :InvoiceNo,:BuyerName,:SupplierName,:FactoryName, :CoverFilePages, :CoverFileUrl, :UserId, :StatusId, :ManyImgPrefix);";
 
 		$pList = array(
 			'ClientId' => $ClientId,
 			'TransactionTypeId' => $TransactionTypeId,
 			'TransactionDate' => $TransactionDate,
 			'InvoiceNo' => $InvoiceNo,
+			'BuyerName' => $BuyerName,
+			'SupplierName' => $SupplierName,
+			'FactoryName' => $FactoryName,
 			'CoverFilePages' => $CoverFilePages,
 			'CoverFileUrl' => $CoverFileUrl,
 			'UserId' => $UserId,
@@ -84,23 +92,29 @@ try {
 
 
 		if ($CoverFileUrl) {
-			$query = "UPDATE t_transaction set TransactionDate=:TransactionDate, InvoiceNo=:InvoiceNo, CoverFilePages=:CoverFilePages, CoverFileUrl=:CoverFileUrl
+			$query = "UPDATE t_transaction set TransactionDate=:TransactionDate, InvoiceNo=:InvoiceNo,BuyerName=:BuyerName,SupplierName=:SupplierName,FactoryName=:FactoryName, CoverFilePages=:CoverFilePages, CoverFileUrl=:CoverFileUrl
 			where TransactionId=:TransactionId;";
 
 			$pList = array(
 				'TransactionDate' => $TransactionDate,
 				'InvoiceNo' => $InvoiceNo,
+				'BuyerName' => $BuyerName,
+				'SupplierName' => $SupplierName,
+				'FactoryName' => $FactoryName,
 				'CoverFilePages' => $CoverFilePages,
 				'CoverFileUrl' => $CoverFileUrl,
 				'TransactionId' => $TransactionId
 			);
 		}else{
-			$query = "UPDATE t_transaction set TransactionDate=:TransactionDate, InvoiceNo=:InvoiceNo, CoverFilePages=:CoverFilePages
+			$query = "UPDATE t_transaction set TransactionDate=:TransactionDate, InvoiceNo=:InvoiceNo,BuyerName=:BuyerName,SupplierName=:SupplierName,FactoryName=:FactoryName, CoverFilePages=:CoverFilePages
 			where TransactionId=:TransactionId;";
 
 			$pList = array(
 				'TransactionDate' => $TransactionDate,
 				'InvoiceNo' => $InvoiceNo,
+				'BuyerName' => $BuyerName,
+				'SupplierName' => $SupplierName,
+				'FactoryName' => $FactoryName,
 				'CoverFilePages' => $CoverFilePages,
 				'TransactionId' => $TransactionId
 			);
