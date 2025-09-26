@@ -171,14 +171,15 @@ function updateMasterPartial($data)
 
 		$id = $data->rowData->id;
 		$TemplateId = $data->rowData->TemplateId;
+		$StatusId = $data->rowData->StatusId;
 
 		try {
 			$aQuerys = array();
 			// if ($id > 0) {
 			$u = new updateq();
 			$u->table = 't_transaction';
-			$u->columns = ['TemplateId'];
-			$u->values = [$TemplateId];
+			$u->columns = ['TemplateId','StatusId'];
+			$u->values = [$TemplateId,$StatusId];
 			$u->pks = ['TransactionId'];
 			$u->pk_values = [$id];
 			$u->build_query();

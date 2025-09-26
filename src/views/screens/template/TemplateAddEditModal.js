@@ -219,7 +219,7 @@ const TemplateAddEditModal = (props) => {
           </div>
 
           <div class="modalItem">
-            <label>Category Name *</label>
+            <label>Template Name *</label>
             <input
               type="text"
               id="TemplateName"

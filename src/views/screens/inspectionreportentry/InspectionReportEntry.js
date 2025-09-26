@@ -248,26 +248,26 @@ const InspectionReportEntry = (props) => {
           }}
         ></PictureAsPdf>
 
-        <AddAPhoto
+       {rowData.StatusId==1 && (<AddAPhoto
           className={"table-addimg-icon"}
           onClick={() => {
             editDataForCheck(rowData);
           }}
-        />
+        />)}
 
-        <Edit
+        {rowData.StatusId==1 && (<Edit
           className={"table-edit-icon"}
           onClick={() => {
             editData(rowData);
           }}
-        />
+        />)}
 
-        <DeleteOutline
+        {rowData.StatusId==1 && (<DeleteOutline
           className={"table-delete-icon"}
           onClick={() => {
             deleteData(rowData);
           }}
-        />
+        />)}
       </>
     );
   }
@@ -428,14 +428,14 @@ setShowImportModal(true);
     if (name === "TemplateId") {
       data["TemplateId"] = value;
       setCurrTemplateId(value);
-      console.log('value: ', value);
+      // console.log('value: ', value);
     }
     setCurrentRow(data);
   };
 
 
-
-  function addEditMasterAPICall() {
+  
+  function assignTemplateUnderInspection() {
     if(!currTemplateId){
       props.openNoticeModal({
         isOpen: true,
@@ -446,12 +446,50 @@ setShowImportModal(true);
       return;
     }
 
+     addEditMasterAPICall(currentRow); 
+  }
+  
+  function postInspection() {
+ swal({
+      title: "Are you sure?",
+      text: "You want to finish this inspection, you will not be able to change this inspection!",
+      icon: "warning",
+      buttons: {
+        confirm: {
+          text: "Yes",
+          value: true,
+          visible: true,
+          className: "",
+          closeModal: true,
+        },
+        cancel: {
+          text: "No",
+          value: null,
+          visible: true,
+          className: "",
+          closeModal: true,
+        },
+      },
+      dangerMode: true,
+    }).then((allowAction) => {
+      if (allowAction) {
+          let data = { ...currentRow };
+          data["StatusId"] = 5;
+          setCurrentRow(data);
+          addEditMasterAPICall(data); 
+      }
+    });
+
+
+  }
+
+  function addEditMasterAPICall(rowData) {
+
       let params = {
         action: "updateMasterPartial",
         lan: language(),
         UserId: UserInfo.UserId,
-        rowData: currentRow,
-        TemplateId: currTemplateId,
+        rowData: rowData,
       };
 
       apiCall.post(serverpage, { params }, apiOption()).then((res) => {
@@ -462,10 +500,14 @@ setShowImportModal(true);
         });
 
         if (res.data.success === 1) {
-          getCategoryDataList();
+          if(rowData.StatusId == 5){
+            panelShowHide(1); // go to master list and refresh
+          }else{
+            getCategoryDataList();
+          }
         }
       });
-    // }
+
   }
 
 
@@ -525,8 +567,8 @@ setShowImportModal(true);
 
   /** Action from table row buttons*/
   function actioncontrolcategory(rowData) {
-    console.log('rowData actioncontrolcategory: ', rowData);
-    console.log('currentRow actioncontrolcategory: ', currentRow.Items);
+    // console.log('rowData actioncontrolcategory: ', rowData);
+    // console.log('currentRow actioncontrolcategory: ', currentRow.Items);
     return (
       <>
 
@@ -742,7 +784,7 @@ setShowImportModal(true);
 
     delete data.Items[Idx];
     setCurrentRow(data);
-    console.log("dataDelete: ", dataDelete);
+    // console.log("dataDelete: ", dataDelete);
   }
 
   function addEditAPICall() {
@@ -875,7 +917,7 @@ setShowImportModal(true);
               {(currentRow.Items.length == 0) && (<Button
                 label={"Save"}
                 class={"btnUpdate"}
-                onClick={addEditMasterAPICall}
+                onClick={assignTemplateUnderInspection}
               />)}
 
                {(currentRow.Items.length > 0) && (<Button
@@ -916,6 +958,12 @@ setShowImportModal(true);
                 class={"btnClose"}
                 onClick={()=>panelShowHide(2)}
               />
+
+              <Button
+                  label={"Finish Inspection"}
+                  class={"btnUpdate"}
+                  onClick={postInspection}
+                />
 
             </div>
           </div>
