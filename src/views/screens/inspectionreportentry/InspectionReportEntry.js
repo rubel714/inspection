@@ -5,6 +5,7 @@ import {
   Edit,
   AddAPhoto,
   PictureAsPdf,
+  Add
 } from "@material-ui/icons";
 import { Button } from "../../../components/CustomControl/Button";
 import Autocomplete from "@material-ui/lab/Autocomplete";
@@ -40,6 +41,7 @@ const InspectionReportEntry = (props) => {
   const [TemplateList, setTemplateList] = useState(null);
   const [currTemplateId, setCurrTemplateId] = useState(0);
   const [currCategoryId, setCurrCategoryId] = useState(0);
+  const [currCategoryName, setCurrCategoryName] = useState("");
 
   // handleChangeWidthHeight
   const { isLoading, data: dataList, error, ExecuteQuery } = ExecuteQueryHook(); //Fetch data
@@ -289,6 +291,7 @@ const InspectionReportEntry = (props) => {
     openModal();
   };
 
+  /**Master Edit */
   const editData = (rowData) => {
     console.log('rowData editData: ', rowData);
     setCurrentRow(rowData);
@@ -447,9 +450,9 @@ const InspectionReportEntry = (props) => {
           msgtype: res.data.success,
         });
 
-        // if (res.data.success === 1) {
-        //   props.modalCallback("addedit");
-        // }
+        if (res.data.success === 1) {
+          getCategoryDataList();
+        }
       });
     // }
   }
@@ -475,6 +478,15 @@ const InspectionReportEntry = (props) => {
       // width: "10%",
     },
     {
+      field: "CheckCount",
+      label: "Number of Added Check List",
+      align: "center",
+      visible: true,
+      sort: true,
+      filter: true,
+      // width: "10%",
+    },
+    {
       field: "custom",
       label: "Action",
       width: "8%",
@@ -492,24 +504,38 @@ const InspectionReportEntry = (props) => {
       action: "getCategoryList",
       lan: language(),
       UserId: UserInfo.UserId,
+      TransactionId:currentRow.id,
     };
     // console.log('LoginUserInfo params: ', params);
 
     ExecuteQueryCategory(serverpage, params);
-
     panelShowHide(3); //1=show master table, 2=show template panel, 3=show category panel, 4=show checklist and image block panel
   }
 
   /** Action from table row buttons*/
   function actioncontrolcategory(rowData) {
+    console.log('rowData actioncontrolcategory: ', rowData);
+    console.log('currentRow actioncontrolcategory: ', currentRow.Items);
     return (
       <>
-        <Edit
+
+        {/* {currentRow.Items.length} */}
+
+        {(rowData.CheckCount == 0) && (<Add
           className={"table-edit-icon"}
           onClick={() => {
            bulkInsertCheckDataAPICall(rowData);
           }}
-        />
+        />)}
+
+         {(rowData.CheckCount > 0) && (<Edit
+          className={"table-edit-icon"}
+          onClick={() => {
+           bulkInsertCheckDataAPICall(rowData);
+          }}
+        />)}
+
+
       </>
     );
   }
@@ -518,6 +544,7 @@ const InspectionReportEntry = (props) => {
   function bulkInsertCheckDataAPICall(rowData) {
    
       setCurrCategoryId(rowData.CategoryId);
+      setCurrCategoryName(rowData.CategoryName);
 
       let params = {
         action: "bulkInsertCheckData",
@@ -665,6 +692,7 @@ const InspectionReportEntry = (props) => {
     let newCheck = {
       CheckId: "",
       CheckName: "",
+      CheckType: "R",
       ColumnNo: "reportcheckblock-height-onethird",
       PhotoUrl: "placeholder.jpg",
       PhotoUrlChanged: "",
@@ -784,6 +812,7 @@ const InspectionReportEntry = (props) => {
                 name="TemplateId"
                 autoComplete
                 //class={errorObject.TemplateId}
+                disabled={currentRow.Items.length>0}
                 options={TemplateList ? TemplateList : []}
                 getOptionLabel={(option) => option.name}
                 defaultValue={{ id: 0, name: "Select Template" }}
@@ -814,22 +843,24 @@ const InspectionReportEntry = (props) => {
             </div>
 
             <div class="modalItem">
+
               <Button
                 label={"Back to List"}
                 class={"btnClose"}
                 onClick={()=>panelShowHide(1)}
               />
-              <Button
+
+              {(currentRow.Items.length == 0) && (<Button
                 label={"Save"}
                 class={"btnUpdate"}
                 onClick={addEditMasterAPICall}
-              />
+              />)}
 
-               <Button
+               {(currentRow.Items.length > 0) && (<Button
                 label={"Next"}
                 class={"btnUpdate"}
                 onClick={getCategoryDataList}
-              />
+              />)}
             </div>
           </div>
         </div>
@@ -878,7 +909,7 @@ const InspectionReportEntry = (props) => {
             {/* <!-- Modal content --> */}
             <div class="modal-content-reportblock">
               <div class="modalHeader">
-                  <h4>Add/Edit Inspection Check List - {currentRow.InvoiceNo}</h4>
+                  <h4>Add/Edit Inspection Check List - {currentRow.InvoiceNo} - {currCategoryName}</h4>
               </div>
 
               {currentRow.Items &&
@@ -1203,7 +1234,7 @@ const InspectionReportEntry = (props) => {
                 <Button
                   label={"Back to List"}
                   class={"btnClose"}
-                  onClick={()=>panelShowHide(3)}
+                  onClick={getCategoryDataList}
                 />
                 <Button
                   label={"Save"}

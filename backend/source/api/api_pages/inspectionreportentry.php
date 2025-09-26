@@ -384,9 +384,13 @@ function dataAddEditMany($data)
 
 function getCategoryList($data)
 {
+
+	$TransactionId = trim($data->TransactionId);
+
 	try {
 		$dbh = new Db();
-		$query = "SELECT a.CategoryId, a.CategoryName
+		$query = "SELECT a.CategoryId, a.CategoryName, 
+		(select count(p.TransactionItemId) from t_transaction_items p where a.CategoryId=p.CategoryId and p.TransactionId=$TransactionId) as CheckCount
 		FROM `t_category` a
 		ORDER BY a.CategoryId ASC;";
 
