@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const InspectionReportImportModal = (props) => {
-  //console.log("props modal: ", props);
+  console.log("props modal: ", props);
   const serverpage = "inspectionreportentry"; // this is .php server page
   const [currentRow, setCurrentRow] = useState(props.currentRow);
   const [errorObject, setErrorObject] = useState({}); 
@@ -64,7 +64,7 @@ const InspectionReportImportModal = (props) => {
   
         setLoading(true); //Show loader
         apiCall.post(serverpage, { params }, apiOption()).then((res) => {
-          props.openNoticeModal({
+          props.masterProps.openNoticeModal({
             isOpen: true,
             msg: res.data.message,
             msgtype: res.data.success,
@@ -76,7 +76,7 @@ const InspectionReportImportModal = (props) => {
           }
         });
       } else {
-        props.openNoticeModal({
+        props.masterProps.openNoticeModal({
           isOpen: true,
           msg: "Please select file",
           msgtype: 0,

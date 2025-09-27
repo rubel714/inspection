@@ -50,10 +50,11 @@ function getDataList($data)
 		a.InvoiceNo,a.BuyerName,a.SupplierName,a.FactoryName,a.CoverFilePages,
 		a.`UserId`, a.StatusId, b.`UserName`,c.`StatusName`, a.CoverFileUrl,'' CoverFileUrlUpload,
 		case when a.CoverFileUrl is null then '' else 'Yes' end as CoverFileUrlStatus,a.ManyImgPrefix,'' Items,
-		ifnull(a.TemplateId,0) as TemplateId
+		ifnull(a.TemplateId,0) as TemplateId,d.TemplateName
 	   FROM `t_transaction` a
 	   INNER JOIN `t_users` b ON a.`UserId` = b.`UserId`
 	   INNER JOIN `t_status` c ON a.`StatusId` = c.`StatusId`
+	   LEFT JOIN `t_template` d ON a.`TemplateId` = d.`TemplateId`
 	   where (a.TransactionId = $pTransactionId OR $pTransactionId=0)
 	   ORDER BY a.`TransactionDate` DESC, a.InvoiceNo ASC;";
 
@@ -526,6 +527,13 @@ function importInspectionReport($data)
 		$lan = trim($data->lan);
 		$UserId = trim($data->UserId);
 		$FileNameString = $data->rowData;
+		$ClientId = 1;
+
+		$TransactionTypeId = 1;
+		$StatusId = 1;
+		$CoverFilePages=null;
+		$CoverFileUrl=null;
+		$ManyImgPrefix=time();
 
 		try {
 
@@ -534,82 +542,17 @@ function importInspectionReport($data)
 
 			$prefix = 123;
 			$FileName = $FileNameString ? ConvertCSVFile($FileNameString, $prefix) : null;
-			// $TransactionDate = date("Y-m-d H:i:s");
-
-
-			// $query = "SELECT a.CustomerId, b.CustomerCode, c.BusinessLineCode, a.UserId 
-			// FROM t_customer_map a 
-			// inner join t_customer b on a.CustomerId=b.CustomerId
-			// inner join t_businessline c on a.BusinessLineId=c.BusinessLineId;";
-
-			// $resultdata = $dbh->query($query);
-			// $CustomerUserList = array();
-			// foreach ($resultdata as $row) {
-			// 		$CustomerUserList[$row['CustomerCode']][$row['BusinessLineCode']] = $row["UserId"];
-			// }
-// echo "<pre>";
-// 		print_r($CustomerUserList);
-		
-// 		exit;
-
-
-			//Insert Master
-			// $q = new insertq();
-			// $q->table = 't_invoice';
-			// $q->columns = ['TransactionDate', 'FileName', 'UserId'];
-			// $q->values = [$TransactionDate, $FileName, $UserId];
-			// $q->pks = ['InvoiceId'];
-			// $q->bUseInsetId = true;
-			// $q->build_query();
-			// $aQuerys[] = $q;
-
-
-
-
 
 			$fileDir = '../../../image/invoicefiles/' . $FileName;
 			$rowcounter = 0;
 			$csvFileContext = fopen($fileDir, "r");
 
 			//CSV file column index
-			$NameIdx = 0;
-			$BusinessUnitIdx = 1;
-			$BudgetCodeIdx = 2;
-			$AccountCodeIdx = 3;
-			$AccountingPeriodIdx = 4;
-			$DebitCreditIdx = 5;
-			$DescriptionIdx = 6;
-			$JournalTypeIdx = 7;
-			$BaseAmountIdx = 8;
-			$TransactionDateIdx = 9;
-			$TransactionReferenceIdx = 10;
-			$AnalysisCode1Idx = 11;
-			$AnalysisCode2Idx = 12;
-			$AnalysisCode3Idx = 13;
-			$AnalysisCode4Idx = 14;
-			$AnalysisCode5Idx = 15;
-			$AnalysisCode6Idx = 16;
-			$AnalysisCode7Idx = 17;
-			$AnalysisCode8Idx = 18;
-			$AnalysisCode9Idx = 19;
-			$TransactionAmountIdx = 20;
-			$CurrencyCodeIdx = 21;
-			$GeneralDate1Idx = 22;
-			$GeneralDate2Idx = 23;
-			$GeneralDate3Idx = 24;
-			$GeneralDescription9Idx = 25;
-			$GeneralDescription4Idx = 26;
-			$GeneralDescription11Idx = 27;
-			$GeneralDescription2Idx = 28;
-			$GeneralDescription12Idx = 29;
-			$GeneralDescription13Idx = 30;
-			$GeneralDescription14Idx = 31;
-			$GeneralDescription15Idx = 32;
-			$GeneralDescription16Idx = 33;
-			$GeneralDescription17Idx = 34;
-			$GeneralDescription18Idx = 35;
-			$GeneralDescription19Idx = 36;
-			$GeneralDescription20Idx = 37;
+			$INSPECTIONDATEIdx = 0;
+			$REPORTNUMBERIdx = 1;
+			$BUYERNAMEIdx = 2;
+			$SUPPLIERNAMEIdx = 3;
+			$FACTORYNAMEIdx = 4;
 
 			$TotalInvoice = 0;
 			while (! feof($csvFileContext)) {
@@ -624,9 +567,8 @@ function importInspectionReport($data)
 							"success" => 0,
 							"status" => 500,
 							"UserId" => $UserId,
-							"InvoiceId" => 0,
-							"TotalInvoice" => $TotalInvoice,
-							"message" => "There are no invoice in this file"
+							"TotalReports" => $TotalInvoice,
+							"message" => "There are no report in this file"
 						];
 						break;
 					}
@@ -646,79 +588,39 @@ function importInspectionReport($data)
 				// echo "<pre>";
 				// print_r($data);
 
-				$Name = $data[$NameIdx];
-				$BusinessUnit = $data[$BusinessUnitIdx];
-				$BudgetCode = $data[$BudgetCodeIdx];
-				$AccountCode = $data[$AccountCodeIdx];
-				$AccountingPeriod = $data[$AccountingPeriodIdx];
-				$DebitCredit = $data[$DebitCreditIdx];
-				$Description = $data[$DescriptionIdx];
-				$JournalType = $data[$JournalTypeIdx];
-				$BaseAmount = $data[$BaseAmountIdx];
-				$TransactionDate = $data[$TransactionDateIdx];
-				$TransactionReference = $data[$TransactionReferenceIdx];
-				$AnalysisCode1 = $data[$AnalysisCode1Idx];
-				$AnalysisCode2 = $data[$AnalysisCode2Idx];
-				$AnalysisCode3 = $data[$AnalysisCode3Idx];
-				$AnalysisCode4 = $data[$AnalysisCode4Idx];
-				$AnalysisCode5 = $data[$AnalysisCode5Idx];
-				$AnalysisCode6 = $data[$AnalysisCode6Idx];
-				$AnalysisCode7 = $data[$AnalysisCode7Idx];
-				$AnalysisCode8 = $data[$AnalysisCode8Idx];
-				$AnalysisCode9 = $data[$AnalysisCode9Idx];
-				$TransactionAmount = $data[$TransactionAmountIdx];
-				$CurrencyCode = $data[$CurrencyCodeIdx];
-				$GeneralDate1 = $data[$GeneralDate1Idx];
-				$GeneralDate2 = $data[$GeneralDate2Idx];
-				$GeneralDate3 = $data[$GeneralDate3Idx];
-				$GeneralDescription9 = $data[$GeneralDescription9Idx];
-				$GeneralDescription4 = $data[$GeneralDescription4Idx];
-				$GeneralDescription11 = $data[$GeneralDescription11Idx];
-				$GeneralDescription2 = $data[$GeneralDescription2Idx];
-				$GeneralDescription12 = $data[$GeneralDescription12Idx];
-				$GeneralDescription13 = $data[$GeneralDescription13Idx];
-				$GeneralDescription14 = $data[$GeneralDescription14Idx];
-				$GeneralDescription15 = $data[$GeneralDescription15Idx];
-				$GeneralDescription16 = $data[$GeneralDescription16Idx];
-				$GeneralDescription17 = $data[$GeneralDescription17Idx];
-				$GeneralDescription18 = $data[$GeneralDescription18Idx];
-				$GeneralDescription19 = $data[$GeneralDescription19Idx];
-				$GeneralDescription20 = $data[$GeneralDescription20Idx];
+				$INSPECTIONDATE = $data[$INSPECTIONDATEIdx];
+				$REPORTNUMBER = $data[$REPORTNUMBERIdx];
+				$BUYERNAME = $data[$BUYERNAMEIdx];
+				$SUPPLIERNAME = $data[$SUPPLIERNAMEIdx];
+				$FACTORYNAME = $data[$FACTORYNAMEIdx];
 
-				$CustomerUserId = null;
-				if(array_key_exists($AccountCode, $CustomerUserList)){
-					if(array_key_exists($AnalysisCode3, $CustomerUserList[$AccountCode])){
-						$CustomerUserId = $CustomerUserList[$AccountCode][$AnalysisCode3];
-					}
-				}
+				$dt = DateTime::createFromFormat("d-M-y", $INSPECTIONDATE); //17-Sep-25
+				$TransactionDate =$dt->format("20y-m-d"); // output: 25-09-17
 
-				//Mrinal bhai confirmed only DebitCredit = D will be save
-				if($DebitCredit != "D"){
-					continue;
-				}
+				$ManyImgPrefix=$ManyImgPrefix+1;
 
 				$q = new insertq();
-				$q->table = 't_invoiceitems';
-				$q->columns = ['InvoiceId', 'Name', 'BusinessUnit', 'BudgetCode', 'AccountCode', 'AccountingPeriod', 'DebitCredit', 'Description', 'JournalType', 'BaseAmount', 'TransactionDate', 'TransactionReference', 'AnalysisCode1', 'AnalysisCode2', 'AnalysisCode3', 'AnalysisCode4', 'AnalysisCode5', 'AnalysisCode6', 'AnalysisCode7', 'AnalysisCode8', 'AnalysisCode9', 'TransactionAmount', 'CurrencyCode', 'GeneralDate1', 'GeneralDate2', 'GeneralDate3', 'GeneralDescription9', 'GeneralDescription4', 'GeneralDescription11', 'GeneralDescription2', 'GeneralDescription12', 'GeneralDescription13', 'GeneralDescription14', 'GeneralDescription15', 'GeneralDescription16', 'GeneralDescription17', 'GeneralDescription18', 'GeneralDescription19', 'GeneralDescription20','CustomerUserId'];
-				$q->values = ['[LastInsertedId]', $Name, $BusinessUnit, $BudgetCode, $AccountCode, $AccountingPeriod, $DebitCredit, $Description, $JournalType, $BaseAmount, $TransactionDate, $TransactionReference, $AnalysisCode1, $AnalysisCode2, $AnalysisCode3, $AnalysisCode4, $AnalysisCode5, $AnalysisCode6, $AnalysisCode7, $AnalysisCode8, $AnalysisCode9, $TransactionAmount, $CurrencyCode, $GeneralDate1, $GeneralDate2, $GeneralDate3, $GeneralDescription9, $GeneralDescription4, $GeneralDescription11, $GeneralDescription2, $GeneralDescription12, $GeneralDescription13, $GeneralDescription14, $GeneralDescription15, $GeneralDescription16, $GeneralDescription17, $GeneralDescription18, $GeneralDescription19, $GeneralDescription20, $CustomerUserId];
-				$q->pks = ['InvoiceItemId'];
-				$q->bUseInsetId = false;
+				$q->table = 't_transaction';
+				$q->columns = ['ClientId', 'TransactionTypeId', 'TransactionDate', 'InvoiceNo', 'BuyerName', 'SupplierName', 'FactoryName', 'CoverFilePages', 'CoverFileUrl', 'UserId', 'StatusId', 'ManyImgPrefix'];
+				$q->values = [$ClientId, $TransactionTypeId, $TransactionDate, $REPORTNUMBER, $BUYERNAME, $SUPPLIERNAME, $FACTORYNAME, $CoverFilePages, $CoverFileUrl, $UserId, $StatusId, $ManyImgPrefix];
+				$q->pks = ['TransactionId'];
+				$q->bUseInsetId = true;
 				$q->build_query();
 				$aQuerys[] = $q;
+
 				$TotalInvoice++;
 			}
 
 			$res = exec_query($aQuerys, $UserId, $lan);
 			$success = ($res['msgType'] == 'success') ? 1 : 0;
 			$status = ($res['msgType'] == 'success') ? 200 : 500;
-			$message = ($res['msgType'] == 'success') ? "Invoice imported successfully" : $res['msg'];
-			$InvoiceId = ($res['msgType'] == 'success') ? $res['InvoiceId'] : 0;
+			$message = ($res['msgType'] == 'success') ? $TotalInvoice." report(s) imported successfully" : $res['msg'];
+			// $InvoiceId = ($res['msgType'] == 'success') ? $res['InvoiceId'] : 0;
 
 			$returnData = [
 				"success" => $success,
 				"status" => $status,
 				"UserId" => $UserId,
-				"InvoiceId" => $InvoiceId,
 				"TotalInvoice" => $TotalInvoice,
 				"message" => $message
 			];

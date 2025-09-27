@@ -151,6 +151,7 @@ const InspectionReportEntry = (props) => {
       filter: true,
       width: "7%",
     },
+
     {
       field: "BuyerName",
       label: "Buyer",
@@ -172,6 +173,15 @@ const InspectionReportEntry = (props) => {
     {
       field: "FactoryName",
       label: "Factory",
+      align: "left",
+      visible: true,
+      sort: true,
+      filter: true,
+      // width: "12%",
+    },
+    {
+      field: "TemplateName",
+      label: "Template",
       align: "left",
       visible: true,
       sort: true,
@@ -273,7 +283,7 @@ const InspectionReportEntry = (props) => {
   }
 
   const importData = () => {
-setShowImportModal(true);
+    setShowImportModal(true);
   }
 
   const addData = () => {
@@ -837,7 +847,7 @@ setShowImportModal(true);
             class={"btnPrint"}
             onClick={PrintPDFExcelExportFunction}
           /> */}
-            {/* <Button label={"IMPORT"} class={"btnClose"} onClick={importData} /> */}
+            <Button label={"IMPORT"} class={"btnClose"} onClick={importData} />
             <Button label={"ADD"} class={"btnAdd"} onClick={addData} />
           </div>
 
