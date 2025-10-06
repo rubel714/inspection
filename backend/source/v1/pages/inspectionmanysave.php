@@ -8,6 +8,7 @@ try {
 	$TransactionId = isset($data['TransactionId']) ? checkNull($data['TransactionId']) : "";
 	$TransactionItemId = isset($data['TransactionItemId']) ? checkNull($data['TransactionItemId']) : "";
 	$CheckName = isset($data['CheckName']) ? checkNull($data['CheckName']) : "";
+	$CategoryId = isset($data['CategoryId']) ? checkNull($data['CategoryId']) : "";
 	$RowNo = isset($data['RowNo']) ? checkNull($data['RowNo']) : "";
 	$ColumnNo = isset($data['ColumnNo']) ? checkNull($data['ColumnNo']) : "";
 	$CheckType = isset($data['CheckType']) ? checkNull($data['CheckType']) : "";
@@ -20,6 +21,13 @@ try {
 
 	if ($TransactionId == "") {
 		$apiResponse = json_encode(recordNotFoundMsg(0, "TransactionId param is missing"));
+		apiLogWrite("Output (" . date('Y_m_d_H_i_s') . "): " . $apiResponse);
+		echo $apiResponse;
+		return;
+	}
+
+	if ($CategoryId == "") {
+		$apiResponse = json_encode(recordNotFoundMsg(0, "CategoryId param is missing"));
 		apiLogWrite("Output (" . date('Y_m_d_H_i_s') . "): " . $apiResponse);
 		echo $apiResponse;
 		return;
@@ -68,11 +76,12 @@ try {
 		}
 		
 
-		$query = "INSERT INTO t_transaction_items (TransactionId,CheckName,RowNo,ColumnNo,CheckType,PhotoUrl,SortOrder) 
-		VALUES (:TransactionId, :CheckName, :RowNo, :ColumnNo,:CheckType, :PhotoUrl, :SortOrder);";
+		$query = "INSERT INTO t_transaction_items (TransactionId,CategoryId,CheckName,RowNo,ColumnNo,CheckType,PhotoUrl,SortOrder) 
+		VALUES (:TransactionId,:CategoryId, :CheckName, :RowNo, :ColumnNo,:CheckType, :PhotoUrl, :SortOrder);";
 
 		$pList = array(
 			'TransactionId' => $TransactionId,
+			'CategoryId' => $CategoryId,
 			'CheckName' => $CheckName,
 			'RowNo' => $RowNo,
 			'ColumnNo' => $ColumnNo,
