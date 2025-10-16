@@ -15,6 +15,11 @@ try {
 		return;
 	}
 
+		/**Get max sortorder*/
+		$query = "SELECT TemplateId	FROM `t_transaction` where TransactionId = $TransactionId;";
+		$resultdatalist = $db->query($query);
+		$TemplateId = $resultdatalist[0]["TemplateId"];
+
 
 		/**Get max sortorder*/
 		$query = "SELECT ifnull(max(SortOrder),0) as MaxSortOrder
@@ -23,19 +28,24 @@ try {
 		$resultdatalist = $db->query($query);
 		$MaxSortOrder = $resultdatalist[0]["MaxSortOrder"];
 
+		$RowNo = "reportcheckblock-width-half";
+		$ColumnNo = "reportcheckblock-height-onethird";
 		$PhotoUrl = "placeholder.jpg";
 
 		$query = "INSERT INTO t_transaction_items (TransactionId,CategoryId,CheckId, CheckName, RowNo, ColumnNo, 
 				PhotoUrl,CheckType, SortOrder) 
-				select TransactionId, CategoryId, CheckId, CheckName, RowNo, ColumnNo,
-				:PhotoUrl, :CheckType, (ROW_NUMBER() OVER (ORDER BY TransactionItemId))+$MaxSortOrder AS SortOrder
-				from t_transaction_items 
-				where TransactionId=:TransactionId;";
+				select $TransactionId TransactionId, b.CategoryId, b.CheckId, b.CheckName, :RowNo, :ColumnNo,
+				:PhotoUrl, :CheckType, (ROW_NUMBER() OVER (ORDER BY a.TemplateCheckListMapId))+$MaxSortOrder AS SortOrder
+				from t_template_checklist_map a
+				inner join t_checklist b on a.CheckId=b.CheckId
+				where a.TemplateId=:TemplateId;";
 
 		$pList = array(
+			'RowNo' => $RowNo,
+			'ColumnNo' => $ColumnNo,
 			'PhotoUrl' => $PhotoUrl,
 			'CheckType' => $CheckType,
-			'TransactionId' => $TransactionId
+			'TemplateId' => $TemplateId
 		);
 
 		$db->bindMore($pList);
