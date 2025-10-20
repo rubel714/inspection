@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useEffect, useState } from "react";
 import { Button } from "../../../components/CustomControl/Button";
-import { DeleteOutline, Edit } from "@material-ui/icons";
+import { DeleteOutline, Edit, ArrowUpward,ArrowDownward } from "@material-ui/icons";
 import ExecuteQueryHook from "../../../components/hooks/ExecuteQueryHook";
 import {
   apiCall,
@@ -15,6 +15,7 @@ const TemplateAddEditModal = (props) => {
   const serverpage = "template"; // this is .php server page
   const [currentRow, setCurrentRow] = useState(props.currentRow);
   const [errorObject, setErrorObject] = useState({});
+  const [filterType, setFilterType] = useState(0);
   // const [checkList, setCheckList] = useState(props.currentRow.CheckListMaped || []);
   // console.log('props.currentRow.CheckListMaped: ', props.currentRow.CheckListMaped);
   const UserInfo = LoginUserInfo();
@@ -25,7 +26,7 @@ const TemplateAddEditModal = (props) => {
 
     React.useEffect(() => {
       getDataList();
-    }, []);
+    }, [filterType]);
     
     /**Get data for table list */
     function getDataList() {
@@ -34,6 +35,7 @@ const TemplateAddEditModal = (props) => {
         lan: language(),
         UserId: UserInfo.UserId,
         TemplateId: props.currentRow.id,
+        FilterType: filterType
       };
       // console.log('LoginUserInfo params: ', params);
   
@@ -103,7 +105,7 @@ const TemplateAddEditModal = (props) => {
     {
       field: "custom",
       label: "Action",
-      width: "4%",
+      width: "15%",
       align: "left",
       visible: true,
       sort: false,
@@ -114,7 +116,7 @@ const TemplateAddEditModal = (props) => {
       label: "Check Name",
       align: "left",
       visible: true,
-      sort: true,
+      sort: false,
       filter: true,
     },
     {
@@ -122,7 +124,7 @@ const TemplateAddEditModal = (props) => {
       label: "Category",
       align: "left",
       visible: true,
-      sort: true,
+      sort: false,
       filter: true,
     },
   ];
@@ -131,6 +133,8 @@ const TemplateAddEditModal = (props) => {
   function actioncontrol(rowData) {
     return (
       <>
+
+
         {/* <Edit
           className={"table-edit-icon"}
           onClick={() => {
@@ -159,6 +163,27 @@ const TemplateAddEditModal = (props) => {
             Yes
           </span>
         )}
+
+
+      {rowData.IsAssigned === 1 && (
+        <>
+        <ArrowUpward
+          className={"table-edit-icon ml-10"}
+          onClick={() => {
+           changeOrder("up",rowData);
+          }}
+        />
+
+
+         <ArrowDownward
+          className={"table-edit-icon mr-10"}
+          onClick={() => {
+           changeOrder("down",rowData);
+          }}
+        />
+        </>
+      )}
+       
       </>
     );
   }
@@ -207,6 +232,62 @@ const TemplateAddEditModal = (props) => {
   }
 
 
+  
+  const changeOrder = (type, rowData) => {
+    // console.log('dataList: ', dataList);
+    // console.log('dataList[2]: ', dataList[2]);
+    console.log('rowData: ', rowData);
+
+    let currIndx = -1;
+    dataList.forEach((element, index) => {
+      if(element.id === rowData.id){
+        currIndx = index;
+        console.log('Found at index: ', index);
+      } 
+    });
+
+    console.log('currIndx: ', currIndx);
+
+    let TorowData = null;
+    if(type === "up" && currIndx > 0){
+      TorowData = dataList[currIndx - 1];
+    }else if(type === "down" && currIndx < dataList.length -1){
+      TorowData = dataList[currIndx + 1];
+    }
+
+    console.log('TorowData: ', TorowData);
+
+    if(TorowData){
+      changeOrderApi(type,rowData,TorowData);
+    }
+  };
+
+  function changeOrderApi(type,rowData,TorowData) {
+   
+    let params = {
+      action: "changeOrder",
+      lan: language(),
+      UserId: UserInfo.UserId,
+      type: type,
+      rowData: rowData,
+      toRowData: TorowData,
+    };
+
+    apiCall.post(serverpage, { params }, apiOption()).then((res) => {
+      getDataList();
+    });
+  }
+ 
+  function handleChangeCheck(e) {
+     console.log('e.target.checked: ', e.target.checked);
+      if(e.target.checked){
+          setFilterType(1);
+      }else{
+          setFilterType(0);
+      }
+     
+  }
+
 
   return (
     <>
@@ -245,6 +326,19 @@ const TemplateAddEditModal = (props) => {
           </div>
 
           {currentRow.id && (<div class="">
+
+            {/* <div style={{"margin":"5px", "font-weight":"bold"}}  >
+              <label>Show Only Assigned</label>
+              <input 
+                id="FilterType" 
+                name="FilterType" 
+                type = "checkbox" 
+                checked={filterType === 0 ? false : true} 
+                onChange = {handleChangeCheck} 
+              />
+            </div> */}
+
+
             <CustomTable
               columns={columnList}
               rows={dataList ? dataList : {}}

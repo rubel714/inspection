@@ -179,7 +179,7 @@ const Template = (props) => {
     });
 
     rowData.CheckListMaped = data;
-    console.log('data++++++++++++++: ', data);
+    // console.log('data++++++++++++++: ', data);
     // console.log('checkList: ', checkList);
     // setCheckListMaped(data);
 

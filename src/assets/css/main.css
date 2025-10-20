@@ -587,6 +587,12 @@ input {
 .pt-5 {
   padding-top: 5px;
 }
+.ml-10 {
+  margin-left: 10px !important;
+} 
+.mr-10 {
+  margin-right: 10px !important;
+} 
 .chosen_dropdown_font {
   font-size: 12px !important;
 }
