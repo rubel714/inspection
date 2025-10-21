@@ -553,7 +553,10 @@ input {
   color: brown;
   height: 16px !important;
 }
-
+.table-swap-icon {
+  color: rgb(0, 0, 0);
+  height: 20px !important;
+}
 /* .table-view-icon{
     color:black;
     height: 16px !important;

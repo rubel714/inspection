@@ -28,6 +28,12 @@ switch ($task) {
 	case "deleteData":
 		$returnData = deleteData($data);
 		break;
+	case "getSingleReportCheckDataList":
+		$returnData = getSingleReportCheckDataList($data);
+		break;
+	case "changeCheckListOrder":
+		$returnData = changeCheckListOrder($data);
+		break;
 	case "importInspectionReport":
 		$returnData = importInspectionReport($data);
 		break;
@@ -513,9 +519,89 @@ function ConvertImage($base64_string, $prefix)
 }
 
 
+function getSingleReportCheckDataList($data){
+
+	$TransactionId = $data->TransactionId;
+	
+	try{
+		$dbh = new Db();
+		$query = "SELECT a.TransactionItemId as id, a.TransactionItemId,a.CheckName, b.CategoryName, a.SortOrder
+		FROM t_transaction_items a
+		inner join t_category b on a.CategoryId=b.CategoryId
+		where a.TransactionId=$TransactionId
+		ORDER BY a.SortOrder ASC;";		
+		$resultdata = $dbh->query($query);
+		
+		$returnData = [
+			"success" => 1,
+			"status" => 200,
+			"message" => "",
+			"datalist" => $resultdata
+		];
+
+	}catch(PDOException $e){
+		$returnData = msg(0,500,$e->getMessage());
+	}
+	
+	return $returnData;
+}
 
 
+function changeCheckListOrder($data)
+{
 
+	if ($_SERVER["REQUEST_METHOD"] != "POST") {
+		return $returnData = msg(0, 404, 'Page Not Found!');
+	}{
+
+		$FromId = $data->rowData->TransactionItemId;
+		$FromSortOrder = $data->rowData->SortOrder;
+
+		$ToId = $data->toRowData->TransactionItemId;
+		$ToSortOrder = $data->toRowData->SortOrder;
+
+		$lan = trim($data->lan);
+		$UserId = trim($data->UserId);
+
+		try {
+
+			$aQuerys = array();
+		
+			$u = new updateq();
+			$u->table = 't_transaction_items';
+			$u->columns = ['SortOrder'];
+			$u->values = [$ToSortOrder];
+			$u->pks = ['TransactionItemId'];
+			$u->pk_values = [$FromId];
+			$u->build_query();
+			$aQuerys[] = $u;
+
+			$u = new updateq();
+			$u->table = 't_transaction_items';
+			$u->columns = ['SortOrder'];
+			$u->values = [$FromSortOrder];
+			$u->pks = ['TransactionItemId'];
+			$u->pk_values = [$ToId];
+			$u->build_query();
+			$aQuerys[] = $u;
+
+			$res = exec_query($aQuerys, $UserId, $lan);
+			$success = ($res['msgType'] == 'success') ? 1 : 0;
+			$status = ($res['msgType'] == 'success') ? 200 : 500;
+
+			$returnData = [
+				"success" => $success,
+				"status" => $status,
+				"UserId" => $UserId,
+				"message" => $res['msg']
+			];
+		} catch (PDOException $e) {
+			$returnData = msg(0, 500, $e->getMessage());
+		}
+
+		return $returnData;
+	}
+}
 
 function importInspectionReport($data)
 {

@@ -24,6 +24,9 @@ switch ($task) {
 	case "assignData":
 		$returnData = assignData($data);
 		break;
+	case "changeOrder":
+		$returnData = changeOrder($data);
+		break;
 	default:
 		echo "{failure:true}";
 		break;
@@ -179,15 +182,22 @@ function deleteData($data)
 function getCheckDataList($data){
 
 		$TemplateId = $data->TemplateId;
+		$FilterType = $data->FilterType;
+
+		if($FilterType == 1){
+			$join = " inner ";	
+		}else{
+			$join = " left ";
+		}
 	
 	try{
 		$dbh = new Db();
-		$query = "SELECT t_checklist.CheckId AS id, CheckName,t_checklist.CategoryId, Sequence, CategoryName, 
-		case when t_template_checklist_map.CheckId is null then 0 else 1 end IsAssigned
+		$query = "SELECT t_checklist.CheckId AS id, CheckName,t_checklist.CategoryId, SortOrder, CategoryName, 
+		case when t_template_checklist_map.CheckId is null then 0 else 1 end IsAssigned, t_template_checklist_map.TemplateCheckListMapId
 		FROM t_checklist 
-		inner join t_category on t_category.CategoryId=t_checklist.CategoryId
-		left join t_template_checklist_map on t_template_checklist_map.CheckId=t_checklist.CheckId and t_template_checklist_map.TemplateId=$TemplateId
-		ORDER BY `Sequence` ASC;";		
+		$join join t_category on t_category.CategoryId=t_checklist.CategoryId
+		$join join t_template_checklist_map on t_template_checklist_map.CheckId=t_checklist.CheckId and t_template_checklist_map.TemplateId=$TemplateId
+		ORDER BY IsAssigned desc, SortOrder ASC, `Sequence` ASC;";		
 		
 		$resultdata = $dbh->query($query);
 		
@@ -224,10 +234,18 @@ function assignData($data)
 
 			$aQuerys = array();
 			if($IsAssigned === 1){
+
+				$dbh = new Db();
+				$query = "SELECT ifnull(MAX(SortOrder),0)+1 AS NextSortOrder
+				FROM t_template_checklist_map where TemplateId=$TemplateId;";
+				
+				$resultdata = $dbh->query($query);
+				$NextSortOrder = $resultdata[0]['NextSortOrder'];
+				
 				$q = new insertq();
 				$q->table = 't_template_checklist_map';
-				$q->columns = ['TemplateId','CheckId'];
-				$q->values = [$TemplateId,$CheckId];
+				$q->columns = ['TemplateId','CheckId','SortOrder'];
+				$q->values = [$TemplateId,$CheckId,$NextSortOrder];
 				$q->pks = ['TemplateCheckListMapId'];
 				$q->bUseInsetId = false;
 				$q->build_query();
@@ -241,6 +259,65 @@ function assignData($data)
 				$d->build_query();
 				$aQuerys[] = $d;
 			}
+
+			$res = exec_query($aQuerys, $UserId, $lan);
+			$success = ($res['msgType'] == 'success') ? 1 : 0;
+			$status = ($res['msgType'] == 'success') ? 200 : 500;
+
+			$returnData = [
+				"success" => $success,
+				"status" => $status,
+				"UserId" => $UserId,
+				"message" => $res['msg']
+			];
+		} catch (PDOException $e) {
+			$returnData = msg(0, 500, $e->getMessage());
+		}
+
+		return $returnData;
+	}
+}
+
+
+
+function changeOrder($data)
+{
+
+	if ($_SERVER["REQUEST_METHOD"] != "POST") {
+		return $returnData = msg(0, 404, 'Page Not Found!');
+	}{
+
+		$FromId = $data->rowData->TemplateCheckListMapId;
+		$FromSortOrder = $data->rowData->SortOrder;
+
+		$ToId = $data->toRowData->TemplateCheckListMapId;
+		$ToSortOrder = $data->toRowData->SortOrder;
+
+		$lan = trim($data->lan);
+		$UserId = trim($data->UserId);
+
+
+		try {
+
+			$aQuerys = array();
+		
+			$u = new updateq();
+			$u->table = 't_template_checklist_map';
+			$u->columns = ['SortOrder'];
+			$u->values = [$ToSortOrder];
+			$u->pks = ['TemplateCheckListMapId'];
+			$u->pk_values = [$FromId];
+			$u->build_query();
+			$aQuerys[] = $u;
+
+			$u = new updateq();
+			$u->table = 't_template_checklist_map';
+			$u->columns = ['SortOrder'];
+			$u->values = [$FromSortOrder];
+			$u->pks = ['TemplateCheckListMapId'];
+			$u->pk_values = [$ToId];
+			$u->build_query();
+			$aQuerys[] = $u;
 
 			$res = exec_query($aQuerys, $UserId, $lan);
 			$success = ($res['msgType'] == 'success') ? 1 : 0;

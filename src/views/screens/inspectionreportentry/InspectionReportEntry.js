@@ -5,7 +5,8 @@ import {
   Edit,
   AddAPhoto,
   PictureAsPdf,
-  Add
+  Add,
+  SwapVert
 } from "@material-ui/icons";
 import { Button } from "../../../components/CustomControl/Button";
 import Autocomplete from "@material-ui/lab/Autocomplete";
@@ -23,6 +24,7 @@ import ExecuteQueryHook from "../../../components/hooks/ExecuteQueryHook";
 import moment from "moment";
 import InspectionReportImportModal from "./InspectionReportImportModal";
 import InspectionReportEntryAddEditModal from "./InspectionReportEntryAddEditModal";
+import CheckListSortModal from "./CheckListSortModal";
 import CheckListModal from "./CheckListModal";
 
 const InspectionReportEntry = (props) => {
@@ -32,6 +34,7 @@ const InspectionReportEntry = (props) => {
   const [bFirst, setBFirst] = useState(true);
   const [currentRow, setCurrentRow] = useState([]);
   const [currentRowDelete, setCurrentRowDelete] = useState([]);
+  const [showSortModal, setShowSortModal] = useState(false); //true=show sort modal, false=hide sort modal
   const [showModal, setShowModal] = useState(false); //true=show modal, false=hide modal
   const [showImportModal, setShowImportModal] = useState(false); //true=show import modal, false=hide import modal
 
@@ -258,6 +261,14 @@ const InspectionReportEntry = (props) => {
           }}
         ></PictureAsPdf>
 
+         <SwapVert
+          titleAccess="Change Checklist Order"
+          className={"table-swap-icon"}
+          onClick={() => {
+            CheckListOrderChange(rowData);
+          }}
+        ></SwapVert>
+
        {rowData.StatusId==1 && (<AddAPhoto
           className={"table-addimg-icon"}
           onClick={() => {
@@ -314,6 +325,23 @@ const InspectionReportEntry = (props) => {
   
     openModal();
   };
+
+  const CheckListOrderChange = (rowData) => {
+    console.log('rowData CheckListOrderChange: ', rowData);
+    setCurrentRow(rowData);
+  
+    openSortModal();
+  };
+
+  function openSortModal() {
+    setShowSortModal(true); //true=modal sort show, false=modal sort hide
+  }
+
+  function sortModalCallback(response) {
+    getDataList();
+    setShowSortModal(false); //true=modal sort show, false=modal sort hide
+  }
+
 
   function handleCheckListModal(Idx) {
     setCurrentCheckIdx(Idx);
@@ -1421,6 +1449,13 @@ const InspectionReportEntry = (props) => {
           masterProps={props}
           currentRow={currentRow}
           modalCallback={modalCallback}
+        />
+      )}
+      {showSortModal && (
+        <CheckListSortModal
+          masterProps={props}
+          currentRow={currentRow}
+          modalCallback={sortModalCallback}
         />
       )}
       {showCheckListModal && (
