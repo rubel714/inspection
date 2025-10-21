@@ -859,23 +859,13 @@ const InspectionReportEntry = (props) => {
 
           {/* <!-- TABLE SEARCH AND GROUP ADD --> */}
           <div class="searchAdd">
-            {/* <input type="text" placeholder="Search Product Group"/> */}
-            {/* <label></label> */}
-            {/* <button
-            onClick={() => {
-              addData();
-            }}
-            className="btnAdd"
-          >
-            ADD
-          </button> */}
-
+         
             {/* <Button
             label={"Export"}
             class={"btnPrint"}
             onClick={PrintPDFExcelExportFunction}
           /> */}
-            <Button label={"IMPORT"} class={"btnClose"} onClick={importData} />
+            {/* <Button label={"IMPORT"} class={"btnClose"} onClick={importData} /> */}
             <Button label={"ADD"} class={"btnAdd"} onClick={addData} />
           </div>
 

@@ -249,11 +249,11 @@ function bulkInsertCheckData($data)
 				$ManyImgPrefix = $resultdatalist[0]["ManyImgPrefix"];
 
 
-				$query = "SELECT a.CheckId,b.CheckName,b.Sequence
+				$query = "SELECT a.CheckId,b.CheckName,a.SortOrder
 					FROM t_template_checklist_map a
 					inner join t_checklist b on a.CheckId=b.CheckId and b.CategoryId=$CategoryId
 					WHERE a.TemplateId = $TemplateId
-					order by b.Sequence;";
+					order by a.SortOrder;";
 				$resultdatalist = $dbh->query($query);
 				
 
@@ -261,7 +261,7 @@ function bulkInsertCheckData($data)
 
 					$CheckId = $Item["CheckId"];
 					$CheckName = $Item["CheckName"];
-					$Sequence = $Item["Sequence"];
+					$SortOrder = $Item["SortOrder"];
 				
 					$RowNo = "reportcheckblock-width-half";
 					$ColumnNo = "reportcheckblock-height-onethird";
@@ -270,7 +270,7 @@ function bulkInsertCheckData($data)
 					$q = new insertq();
 					$q->table = 't_transaction_items';
 					$q->columns = ['TransactionId','CategoryId','CheckId', 'CheckName', 'RowNo', 'ColumnNo', 'PhotoUrl','CheckType', 'SortOrder'];
-					$q->values = [$TransactionId,$CategoryId,$CheckId, $CheckName, $RowNo, $ColumnNo, $PhotoUrl,$CheckType, $Sequence];
+					$q->values = [$TransactionId,$CategoryId,$CheckId, $CheckName, $RowNo, $ColumnNo, $PhotoUrl,$CheckType, $SortOrder];
 					$q->pks = ['TransactionItemId'];
 					$q->bUseInsetId = false;
 					$q->build_query();

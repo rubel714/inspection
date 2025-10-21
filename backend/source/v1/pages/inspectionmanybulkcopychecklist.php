@@ -38,7 +38,7 @@ try {
 				:PhotoUrl, :CheckType, (ROW_NUMBER() OVER (ORDER BY a.TemplateCheckListMapId))+$MaxSortOrder AS SortOrder
 				from t_template_checklist_map a
 				inner join t_checklist b on a.CheckId=b.CheckId
-				where a.TemplateId=:TemplateId;";
+				where a.TemplateId=:TemplateId ORDER BY a.SortOrder ASC;";
 
 		$pList = array(
 			'RowNo' => $RowNo,

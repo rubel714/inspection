@@ -43,19 +43,19 @@ try {
 		$TemplateId = $resultdatalist[0]["TemplateId"];
 		$ManyImgPrefix = $resultdatalist[0]["ManyImgPrefix"];
 
-
-		$query = "SELECT a.CheckId,b.CheckName,b.Sequence
+// ORDER BY a.SortOrder ASC
+		$query = "SELECT a.CheckId,b.CheckName,a.SortOrder
 		FROM t_template_checklist_map a
 		inner join t_checklist b on a.CheckId=b.CheckId and b.CategoryId=$CategoryId
 		WHERE a.TemplateId = $TemplateId
-		order by b.Sequence;";
+		order by a.SortOrder;";
 		$resultdatalist = $db->query($query);
 
 		foreach ($resultdatalist as $Item) {
 
 			$CheckId = $Item["CheckId"];
 			$CheckName = $Item["CheckName"];
-			$Sequence = $Item["Sequence"];
+			$SortOrder = $Item["SortOrder"];
 
 			$RowNo = "reportcheckblock-width-half";
 			$ColumnNo = "reportcheckblock-height-onethird";
@@ -73,7 +73,7 @@ try {
 				'ColumnNo' => $ColumnNo,
 				'PhotoUrl' => $PhotoUrl,
 				'CheckType' => $CheckType,
-				'SortOrder' => $Sequence
+				'SortOrder' => $SortOrder
 			);
 
 			$db->bindMore($pList);
