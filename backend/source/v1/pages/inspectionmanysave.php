@@ -68,12 +68,18 @@ try {
 
 	if ($TransactionItemId == "") {
 
-		if ($SortOrder == "") {
-			$apiResponse = json_encode(recordNotFoundMsg(0, "Sort Order param is missing"));
-			apiLogWrite("Output (" . date('Y_m_d_H_i_s') . "): " . $apiResponse);
-			echo $apiResponse;
-			return;
-		}
+		// if ($SortOrder == "") {
+		// 	$apiResponse = json_encode(recordNotFoundMsg(0, "Sort Order param is missing"));
+		// 	apiLogWrite("Output (" . date('Y_m_d_H_i_s') . "): " . $apiResponse);
+		// 	echo $apiResponse;
+		// 	return;
+		// }
+
+		$query = "SELECT ifnull(max(a.SortOrder),0) as MaxSortOrder
+		FROM t_transaction_items a
+		where a.TransactionId=$TransactionId;";
+		$resultdatalist = $db->query($query);
+		$SortOrder = $resultdatalist[0]["MaxSortOrder"];
 		
 
 		$query = "INSERT INTO t_transaction_items (TransactionId,CategoryId,CheckName,RowNo,ColumnNo,CheckType,PhotoUrl,SortOrder) 

@@ -23,8 +23,6 @@ try {
 		return;
 	}
 
-
-
 	/**Check Check list exist under this reports */
 	$query = "SELECT count(TransactionItemId) as ChkCount
 			FROM `t_transaction_items` a
@@ -43,7 +41,12 @@ try {
 		$TemplateId = $resultdatalist[0]["TemplateId"];
 		$ManyImgPrefix = $resultdatalist[0]["ManyImgPrefix"];
 
-// ORDER BY a.SortOrder ASC
+		$query = "SELECT ifnull(max(a.SortOrder),0) as MaxSortOrder
+		FROM t_transaction_items a
+		where a.TransactionId=$TransactionId;";
+		$resultdatalist = $db->query($query);
+		$SortOrder = $resultdatalist[0]["MaxSortOrder"];
+
 		$query = "SELECT a.CheckId,b.CheckName,a.SortOrder
 		FROM t_template_checklist_map a
 		inner join t_checklist b on a.CheckId=b.CheckId and b.CategoryId=$CategoryId
@@ -55,7 +58,7 @@ try {
 
 			$CheckId = $Item["CheckId"];
 			$CheckName = $Item["CheckName"];
-			$SortOrder = $Item["SortOrder"];
+			$SortOrder = $SortOrder + 1;
 
 			$RowNo = "reportcheckblock-width-half";
 			$ColumnNo = "reportcheckblock-height-onethird";

@@ -248,6 +248,7 @@ function bulkInsertCheckData($data)
 				$TemplateId = $resultdatalist[0]["TemplateId"];
 				$ManyImgPrefix = $resultdatalist[0]["ManyImgPrefix"];
 
+				$SortOrder = getMaxSortOrder($TransactionId, "t_transaction_items");
 
 				$query = "SELECT a.CheckId,b.CheckName,a.SortOrder
 					FROM t_template_checklist_map a
@@ -261,7 +262,7 @@ function bulkInsertCheckData($data)
 
 					$CheckId = $Item["CheckId"];
 					$CheckName = $Item["CheckName"];
-					$SortOrder = $Item["SortOrder"];
+					$SortOrder = $SortOrder + 1;
 				
 					$RowNo = "reportcheckblock-width-half";
 					$ColumnNo = "reportcheckblock-height-onethird";
@@ -328,7 +329,8 @@ function dataAddEditMany($data)
 		// print_r($Items);
 		try {
 
-			// $dbh = new Db();
+			$SortOrder = getMaxSortOrder($id,"t_transaction_items");
+
 			$aQuerys = array();
 
 			foreach ($currentRowDelete as $DelItem) {
@@ -342,6 +344,7 @@ function dataAddEditMany($data)
 				}
 			}
 
+			
 			foreach ($Items as $Item) {
 				$TransactionItemId = $Item->TransactionItemId;
 				$autoId = $Item->autoId;
@@ -350,10 +353,11 @@ function dataAddEditMany($data)
 				$ColumnNo = $Item->ColumnNo;
 				//$PhotoUrl = $Item->PhotoUrlChanged ? $Item->PhotoUrlChanged : $Item->PhotoUrl;
 				$PhotoUrl = $Item->PhotoUrlPreview ? ConvertImage($Item->PhotoUrlPreview, $ManyImgPrefix) : $Item->PhotoUrl;
-				$SortOrder = $Item->SortOrder;
+				
 				$CheckType = $Item->CheckType ? $Item->CheckType : "R";
 
 				if ($autoId == -1) {
+					$SortOrder = $SortOrder + 1;
 					$q = new insertq();
 					$q->table = 't_transaction_items';
 					$q->columns = ['TransactionId','CategoryId', 'CheckName', 'RowNo', 'ColumnNo', 'PhotoUrl', 'SortOrder','CheckType'];
@@ -365,8 +369,8 @@ function dataAddEditMany($data)
 				} else {
 					$u = new updateq();
 					$u->table = 't_transaction_items';
-					$u->columns = ['CheckName', 'RowNo', 'ColumnNo', 'PhotoUrl', 'SortOrder','CheckType'];
-					$u->values = [$CheckName, $RowNo, $ColumnNo, $PhotoUrl, $SortOrder,$CheckType];
+					$u->columns = ['CheckName', 'RowNo', 'ColumnNo', 'PhotoUrl', 'CheckType'];
+					$u->values = [$CheckName, $RowNo, $ColumnNo, $PhotoUrl, $CheckType];
 					$u->pks = ['TransactionItemId'];
 					$u->pk_values = [$TransactionItemId];
 					$u->build_query();
@@ -738,3 +742,22 @@ function ConvertCSVFile($base64_string, $prefix)
 }
 
 
+function getMaxSortOrder($Id,$TableName){
+	try {
+		$dbh = new Db();
+		$query = "";
+
+		if($TableName == "t_transaction_items"){
+			$query = "SELECT ifnull(max(a.SortOrder),0) as MaxSortOrder
+			FROM t_transaction_items a
+			where a.TransactionId=$Id;";
+		}
+
+		$resultdatalist = $dbh->query($query);
+		$MaxSortOrder = $resultdatalist[0]["MaxSortOrder"];
+
+		return $MaxSortOrder;
+	} catch (PDOException $e) {
+		return 0;
+	}
+}
