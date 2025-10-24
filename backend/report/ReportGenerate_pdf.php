@@ -317,10 +317,10 @@ foreach ($images as $img) {
     //$row_height = 230;
     $row_height = max($row_height, $total_height);
 }
-
 // $pdf->Output('images_with_labels.pdf', 'I');
 // $FileDirectory = dirname(__FILE__) . '/';
-$CheckListFileName = $ManyImgPrefix.'_checklistreport_'.date("Y_m_d_H_i_s").'.pdf';
+// $CheckListFileName = $ManyImgPrefix.'_checklistreport_'.date("Y_m_d_H_i_s").'.pdf';
+$CheckListFileName = $InvoiceNo.'_'.date("Y_m_d_H_i_s").'.pdf';
 $SecondFileName = $FileDirectory.$CheckListFileName;
 $pdf->Output($SecondFileName, 'F');//save file
 
