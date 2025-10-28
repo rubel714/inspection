@@ -684,8 +684,9 @@ function importInspectionReport($data)
 				$SUPPLIERNAME = $data[$SUPPLIERNAMEIdx];
 				$FACTORYNAME = $data[$FACTORYNAMEIdx];
 
-				$dt = DateTime::createFromFormat("d-M-y", $INSPECTIONDATE); //17-Sep-25
-				$TransactionDate =$dt->format("20y-m-d"); // output: 25-09-17
+				$dt = DateTime::createFromFormat("d-M-Y", $INSPECTIONDATE); //17-Sep-2025
+				$TransactionDate =$dt->format("Y-m-d"); // output: 2025-09-17
+				// $TransactionDate =$dt->format("20y-m-d"); // output: 2025-09-17
 
 				$ManyImgPrefix=$ManyImgPrefix+1;
 

@@ -70,9 +70,9 @@ const InspectionReportImportModal = (props) => {
             msgtype: res.data.success,
           });
   
+          setLoading(false); //Hide loader
           if (res.data.success === 1) {
-            setLoading(false); //Hide loader
-            importModalCallback();
+              importModalCallback();
           }
         });
       } else {

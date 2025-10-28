@@ -865,7 +865,7 @@ const InspectionReportEntry = (props) => {
             class={"btnPrint"}
             onClick={PrintPDFExcelExportFunction}
           /> */}
-            {/* <Button label={"IMPORT"} class={"btnClose"} onClick={importData} /> */}
+            <Button label={"IMPORT"} class={"btnClose"} onClick={importData} />
             <Button label={"ADD"} class={"btnAdd"} onClick={addData} />
           </div>
 
