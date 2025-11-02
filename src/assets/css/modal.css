@@ -442,3 +442,16 @@ column-gap: 2px;
     color:darkblue;
 }
   /* background-color: var(--primary-color); */
+
+
+  .bulk-image-block {
+    width: 120px;
+    height: 150px;
+    overflow: hidden;
+    border: 2px solid var(--input-border);
+    /* Add a border style */
+    box-sizing: border-box;
+    display:inline-grid;
+    padding: 5px;
+    /* Include the border in the box model */
+}

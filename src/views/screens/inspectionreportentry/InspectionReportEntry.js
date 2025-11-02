@@ -6,7 +6,8 @@ import {
   AddAPhoto,
   PictureAsPdf,
   Add,
-  SwapVert
+  SwapVert,
+  PhotoAlbum
 } from "@material-ui/icons";
 import { Button } from "../../../components/CustomControl/Button";
 import Autocomplete from "@material-ui/lab/Autocomplete";
@@ -25,6 +26,7 @@ import moment from "moment";
 import InspectionReportImportModal from "./InspectionReportImportModal";
 import InspectionReportEntryAddEditModal from "./InspectionReportEntryAddEditModal";
 import CheckListSortModal from "./CheckListSortModal";
+import BulkImagesModal from "./BulkImagesModal";
 import CheckListModal from "./CheckListModal";
 
 const InspectionReportEntry = (props) => {
@@ -35,6 +37,7 @@ const InspectionReportEntry = (props) => {
   const [currentRow, setCurrentRow] = useState([]);
   const [currentRowDelete, setCurrentRowDelete] = useState([]);
   const [showSortModal, setShowSortModal] = useState(false); //true=show sort modal, false=hide sort modal
+  const [showBulkImagesModal, setShowBulkImagesModal] = useState(false); //true=show sort modal, false=hide Bulk Images Modal
   const [showModal, setShowModal] = useState(false); //true=show modal, false=hide modal
   const [showImportModal, setShowImportModal] = useState(false); //true=show import modal, false=hide import modal
 
@@ -223,7 +226,7 @@ const InspectionReportEntry = (props) => {
       field: "custom",
       label: "Action",
       width: "12%",
-      align: "center",
+      align: "left",
       visible: true,
       sort: false,
       filter: false,
@@ -260,6 +263,14 @@ const InspectionReportEntry = (props) => {
             PDFGenerate(rowData.id);
           }}
         ></PictureAsPdf>
+
+         <PhotoAlbum
+          titleAccess="Change Checklist Order"
+          className={"table-swap-icon"}
+          onClick={() => {
+            VisibleBulkImageModal(rowData);
+          }}
+        ></PhotoAlbum>
 
          <SwapVert
           titleAccess="Change Checklist Order"
@@ -340,6 +351,25 @@ const InspectionReportEntry = (props) => {
   function sortModalCallback(response) {
     getDataList();
     setShowSortModal(false); //true=modal sort show, false=modal sort hide
+  }
+
+
+
+    const VisibleBulkImageModal = (rowData) => {
+    console.log('rowData VisibleBulkImageModal: ', rowData);
+    setCurrentRow(rowData);
+  
+    openBulkImagesModal();
+  };
+
+  
+  function openBulkImagesModal() {
+    setShowBulkImagesModal(true); //true=modal sort show, false=modal BulkImages hide
+  }
+
+  function BulkImagesModalCallback(response) {
+    getDataList();
+    setShowBulkImagesModal(false); //true=modal sort show, false=modal BulkImages hide
   }
 
 
@@ -1446,6 +1476,13 @@ const InspectionReportEntry = (props) => {
           masterProps={props}
           currentRow={currentRow}
           modalCallback={sortModalCallback}
+        />
+      )}
+      {showBulkImagesModal && (
+        <BulkImagesModal
+          masterProps={props}
+          currentRow={currentRow}
+          modalCallback={BulkImagesModalCallback}
         />
       )}
       {showCheckListModal && (

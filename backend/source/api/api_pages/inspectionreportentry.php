@@ -31,6 +31,9 @@ switch ($task) {
 	case "getSingleReportCheckDataList":
 		$returnData = getSingleReportCheckDataList($data);
 		break;
+	case "getBulkImages":
+		$returnData = getBulkImages($data);
+		break;
 	case "changeCheckListOrder":
 		$returnData = changeCheckListOrder($data);
 		break;
@@ -535,6 +538,39 @@ function getSingleReportCheckDataList($data){
 		where a.TransactionId=$TransactionId
 		ORDER BY a.SortOrder ASC;";		
 		$resultdata = $dbh->query($query);
+		
+		$returnData = [
+			"success" => 1,
+			"status" => 200,
+			"message" => "",
+			"datalist" => $resultdata
+		];
+
+	}catch(PDOException $e){
+		$returnData = msg(0,500,$e->getMessage());
+	}
+	
+	return $returnData;
+}
+
+function getBulkImages($data){
+
+	$TransactionId = $data->TransactionId;
+	$ManyImgPrefix = $data->ManyImgPrefix;
+	
+	try{
+
+		$path = "../../../image/transaction/" . $ManyImgPrefix.'/bulkimg';
+		$resultdata = array();
+		if (is_dir($path)) {
+			$files = scandir($path);
+
+			foreach($files as $file){
+				if($file != '.' && $file != '..'){
+					$resultdata[] = domainurl."image/transaction/" . $ManyImgPrefix."/bulkimg"."/".$file;
+				}
+			}
+		}
 		
 		$returnData = [
 			"success" => 1,
