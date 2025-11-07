@@ -297,39 +297,7 @@ foreach ($images as $img) {
 
     // Draw image
     //$x=5, $y=25, $w=200, $h=224
-    //$pdf->Image($img['file'], $x, $y, $w, $h, '', '', '', true);
-	
-		
-		
-	// ✅ 3. Draw 3:4 ratio box and insert image
-	$boxWidth  = $w;// $page_width;  // mm
-	$boxHeight = $h;//$page_height; // mm
-	// $boxWidth  = 90;  // mm
-	// $boxHeight = 120; // mm
-	//$x = 10;
-	//$y = 25;
-
-	$pdf->Rect($x, $y, $boxWidth, $boxHeight); // optional: container border
-	$pdf->Rect($x, $y, $w, $h); // optional: container border
-
-	$imageFile = $img['file'];//'example.jpg'; // your image path
-	list($imgW, $imgH) = getimagesize($imageFile);
-	$imgRatio = $imgW / $imgH;
-	$boxRatio = $boxWidth / $boxHeight;
-
-	if ($imgRatio > $boxRatio) {
-		$fitW = $boxWidth;
-		$fitH = $boxWidth / $imgRatio;
-	} else {
-		$fitH = $boxHeight;
-		$fitW = $boxHeight * $imgRatio;
-	}
-
-	$imgX = $x + ($boxWidth - $fitW) / 2;
-	$imgY = $y + ($boxHeight - $fitH) / 2;
-
-	$pdf->Image($img['file'], $imgX, $imgY, $fitW, $fitH, '', '', '', false, 300, '', false, false, 0, false, false, false);
-
+    $pdf->Image($img['file'], $x, $y, $w, $h, '', '', '', true);
 
     // Draw label below image
     //$x=5, $y + $h + 1 = 25+224+1
