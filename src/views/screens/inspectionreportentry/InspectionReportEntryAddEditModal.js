@@ -43,7 +43,10 @@ const InspectionReportEntryAddEditModal = (props) => {
   };
 
   const handleChangeMasterFile = (e) => {
-    // const { name, value } = e.target;
+    const { name, value } = e.target;
+    // console.log('name: ', name);
+
+
     let file = e.target.files[0];
     // console.log('file: ', file);
     if (file) {
@@ -57,7 +60,8 @@ const InspectionReportEntryAddEditModal = (props) => {
       reader.readAsDataURL(file);
       reader.onload = (event) => {
         // setPreview(event.target.result);
-        data["CoverFileUrlUpload"] = event.target.result;
+        data[name] = event.target.result;
+        // data["CoverFileUrlUpload"] = event.target.result;
         //  console.log('event.target.result: ', event.target.result);
         // console.log('From onload');
         setCurrentRow(data);
@@ -252,19 +256,6 @@ const InspectionReportEntryAddEditModal = (props) => {
               value={currentRow.FactoryName}
               onChange={(e) => handleChange(e)}
             />
-          </div>
-          <div class="contactmodalBody pt-10">
-            <label>Cover File</label>
-            <input
-              type="file"
-              id="PhotoUrl"
-              name="PhotoUrl"
-              accept="application/pdf"
-              style={{ color: "transparent" }}
-              //onChange={handleFileChange}
-              //onChange={(e) => handleFileChange(e, "PhotoUrl")}
-              onChange={(e) => handleChangeMasterFile(e)}
-            />
 
             <label>Cover File Page Count</label>
             <input
@@ -277,6 +268,35 @@ const InspectionReportEntryAddEditModal = (props) => {
               onChange={(e) => handleChange(e)}
             />
           </div>
+          <div class="contactmodalBody pt-10">
+            <label>Cover File</label>
+            <input
+              type="file"
+              id="CoverFileUrlUpload"
+              name="CoverFileUrlUpload"
+              accept="application/pdf"
+              style={{ color: "transparent" }}
+              //onChange={handleFileChange}
+              //onChange={(e) => handleFileChange(e, "CoverFileUrl")}
+              onChange={(e) => handleChangeMasterFile(e)}
+            />
+
+            <label>Footer File</label>
+            <input
+              type="file"
+              id="FooterFileUrlUpload"
+              name="FooterFileUrlUpload"
+              accept="application/pdf"
+              style={{ color: "transparent" }}
+              //onChange={handleFileChange}
+              //onChange={(e) => handleFileChange(e, "FooterFileUrl")}
+              onChange={(e) => handleChangeMasterFile(e)}
+            />
+
+    
+          </div>
+          
+      
 
           <div class="modalItem">
             {/* <Button

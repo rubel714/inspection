@@ -57,8 +57,11 @@ function getDataList($data)
 
 		$query = "SELECT a.TransactionId AS id,a.TransactionTypeId,DATE(a.`TransactionDate`) TransactionDate, 
 		a.InvoiceNo,a.BuyerName,a.SupplierName,a.FactoryName,a.CoverFilePages,
-		a.`UserId`, a.StatusId, b.`UserName`,c.`StatusName`, a.CoverFileUrl,'' CoverFileUrlUpload,
-		case when a.CoverFileUrl is null then '' else 'Yes' end as CoverFileUrlStatus,a.ManyImgPrefix,'' Items,
+		a.`UserId`, a.StatusId, b.`UserName`,c.`StatusName`, 
+		a.CoverFileUrl,'' CoverFileUrlUpload, case when a.CoverFileUrl is null then '' else 'Yes' end as CoverFileUrlStatus,
+		a.FooterFileUrl,'' FooterFileUrlUpload, case when a.FooterFileUrl is null then '' else 'Yes' end as FooterFileUrlStatus,
+		
+		a.ManyImgPrefix,'' Items,
 		ifnull(a.TemplateId,0) as TemplateId,d.TemplateName
 	   FROM `t_transaction` a
 	   INNER JOIN `t_users` b ON a.`UserId` = b.`UserId`
@@ -122,14 +125,19 @@ function dataAddEdit($data)
 		$TransactionDate = $data->rowData->TransactionDate;
 		$CoverFilePages = $data->rowData->CoverFilePages ? $data->rowData->CoverFilePages : null;
 		$ManyImgPrefix = $data->rowData->ManyImgPrefix;
-		$CoverFileUrl = $data->rowData->CoverFileUrlUpload ? ConvertFile($data->rowData->CoverFileUrlUpload, $ManyImgPrefix) : null;
+		$CoverFileUrl = $data->rowData->CoverFileUrlUpload ? ConvertFile($data->rowData->CoverFileUrlUpload, $ManyImgPrefix,"cover",null) : null;
+		$FooterFileUrl = $data->rowData->FooterFileUrlUpload ? ConvertFile($data->rowData->FooterFileUrlUpload, $ManyImgPrefix,"footer",null) : null;
+		
+		//a.FooterFileUrl,'' FooterFileUrlUpload, case when a.FooterFileUrl is null then '' else 'Yes' end as FooterFileUrlStatus,
+		//
+		
 		try {
 			$aQuerys = array();
 			if ($id == "") {
 				$q = new insertq();
 				$q->table = 't_transaction';
-				$q->columns = ['ClientId', 'TransactionTypeId', 'TransactionDate', 'InvoiceNo', 'BuyerName', 'SupplierName', 'FactoryName', 'CoverFilePages', 'CoverFileUrl', 'UserId', 'StatusId', 'ManyImgPrefix'];
-				$q->values = [$ClientId, $TransactionTypeId, $TransactionDate, $InvoiceNo, $BuyerName, $SupplierName, $FactoryName, $CoverFilePages, $CoverFileUrl, $UserId, $StatusId, $ManyImgPrefix];
+				$q->columns = ['ClientId', 'TransactionTypeId', 'TransactionDate', 'InvoiceNo', 'BuyerName', 'SupplierName', 'FactoryName', 'CoverFilePages', 'CoverFileUrl','FooterFileUrl', 'UserId', 'StatusId', 'ManyImgPrefix'];
+				$q->values = [$ClientId, $TransactionTypeId, $TransactionDate, $InvoiceNo, $BuyerName, $SupplierName, $FactoryName, $CoverFilePages, $CoverFileUrl, $FooterFileUrl, $UserId, $StatusId, $ManyImgPrefix];
 				$q->pks = ['TransactionId'];
 				$q->bUseInsetId = true;
 				$q->build_query();
@@ -137,14 +145,30 @@ function dataAddEdit($data)
 			} else {
 				$u = new updateq();
 				$u->table = 't_transaction';
+
+
+				$columns = ['TransactionDate', 'InvoiceNo', 'BuyerName', 'SupplierName', 'FactoryName', 'CoverFilePages', 'StatusId'];
+				$values = [$TransactionDate, $InvoiceNo, $BuyerName, $SupplierName, $FactoryName, $CoverFilePages, $StatusId];
+
 				if ($CoverFileUrl) {
-					$u->columns = ['TransactionDate', 'InvoiceNo', 'BuyerName', 'SupplierName', 'FactoryName', 'CoverFilePages', 'CoverFileUrl', 'StatusId'];
-					$u->values = [$TransactionDate, $InvoiceNo, $BuyerName, $SupplierName, $FactoryName, $CoverFilePages, $CoverFileUrl, $StatusId];
-				} else {
-					$u->columns = ['TransactionDate', 'InvoiceNo', 'BuyerName', 'SupplierName', 'FactoryName', 'CoverFilePages', 'StatusId'];
-					$u->values = [$TransactionDate, $InvoiceNo, $BuyerName, $SupplierName, $FactoryName, $CoverFilePages, $StatusId];
+					$columns[] = "CoverFileUrl";
+					$values[] = $CoverFileUrl;
 				}
 
+				if ($FooterFileUrl) {
+					$columns[] = "FooterFileUrl";
+					$values[] = $FooterFileUrl;
+				}
+				// if ($CoverFileUrl) {
+				// 	// $u->columns = ['TransactionDate', 'InvoiceNo', 'BuyerName', 'SupplierName', 'FactoryName', 'CoverFilePages', 'CoverFileUrl', 'StatusId'];
+				// 	// $u->values = [$TransactionDate, $InvoiceNo, $BuyerName, $SupplierName, $FactoryName, $CoverFilePages, $CoverFileUrl, $StatusId];
+				// } else {
+				// 	// $u->columns = ['TransactionDate', 'InvoiceNo', 'BuyerName', 'SupplierName', 'FactoryName', 'CoverFilePages', 'StatusId'];
+				// 	// $u->values = [$TransactionDate, $InvoiceNo, $BuyerName, $SupplierName, $FactoryName, $CoverFilePages, $StatusId];
+				// }
+
+				$u->columns = $columns;
+				$u->values = $values;
 				$u->pks = ['TransactionId'];
 				$u->pk_values = [$id];
 				$u->build_query();
@@ -484,7 +508,7 @@ function deleteData($data)
 
 
 
-function ConvertFile($base64_string, $prefix, $extention = null)
+function ConvertFile($base64_string, $prefix, $type, $extention = null)
 {
 
 	$path = "../../../image/transaction/" . $prefix;
@@ -499,7 +523,7 @@ function ConvertFile($base64_string, $prefix, $extention = null)
 		$extention = explode(';', explode('/', $exploded[0])[1])[0];
 	}
 	$decoded = base64_decode($exploded[1]);
-	$output_file = $prefix . "_cover_" . date("Y_m_d_H_i_s") . "_" . rand(1, 9999) . "." . $extention;
+	$output_file = $prefix . "_".$type."_" . date("Y_m_d_H_i_s") . "_" . rand(1, 9999) . "." . $extention;
 	file_put_contents($targetDir . "/" . $output_file, $decoded);
 	return $output_file;
 }

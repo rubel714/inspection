@@ -15,8 +15,10 @@ try{
 	$query = "SELECT a.TransactionId AS id,a.TransactionTypeId,
 	DATE_FORMAT(a.TransactionDate, '%d-%b-%Y') AS TransactionDate,
 		a.InvoiceNo,a.BuyerName,a.SupplierName,a.FactoryName,a.CoverFilePages,ifnull(a.TemplateId,0) as TemplateId,
-		a.`UserId`, a.StatusId, b.`UserName`,c.`StatusName`, a.CoverFileUrl,'' CoverFileUrlUpload,
-		case when a.CoverFileUrl is null then '' else 'Yes' end as CoverFileUrlStatus,a.ManyImgPrefix,'' Items
+		a.`UserId`, a.StatusId, b.`UserName`,c.`StatusName`, 
+		a.CoverFileUrl,'' CoverFileUrlUpload,case when a.CoverFileUrl is null then '' else 'Yes' end as CoverFileUrlStatus,
+		a.FooterFileUrl,'' FooterFileUrlUpload,case when a.FooterFileUrl is null then '' else 'Yes' end as FooterFileUrlStatus,
+		a.ManyImgPrefix,'' Items
 	   FROM `t_transaction` a
 	   INNER JOIN `t_users` b ON a.`UserId` = b.`UserId`
 	   INNER JOIN `t_status` c ON a.`StatusId` = c.`StatusId`

@@ -206,12 +206,22 @@ const InspectionReportEntry = (props) => {
 
     {
       field: "CoverFileUrlStatus",
-      label: "Cover File Uploaded",
+      label: "Cover File",
       align: "center",
       visible: true,
       sort: true,
       filter: true,
-      width: "10%",
+      width: "6%",
+    },
+
+    {
+      field: "FooterFileUrlStatus",
+      label: "Footer File",
+      align: "center",
+      visible: true,
+      sort: true,
+      filter: true,
+      width: "6%",
     },
     {
       field: "StatusName",
@@ -317,6 +327,10 @@ const InspectionReportEntry = (props) => {
       CoverFileUrl: "",
       CoverFileUrlUpload: "",
       CoverFilePages: "",
+
+      FooterFileUrl: "",
+      FooterFileUrlUpload: "",
+
       StatusId: 1,
       ManyImgPrefix: Date.now(),
       BuyerName: "",

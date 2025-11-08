@@ -23,7 +23,7 @@ $siteTitle = reportsitetitleeng;
 require_once('TCPDF-master/examples/tcpdf_include.php');
 
 $sqlf = "SELECT a.TransactionId, DATE_FORMAT(a.TransactionDate, '%d-%m-%Y') AS TransactionDate
-			,a.InvoiceNo,a.CoverFilePages,a.CoverFileUrl,a.ManyImgPrefix,a.UserId,a.StatusId,b.UserName
+			,a.InvoiceNo,a.CoverFilePages,a.CoverFileUrl,a.FooterFileUrl,a.ManyImgPrefix,a.UserId,a.StatusId,b.UserName
 			FROM t_transaction a
 			inner join t_users b on a.UserId=b.UserId
 			where a.TransactionId = $TransactionId;";
@@ -33,6 +33,7 @@ $TransactionDate = "";
 $InvoiceNo = "";
 $CoverFilePages = "";
 $CoverFileUrl = "";
+$FooterFileUrl = "";
 $ManyImgPrefix = "";
 $UserId = "";
 $UserName = "";
@@ -41,6 +42,7 @@ foreach ($sqlLoop1result as $result) {
     $InvoiceNo = $result['InvoiceNo'];
     $CoverFilePages = $result['CoverFilePages'];
     $CoverFileUrl = $result['CoverFileUrl'];
+    $FooterFileUrl = $result['FooterFileUrl'];
     $ManyImgPrefix = $result['ManyImgPrefix'];
     $UserId = $result['UserId'];
     $UserName = $result['UserName'];
@@ -362,7 +364,7 @@ require_once('fpdi-tcpdf/vendor/autoload.php');
 use setasign\Fpdi\Tcpdf\Fpdi;
 
 //when Cover file is not available
-if ($CoverFileUrl == "") {
+if ($CoverFileUrl == "" && $FooterFileUrl == "") {
     $pdf->Output($SecondFileName, 'I'); //show file
 } else {
     //when Cover file is available
@@ -372,7 +374,21 @@ if ($CoverFileUrl == "") {
     $pdf = new PDFMerger();
 
     // $files = ['file1.pdf', 'file2.pdf'];
-    $files = [$CoverFileUrl, $CheckListFileName];
+
+    // $files = [$CoverFileUrl, $CheckListFileName];
+
+    $files = [];
+
+    if ($CoverFileUrl != "") {
+        $files[] = $CoverFileUrl;
+    }
+
+    $files[] = $CheckListFileName;
+
+    if ($FooterFileUrl != "") {
+        $files[] = $FooterFileUrl;
+    }
+
     $pdf->setPrintHeader(false);
     $pdf->setPrintFooter(false);
     foreach ($files as $file) {

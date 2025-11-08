@@ -43,7 +43,7 @@ function convertAppToDBDateTime($appDate)
 
 
 
-function ConvertFileAPI($base64_string, $prefix, $extention = null)
+function ConvertFileAPI($base64_string, $prefix, $extention = null,$type="na")
 {
 
 	$path = "../../../image/transaction/" . $prefix;
@@ -58,7 +58,7 @@ function ConvertFileAPI($base64_string, $prefix, $extention = null)
 		$extention = explode(';', explode('/', $exploded[0])[1])[0];
 	}
 	$decoded = base64_decode($exploded[1]);
-	$output_file = $prefix . "_cover_" . date("Y_m_d_H_i_s") . "_" . rand(1, 9999) . "." . $extention;
+	$output_file = $prefix . "_".$type."_" . date("Y_m_d_H_i_s") . "_" . rand(1, 9999) . "." . $extention;
 	file_put_contents($targetDir . "/" . $output_file, $decoded);
 	return $output_file;
 }
