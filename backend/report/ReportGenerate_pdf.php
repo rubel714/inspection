@@ -50,6 +50,7 @@ foreach ($sqlLoop1result as $result) {
 
 $NoImageDirectory = dirname(__FILE__) . '/../../image/transaction/';
 $FileDirectory = dirname(__FILE__) . '/../../image/transaction/' . $ManyImgPrefix . '/';
+$OutputFileDirectory = dirname(__FILE__) . '/../../media/files/';
 
 /*check the director is available. If not, then create*/
 $path = "../../image/transaction/" . $ManyImgPrefix;
@@ -347,8 +348,15 @@ foreach ($images as $img) {
 // $pdf->Output('images_with_labels.pdf', 'I');
 // $FileDirectory = dirname(__FILE__) . '/';
 // $CheckListFileName = $ManyImgPrefix.'_checklistreport_'.date("Y_m_d_H_i_s").'.pdf';
-$CheckListFileName = $InvoiceNo . '_' . date("Y_m_d_H_i_s") . '.pdf';
-$SecondFileName = $FileDirectory . $CheckListFileName;
+
+
+if ($CoverFileUrl == "" && $FooterFileUrl == "") {
+    $CheckListFileName = $InvoiceNo . '_' . date("Y_m_d_H_i_s") . '.pdf';
+}else{
+    $CheckListFileName = $InvoiceNo . '_' . date("Y_m_d_H_i_s") . '_checklist.pdf';
+}
+
+$SecondFileName = $OutputFileDirectory . $CheckListFileName;
 $pdf->Output($SecondFileName, 'F'); //save file
 
 
@@ -380,20 +388,21 @@ if ($CoverFileUrl == "" && $FooterFileUrl == "") {
     $files = [];
 
     if ($CoverFileUrl != "") {
-        $files[] = $CoverFileUrl;
+        $files[] = $FileDirectory.$CoverFileUrl;
     }
 
-    $files[] = $CheckListFileName;
+    $files[] = $OutputFileDirectory.$CheckListFileName;
 
     if ($FooterFileUrl != "") {
-        $files[] = $FooterFileUrl;
+        $files[] = $FileDirectory.$FooterFileUrl;
     }
 
     $pdf->setPrintHeader(false);
     $pdf->setPrintFooter(false);
     foreach ($files as $file) {
         // $pageCount = $pdf->setSourceFile($file);
-        $pageCount = $pdf->setSourceFile($FileDirectory . $file);
+        // $pageCount = $pdf->setSourceFile($FileDirectory . $file);
+        $pageCount = $pdf->setSourceFile($file);
 
         for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
             $templateId = $pdf->importPage($pageNo);
@@ -404,7 +413,10 @@ if ($CoverFileUrl == "" && $FooterFileUrl == "") {
         }
     }
 
-    $CombineFileName = $FileDirectory . $ManyImgPrefix . '_invoicereport_' . date("Y_m_d_H_i_s") . '.pdf';
+    //$CheckListFileName = $InvoiceNo . '_' . date("Y_m_d_H_i_s") . '.pdf';
+
+    // $CombineFileName = $FileDirectory . $ManyImgPrefix . '_invoicereport_' . date("Y_m_d_H_i_s") . '.pdf';
+    $CombineFileName = $OutputFileDirectory . $InvoiceNo . '_' . date("Y_m_d_H_i_s") . '.pdf';
     $pdf->Output($CombineFileName, 'F'); //save file
 
     $pdf->Output($CombineFileName, 'I'); //show file

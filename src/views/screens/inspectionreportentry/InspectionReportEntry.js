@@ -206,7 +206,7 @@ const InspectionReportEntry = (props) => {
 
     {
       field: "CoverFileUrlStatus",
-      label: "Cover File",
+      label: "Report File",
       align: "center",
       visible: true,
       sort: true,
@@ -216,12 +216,12 @@ const InspectionReportEntry = (props) => {
 
     {
       field: "FooterFileUrlStatus",
-      label: "Footer File",
+      label: "Accessories File",
       align: "center",
       visible: true,
       sort: true,
       filter: true,
-      width: "6%",
+      width: "8%",
     },
     {
       field: "StatusName",

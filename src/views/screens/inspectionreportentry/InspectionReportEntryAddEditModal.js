@@ -257,19 +257,19 @@ const InspectionReportEntryAddEditModal = (props) => {
               onChange={(e) => handleChange(e)}
             />
 
-            <label>Cover File Page Count</label>
+            <label>Report File Page Count</label>
             <input
               type="text"
               id="CoverFilePages"
               name="CoverFilePages"
               // class={errorObject.CoverFilePages}
-              placeholder="Enter Cover File Page Count"
+              placeholder="Enter Report File Page Count"
               value={currentRow.CoverFilePages}
               onChange={(e) => handleChange(e)}
             />
           </div>
           <div class="contactmodalBody pt-10">
-            <label>Cover File</label>
+            <label>Report File</label>
             <input
               type="file"
               id="CoverFileUrlUpload"
@@ -281,7 +281,7 @@ const InspectionReportEntryAddEditModal = (props) => {
               onChange={(e) => handleChangeMasterFile(e)}
             />
 
-            <label>Footer File</label>
+            <label>Accessories File</label>
             <input
               type="file"
               id="FooterFileUrlUpload"
