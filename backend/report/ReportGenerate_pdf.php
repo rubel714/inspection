@@ -364,13 +364,111 @@ $pdf->Output($SecondFileName, 'F'); //save file
 
 
 
+
+
+
+
+
+require 'vendor/autoload.php';
+
+use iio\libmergepdf\Merger;
+use iio\libmergepdf\Driver\TcpdiDriver;
+
+try {
+    // Use TCPDI driver (supports compressed PDFs)
+    $merger = new Merger(new TcpdiDriver());
+
+
+	//when Cover file is not available
+	if ($CoverFileUrl == "" && $FooterFileUrl == "") {
+		$pdf->Output($SecondFileName, 'I'); //show file
+	} else {
+		
+		
+    // Add PDF files (must exist and be valid)
+    // $merger->addFile(__DIR__ . '/1111.pdf');
+    // $merger->addFile(__DIR__ . '/aaa.pdf');
+    // $merger->addFile(__DIR__ . '/2222.pdf');
+    // $merger->addFile(__DIR__ . '/bbb.pdf');
+
+   // // Merge them
+    //$createdPdf = $merger->merge();
+
+   // // Save the result
+    //file_put_contents(__DIR__ . '/merged.pdf', $createdPdf);
+	
+////////////////////////////////////////////////////////////////////////////////////////////////////
+	 $files = [];
+
+    if ($CoverFileUrl != "") {
+        $files[] = $FileDirectory.$CoverFileUrl;
+    }
+
+    $files[] = $OutputFileDirectory.$CheckListFileName;
+
+    if ($FooterFileUrl != "") {
+        $files[] = $FileDirectory.$FooterFileUrl;
+    }
+// echo "<pre>";
+// print_r( $files);
+// exit;
+    // $pdf->setPrintHeader(false);
+    // $pdf->setPrintFooter(false);
+    foreach ($files as $file) {
+		$merger->addFile($file);
+    }
+
+    // Merge them
+    $createdPdf = $merger->merge();
+	// echo "<pre>";
+	// print_r($createdPdf);
+	// exit;
+    // $CombineFileName = $OutputFileDirectory . $InvoiceNo . '_' . date("Y_m_d_H_i_s") . '.pdf';
+    $CombineFileName = $InvoiceNo . '_' . date("Y_m_d_H_i_s") . '.pdf';
+	// echo $CombineFileName;
+	// exit;
+    // Save the result
+    // file_put_contents($CombineFileName, $createdPdf);
+	$OutputFile = __DIR__ . '/../../media/files/'.$CombineFileName;
+    // file_put_contents(__DIR__ . '/../../media/files/'.$CombineFileName, $createdPdf);
+    file_put_contents($OutputFile, $createdPdf);
+	
+	$url = domainurl.'media/files/'.$CombineFileName;
+	header('Location: ' . $url);
+	// exit;
+	}
+	
+} catch (Exception $e) {
+    echo "❌ Error merging PDFs: " . $e->getMessage();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
 //===========================================================================================================
 //=============================================Merge Report==================================================
 //===========================================================================================================
+/*
 require_once('fpdi-tcpdf/vendor/autoload.php');
 
 use setasign\Fpdi\Tcpdf\Fpdi;
-
+ try {
 //when Cover file is not available
 if ($CoverFileUrl == "" && $FooterFileUrl == "") {
     $pdf->Output($SecondFileName, 'I'); //show file
@@ -382,7 +480,6 @@ if ($CoverFileUrl == "" && $FooterFileUrl == "") {
     $pdf = new PDFMerger();
 
     // $files = ['file1.pdf', 'file2.pdf'];
-
     // $files = [$CoverFileUrl, $CheckListFileName];
 
     $files = [];
@@ -421,3 +518,8 @@ if ($CoverFileUrl == "" && $FooterFileUrl == "") {
 
     $pdf->Output($CombineFileName, 'I'); //show file
 }
+} catch (Exception $e) {
+    echo "Error reading $file: " . $e->getMessage() . "\n";
+}
+
+*/
