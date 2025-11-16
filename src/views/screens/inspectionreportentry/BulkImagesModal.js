@@ -14,6 +14,7 @@ const BulkImagesModal = (props) => {
   // console.log('props: ', props);
   const serverpage = "inspectionreportentry"; // this is .php server page
   const UserInfo = LoginUserInfo();
+  const EXCEL_EXPORT_URL = process.env.REACT_APP_API_URL;
 
   const { isLoading, data: dataList, error, ExecuteQuery } = ExecuteQueryHook(); //Fetch data
 
@@ -33,6 +34,18 @@ const BulkImagesModal = (props) => {
     // console.log('LoginUserInfo params: ', params);
 
     ExecuteQuery(serverpage, params);
+  }
+
+  function modalDownload() {
+
+    let finalUrl = EXCEL_EXPORT_URL + "report/ImageDownload.php";
+    window.open(
+      finalUrl +
+        "?TransactionId=" +
+        props.currentRow.id +
+        "&TimeStamp=" +
+        Date.now()
+    );
   }
 
   function modalClose() {
@@ -98,6 +111,7 @@ const BulkImagesModal = (props) => {
             })}
 
           <div class="modalItem">
+            <Button label={"Download"} class={"btnAdd"} onClick={modalDownload} />
             <Button label={"Close"} class={"btnClose"} onClick={modalClose} />
           </div>
         </div>
