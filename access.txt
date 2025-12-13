@@ -7,39 +7,67 @@ Password: Net@pp096
 
 
 =================Local .env================================================
-
 FAST_REFRESH = false
 CHOKIDAR_USEPOLLING=true
 REACT_APP_BASE_NAME=/inspection
 REACT_APP_API_URL=http://localhost/inspection/backend/
 REACT_APP_FRONT_URL= http://localhost/inspection/
 
-
-=================Local env.php================================================
-define("DB_NAME", "inspection_db");
-define("DB_USER", "root");
-define("DB_PASSWORD", "");
-define("DB_SERVER", "localhost");
-define("sitetitleeng", "Inspection");
-define("domainurl", "http://localhost/inspection/");
-define("reportsitetitleeng", "Inspection");
-define("LOGIN_ONLY_ADMIN", "0");  /*0=production mode, 1=maintanance mode*/
-
-
-=================Web .env================================================
-
+=================Web .env========inspection.ng-pl.com========================================
 FAST_REFRESH = false
 CHOKIDAR_USEPOLLING=true
 REACT_APP_BASE_NAME=
 REACT_APP_API_URL=https://inspection.ng-pl.com/backend/
 REACT_APP_FRONT_URL=https://inspection.ng-pl.com/
 
-=================Web env.php================================================
+=================Web .env========175.29.124.231======================================
+FAST_REFRESH = false
+CHOKIDAR_USEPOLLING=true
+REACT_APP_BASE_NAME=/inspection
+REACT_APP_API_URL=http://175.29.124.231/inspection/backend/
+REACT_APP_FRONT_URL=http://175.29.124.231/inspection/
+
+
+
+=================Local env.php================================================
+<?php
+define("DB_NAME", "inspection_db");
+define("DB_USER", "root");
+define("DB_PASSWORD", "");
+define("DB_SERVER", "localhost");
+define("sitetitleeng", "Inspection Management System");
+define("reportsitetitleeng", "Inspection Management System");
+define("LOGIN_ONLY_ADMIN", "0");  /*0=production mode, 1=maintanance mode*/
+define("STORAGE_PATH", $_SERVER['DOCUMENT_ROOT'] . '/storage/inspection/');
+define("STORAGE_PATH_URL", "http://localhost/storage/inspection/");
+
+?>
+
+
+=================Web env.php= Web https://inspection.ng-pl.com=========================
+<?php
 define("DB_NAME", "ngplcom_inspection_db");
 define("DB_USER", "ngplcom_ngplcom");
 define("DB_PASSWORD", "12@ASasdfghjkl");
 define("DB_SERVER", "localhost");
-define("sitetitleeng", "Inspection");
-define("domainurl", "https://inspection.ng-pl.com/");
-define("reportsitetitleeng", "Inspection");
+define("sitetitleeng", "Inspection Management System");
+define("reportsitetitleeng", "Inspection Management System");
 define("LOGIN_ONLY_ADMIN", "0");  /*0=production mode, 1=maintanance mode*/
+define("STORAGE_PATH", $_SERVER['DOCUMENT_ROOT'] . '/storage/inspection/');
+define("STORAGE_PATH_URL", "http://localhost/storage/inspection/");
+?>
+
+
+==========================Web 175.29.124.231/inspection=========================
+<?php
+define("DB_NAME", "inspection_db");
+define("DB_USER", "root");
+define("DB_PASSWORD", "P@ss!w0rId2N$5T@r");
+define("DB_SERVER", "localhost");
+define("sitetitleeng", "Inspection Management System");
+define("reportsitetitleeng", "Inspection Management System");
+define("LOGIN_ONLY_ADMIN", "0");  /*0=production mode, 1=maintanance mode*/
+define("STORAGE_PATH", $_SERVER['DOCUMENT_ROOT'] . '/storage/inspection/');
+define("STORAGE_PATH_URL", "http://175.29.124.231/storage/inspection/");
+
+?>
