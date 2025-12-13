@@ -694,7 +694,7 @@ function importInspectionReport($data)
 			$prefix = 123;
 			$FileName = $FileNameString ? ConvertCSVFile($FileNameString, $prefix) : null;
 
-			$fileDir = '../../../image/invoicefiles/' . $FileName;
+			$fileDir = STORAGE_PATH."image/invoicefiles/" . $FileName;
 			$rowcounter = 0;
 			$csvFileContext = fopen($fileDir, "r");
 
@@ -786,7 +786,8 @@ function importInspectionReport($data)
 
 function ConvertCSVFile($base64_string, $prefix)
 {
-	$targetDir = '../../../image/invoicefiles';
+	// $targetDir = '../../../image/invoicefiles';
+	$targetDir = STORAGE_PATH."image/invoicefiles";
 
 	if (!file_exists($targetDir)) {
 		mkdir($targetDir, 0777, true);
