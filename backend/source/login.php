@@ -184,7 +184,7 @@ else {
         //when maintenance mode on then only Admin role user able to login
         if($query_stmt->rowCount()){
             
-            if(loginonlyadmin==1){
+            if(LOGIN_ONLY_ADMIN==1){
 
                 //role id = 1 = Super Admin. If site is maintenance mode then only super admin able to login
                 if($RoleId != 1){

@@ -11,7 +11,7 @@ try {
 	$UserId = ($UserId ? $UserId : 0);
 
 	$dbh = new Db();
-	$imgURL = domainurl . "/image/appmenu/";
+	$imgURL = STORAGE_PATH_URL . "image/appmenu/";
 	$query = "SELECT 1 AS SysValue,'Successful' AS SysMessage, 
 	a.UserId AS UserInfoID, d.MenuTitle AS MenuName,d.CategoryName
 	,d.MenuKey AS ActivityName, concat('$imgURL',d.ICONURL) AS ICONURL

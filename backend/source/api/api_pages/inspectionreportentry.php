@@ -510,14 +510,13 @@ function deleteData($data)
 
 function ConvertFile($base64_string, $prefix, $type, $extention = null)
 {
+	// $targetDir = '../../../../storage/inspection/image/transaction/' . $prefix;
+	$targetDir = STORAGE_PATH.'image/transaction/' . $prefix;
 
-	$path = "../../../image/transaction/" . $prefix;
-
-	if (!file_exists($path)) {
-		mkdir($path, 0777, true);
+	if (!file_exists($targetDir)) {
+		mkdir($targetDir, 0777, true);
 	}
 
-	$targetDir = '../../../image/transaction/' . $prefix;
 	$exploded = explode(',', $base64_string, 2);
 	if (!$extention) {
 		$extention = explode(';', explode('/', $exploded[0])[1])[0];
@@ -532,13 +531,14 @@ function ConvertFile($base64_string, $prefix, $type, $extention = null)
 function ConvertImage($base64_string, $prefix)
 {
 
-	$path = "../../../image/transaction/" . $prefix;
+	$targetDir = STORAGE_PATH.'image/transaction/' . $prefix;
+	// $path = "../../../image/transaction/" . $prefix;
 
-	if (!file_exists($path)) {
-		mkdir($path, 0777, true);
+	if (!file_exists($targetDir)) {
+		mkdir($targetDir, 0777, true);
 	}
 
-	$targetDir = '../../../image/transaction/' . $prefix;
+	// $targetDir = '../../../image/transaction/' . $prefix;
 	$exploded = explode(',', $base64_string, 2);
 	$extention = explode(';', explode('/', $exploded[0])[1])[0];
 	$decoded = base64_decode($exploded[1]);
@@ -581,17 +581,18 @@ function getBulkImages($data){
 
 	$TransactionId = $data->TransactionId;
 	$ManyImgPrefix = $data->ManyImgPrefix;
-	
+
 	try{
 
-		$path = "../../../image/transaction/" . $ManyImgPrefix.'/bulkimg';
+		// $path = "../../../image/transaction/" . $ManyImgPrefix.'/bulkimg';
+		$path = STORAGE_PATH."image/transaction/" . $ManyImgPrefix.'/bulkimg';
 		$resultdata = array();
 		if (is_dir($path)) {
 			$files = scandir($path);
 
 			foreach($files as $file){
 				if($file != '.' && $file != '..'){
-					$resultdata[] = domainurl."image/transaction/" . $ManyImgPrefix."/bulkimg"."/".$file;
+					$resultdata[] = STORAGE_PATH_URL."image/transaction/" . $ManyImgPrefix."/bulkimg"."/".$file;
 				}
 			}
 		}

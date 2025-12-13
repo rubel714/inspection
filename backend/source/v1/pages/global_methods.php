@@ -2,8 +2,8 @@
 
 function apiLogWrite($logText)
 {
-
-	$logFileName = "../../../media/log/apilog" . date('Y') . ".txt";
+	// $logFileName = "../../../media/log/apilog" . date('Y') . ".txt";
+	$logFileName = STORAGE_PATH."media/log/apilog" . date('Y') . ".txt";
 	file_put_contents($logFileName, $logText . PHP_EOL, FILE_APPEND | LOCK_EX);
 }
 
@@ -46,13 +46,14 @@ function convertAppToDBDateTime($appDate)
 function ConvertFileAPI($base64_string, $prefix, $extention = null,$type="na")
 {
 
-	$path = "../../../image/transaction/" . $prefix;
+	// $path = "../../../image/transaction/" . $prefix;
+	$targetDir = STORAGE_PATH."image/transaction/" . $prefix;
 
-	if (!file_exists($path)) {
-		mkdir($path, 0777, true);
+	if (!file_exists($targetDir)) {
+		mkdir($targetDir, 0777, true);
 	}
 
-	$targetDir = '../../../image/transaction/' . $prefix;
+	// $targetDir = '../../../image/transaction/' . $prefix;
 	$exploded = explode(',', $base64_string, 2);
 	if (!$extention) {
 		$extention = explode(';', explode('/', $exploded[0])[1])[0];
@@ -67,13 +68,14 @@ function ConvertFileAPI($base64_string, $prefix, $extention = null,$type="na")
 function ConvertImageAPI($base64_string, $prefix, $extention = null)
 {
 
-	$path = "../../../image/transaction/" . $prefix;
+	// $path = "../../../image/transaction/" . $prefix;
+	$targetDir = STORAGE_PATH."image/transaction/" . $prefix;
 
-	if (!file_exists($path)) {
-		mkdir($path, 0777, true);
+	if (!file_exists($targetDir)) {
+		mkdir($targetDir, 0777, true);
 	}
 
-	$targetDir = '../../../image/transaction/' . $prefix;
+	// $targetDir = '../../../image/transaction/' . $prefix;
 	$exploded = explode(',', $base64_string, 2);
 	if (!$extention) {
 		$extention = explode(';', explode('/', $exploded[0])[1])[0];
@@ -91,13 +93,14 @@ function ConvertImageAPI($base64_string, $prefix, $extention = null)
 function ConvertImageAPIBulk($base64_string, $prefix, $extention = null)
 {
 
-	$path = "../../../image/transaction/" . $prefix."/bulkimg";
+	// $path = "../../../image/transaction/" . $prefix."/bulkimg";
+	$targetDir = STORAGE_PATH."image/transaction/" . $prefix."/bulkimg";
 
-	if (!file_exists($path)) {
-		mkdir($path, 0777, true);
+	if (!file_exists($targetDir)) {
+		mkdir($targetDir, 0777, true);
 	}
 
-	$targetDir = '../../../image/transaction/' . $prefix."/bulkimg";
+	// $targetDir = '../../../image/transaction/' . $prefix."/bulkimg";
 	$exploded = explode(',', $base64_string, 2);
 	if (!$extention) {
 		$extention = explode(';', explode('/', $exploded[0])[1])[0];

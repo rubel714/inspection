@@ -29,7 +29,8 @@ if ($ManyImgPrefix == "") {
 
 
 
-$zipFile = "../../media/files/$InvoiceNo"."_Images.zip";
+// $zipFile = "../../media/files/$InvoiceNo"."_Images.zip";
+$zipFile = STORAGE_PATH . "media/files/$InvoiceNo"."_Images.zip";
 // folder containing images
 // $zipFile = 'images.zip';     // output zip file name
 
@@ -49,21 +50,30 @@ $allowed = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
 
 ////////////////////current folder/////////////////////////////
 // $reportimgfolder = "../../image/transaction/1763301073252";
-$reportimgfolder = "../../image/transaction/$ManyImgPrefix";
+// $reportimgfolder = "../../image/transaction/$ManyImgPrefix";
+$reportimgfolder = STORAGE_PATH . "image/transaction/$ManyImgPrefix";
+// echo $reportimgfolder;
+// exit;
+// echo "<pre>";
 $files = scandir($reportimgfolder);
 foreach ($files as $file) {
     $filePath = $reportimgfolder . '/' . $file;
+
     $ext = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
 
     //Add only image files
     if (is_file($filePath) && in_array($ext, $allowed)) {
+            // echo $filePath;
+    // echo "<br/>";
         $zip->addFile($filePath, $file);
     }
 }
-
+// exit;
 ////////////////////bulkimg folder/////////////////////////////
 // $bulkimgfolder = '../../image/transaction/1763301073252/bulkimg';
-$bulkimgfolder = "../../image/transaction/$ManyImgPrefix/bulkimg";
+// $bulkimgfolder = "../../image/transaction/$ManyImgPrefix/bulkimg";
+
+$bulkimgfolder = STORAGE_PATH . "image/transaction/$ManyImgPrefix/bulkimg";
 if(is_dir($bulkimgfolder)) {
 	$files = scandir($bulkimgfolder);
 	foreach ($files as $file) {
@@ -79,11 +89,43 @@ if(is_dir($bulkimgfolder)) {
 
 $zip->close();
 
-// Download the zip file
-header('Content-Type: application/zip');
-header('Content-Disposition: attachment; filename="' . basename($zipFile) . '"');
-header('Content-Length: ' . filesize($zipFile));
-readfile($zipFile);
-exit;
+// Stream the ZIP file as a clean binary response
+// Ensure no buffered output or compression interferes
+if (function_exists('apache_setenv')) {
+    @apache_setenv('no-gzip', '1');
+}
+if (function_exists('ini_set')) {
+    @ini_set('zlib.output_compression', '0');
+}
 
-?>
+// Clear any output buffers to avoid corrupting the ZIP
+while (ob_get_level() > 0) {
+    @ob_end_clean();
+}
+
+// Send headers for file download
+header('Content-Type: application/zip');
+header('Content-Transfer-Encoding: binary');
+header('Content-Disposition: attachment; filename="' . basename($zipFile) . '"');
+header('Cache-Control: no-store, no-cache, must-revalidate');
+header('Pragma: public');
+header('Expires: 0');
+
+// Validate file before streaming
+if (!file_exists($zipFile) || !is_readable($zipFile)) {
+    http_response_code(404);
+    echo 'File not found';
+    exit;
+}
+
+$size = filesize($zipFile);
+if ($size !== false) {
+    header('Content-Length: ' . $size);
+}
+
+$fp = fopen($zipFile, 'rb');
+if ($fp) {
+    fpassthru($fp);
+    fclose($fp);
+}
+exit;

@@ -23,7 +23,7 @@ define("DB_SERVER", "localhost");
 define("sitetitleeng", "Inspection");
 define("domainurl", "http://localhost/inspection/");
 define("reportsitetitleeng", "Inspection");
-define("loginonlyadmin", "0");  /*0=production mode, 1=maintanance mode*/
+define("LOGIN_ONLY_ADMIN", "0");  /*0=production mode, 1=maintanance mode*/
 
 
 =================Web .env================================================
@@ -42,4 +42,4 @@ define("DB_SERVER", "localhost");
 define("sitetitleeng", "Inspection");
 define("domainurl", "https://inspection.ng-pl.com/");
 define("reportsitetitleeng", "Inspection");
-define("loginonlyadmin", "0");  /*0=production mode, 1=maintanance mode*/
+define("LOGIN_ONLY_ADMIN", "0");  /*0=production mode, 1=maintanance mode*/

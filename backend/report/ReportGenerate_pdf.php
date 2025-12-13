@@ -48,12 +48,17 @@ foreach ($sqlLoop1result as $result) {
     $UserName = $result['UserName'];
 }
 
-$NoImageDirectory = dirname(__FILE__) . '/../../image/transaction/';
-$FileDirectory = dirname(__FILE__) . '/../../image/transaction/' . $ManyImgPrefix . '/';
-$OutputFileDirectory = dirname(__FILE__) . '/../../media/files/';
+// $NoImageDirectory = dirname(__FILE__) . '/../../image/transaction/';
+// $FileDirectory = dirname(__FILE__) . '/../../image/transaction/' . $ManyImgPrefix . '/';
+// $OutputFileDirectory = dirname(__FILE__) . '/../../media/files/';
+$NoImageDirectory = STORAGE_PATH . 'image/transaction/';
+$FileDirectory = STORAGE_PATH . 'image/transaction/' . $ManyImgPrefix . '/';
+$OutputFileDirectory = STORAGE_PATH . 'media/files/';
+
 
 /*check the director is available. If not, then create*/
-$path = "../../image/transaction/" . $ManyImgPrefix;
+// $path = "../../image/transaction/" . $ManyImgPrefix;
+$path = STORAGE_PATH."image/transaction/" . $ManyImgPrefix;
 if (!file_exists($path)) {
     mkdir($path, 0777, true);
 }
@@ -68,7 +73,8 @@ class MYPDF extends TCPDF
         // exit;
 
         // Logo
-        $image_file = '../../image/appmenu/Intertek_Logo.png';
+        // $image_file = '../../image/appmenu/Intertek_Logo.png';
+        $image_file = STORAGE_PATH.'image/appmenu/Intertek_Logo.png';
         $this->Image($image_file, 5, 5, 30, 10, 'PNG', '', '', false, 150, '', false, false, 1, false, false, false);
         // Set font
         $this->SetFont('helvetica', 'B', 10);
@@ -429,11 +435,13 @@ try {
 	// exit;
     // Save the result
     // file_put_contents($CombineFileName, $createdPdf);
-	$OutputFile = __DIR__ . '/../../media/files/'.$CombineFileName;
+	// $OutputFile = __DIR__ . '/../../media/files/'.$CombineFileName;
+	$OutputFile = STORAGE_PATH . 'media/files/'.$CombineFileName;
     // file_put_contents(__DIR__ . '/../../media/files/'.$CombineFileName, $createdPdf);
     file_put_contents($OutputFile, $createdPdf);
 	
-	$url = domainurl.'media/files/'.$CombineFileName;
+	// $url = domainurl.'media/files/'.$CombineFileName;
+	$url = STORAGE_PATH_URL.'media/files/'.$CombineFileName;
 	header('Location: ' . $url);
 	// exit;
 	}
