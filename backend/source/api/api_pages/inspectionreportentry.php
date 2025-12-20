@@ -108,6 +108,7 @@ function dataAddEdit($data)
 	if ($_SERVER["REQUEST_METHOD"] != "POST") {
 		return $returnData = msg(0, 404, 'Page Not Found!');
 	} else {
+		$dbh = new Db();
 
 		$lan = trim($data->lan);
 		$UserId = trim($data->UserId);
@@ -126,11 +127,24 @@ function dataAddEdit($data)
 		$CoverFilePages = $data->rowData->CoverFilePages ? $data->rowData->CoverFilePages : null;
 		$ManyImgPrefix = $data->rowData->ManyImgPrefix;
 		$CoverFileUrl = $data->rowData->CoverFileUrlUpload ? ConvertFile($data->rowData->CoverFileUrlUpload, $ManyImgPrefix,"cover",null) : null;
-		$FooterFileUrl = $data->rowData->FooterFileUrlUpload ? ConvertFile($data->rowData->FooterFileUrlUpload, $ManyImgPrefix,"footer",null) : null;
 		
-		//a.FooterFileUrl,'' FooterFileUrlUpload, case when a.FooterFileUrl is null then '' else 'Yes' end as FooterFileUrlStatus,
-		//
-		
+		// echo "<pre>";
+		// print_r( $data->rowData->FooterFileUrlUpload);
+		// exit;
+		$FooterFileUrl = null;
+		if($data->rowData->FooterFileUrlUpload){
+			foreach($data->rowData->FooterFileUrlUpload as $footerFile){
+				
+				$fName = ConvertFile($footerFile->data, $ManyImgPrefix,"footer",null);
+
+				if($FooterFileUrl){
+					$FooterFileUrl = $FooterFileUrl.','.$fName;	
+				}else{
+					$FooterFileUrl = $fName;
+				}
+			}	
+		}
+
 		try {
 			$aQuerys = array();
 			if ($id == "") {
@@ -143,9 +157,23 @@ function dataAddEdit($data)
 				$q->build_query();
 				$aQuerys[] = $q;
 			} else {
+
+
+
+
+
+				$query01 = "SELECT FooterFileUrl FROM t_transaction where TransactionId=$id;";
+				$MasterResult = $dbh->query($query01);
+				$OldFooterFileUrl = $MasterResult[0]['FooterFileUrl'];
+
+				if($OldFooterFileUrl && $FooterFileUrl){
+					$FooterFileUrl = $OldFooterFileUrl.','.$FooterFileUrl;
+				}
+
+
+
 				$u = new updateq();
 				$u->table = 't_transaction';
-
 
 				$columns = ['TransactionDate', 'InvoiceNo', 'BuyerName', 'SupplierName', 'FactoryName', 'CoverFilePages', 'StatusId'];
 				$values = [$TransactionDate, $InvoiceNo, $BuyerName, $SupplierName, $FactoryName, $CoverFilePages, $StatusId];
@@ -526,6 +554,7 @@ function ConvertFile($base64_string, $prefix, $type, $extention = null)
 	file_put_contents($targetDir . "/" . $output_file, $decoded);
 	return $output_file;
 }
+
 
 
 function ConvertImage($base64_string, $prefix)

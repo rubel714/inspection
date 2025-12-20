@@ -15,6 +15,11 @@ const InspectionReportEntryAddEditModal = (props) => {
   const serverpage = "inspectionreportentry"; // this is .php server page
   const [currentRow, setCurrentRow] = useState(props.currentRow);
   const [errorObject, setErrorObject] = useState({});
+  const [selectedFiles, setSelectedFiles] = useState(
+    props.currentRow.FooterFileUrl
+      ? props.currentRow.FooterFileUrl.split(",")
+      : []
+  );
   // const [currentFile, setCurrentFile] = useState(null);
   const UserInfo = LoginUserInfo();
 
@@ -43,9 +48,56 @@ const InspectionReportEntryAddEditModal = (props) => {
   };
 
   const handleChangeMasterFile = (e) => {
+    const { name } = e.target;
+    const files = e.target.files;
+
+    if (!files || files.length === 0) return;
+
+    let data = { ...currentRow };
+
+    // Handle multiple files for FooterFileUrlUpload (Accessories)
+    if (name === "FooterFileUrlUpload") {
+      const fileArray = Array.from(files);
+      const fileNames = fileArray.map((f) => f.name);
+      // console.log("selectedFiles: ", selectedFiles);
+
+      // Append to existing files instead of replacing
+      setSelectedFiles((prev) => [...prev, ...fileNames]);
+
+      const filePromises = fileArray.map((file) => {
+        return new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            resolve({
+              name: file.name,
+              data: event.target.result,
+            });
+          };
+          reader.readAsDataURL(file);
+        });
+      });
+
+      Promise.all(filePromises).then((results) => {
+        // Append to existing file data instead of replacing
+        const existingFiles = data[name] || [];
+        data[name] = [...existingFiles, ...results];
+        setCurrentRow(data);
+      });
+    } else {
+      // Handle single file for CoverFileUrlUpload (Report File)
+      const file = files[0];
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        data[name] = event.target.result;
+        setCurrentRow(data);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleChangeMasterFileFooter = (e) => {
     const { name, value } = e.target;
     // console.log('name: ', name);
-
 
     let file = e.target.files[0];
     // console.log('file: ', file);
@@ -70,7 +122,6 @@ const InspectionReportEntryAddEditModal = (props) => {
       // setErrorObject({ ...errorObject, [name]: null });
     }
   };
-
   // const handleChangeManyDropDown = (name, value, Idx) => {
   //   let data = { ...currentRow };
   //   if (name === "CheckId") {
@@ -196,7 +247,7 @@ const InspectionReportEntryAddEditModal = (props) => {
           <div class="modalHeader">
             <h4>Add/Edit Inspection Report</h4>
           </div>
-          
+
           <div class="contactmodalBody pt-10">
             <label>Report Number</label>
             <input
@@ -275,28 +326,69 @@ const InspectionReportEntryAddEditModal = (props) => {
               id="CoverFileUrlUpload"
               name="CoverFileUrlUpload"
               accept="application/pdf"
-              style={{ color: "transparent" }}
+              style={!currentRow.CoverFileUrlUpload ? { color: "transparent" } : {}}
               //onChange={handleFileChange}
               //onChange={(e) => handleFileChange(e, "CoverFileUrl")}
               onChange={(e) => handleChangeMasterFile(e)}
             />
 
+            {/* </div>
+          <div class="contactmodalBody pt-10"> */}
             <label>Accessories File</label>
             <input
               type="file"
               id="FooterFileUrlUpload"
               name="FooterFileUrlUpload"
               accept="application/pdf"
+              multiple
               style={{ color: "transparent" }}
               //onChange={handleFileChange}
               //onChange={(e) => handleFileChange(e, "FooterFileUrl")}
               onChange={(e) => handleChangeMasterFile(e)}
             />
-
-    
           </div>
-          
-      
+          <div class="contactmodalBody pt-10">
+            <div> </div>
+            <div>
+              {currentRow.CoverFileUrl && !currentRow.CoverFileUrlUpload && (
+                <div style={{ color: "#666" }}>
+                  <ul style={{ paddingLeft: "20px" }}>
+                    <li key={0}>
+                      {currentRow.CoverFileUrl.length > 15
+                        ? `${currentRow.CoverFileUrl.slice(
+                            0,
+                            6
+                          )}...${currentRow.CoverFileUrl.slice(-8)}`
+                        : currentRow.CoverFileUrl}
+                    </li>
+                  </ul>
+                </div>
+              )}
+              
+              {/* { currentRow.CoverFileUrlUpload? currentRow.CoverFileUrlUpload.data:""}
+              { currentRow.CoverFileUrlUpload} */}
+
+
+            </div>
+            <div> </div>
+            <div>
+              {selectedFiles.length > 0 && (
+                <div style={{ color: "#666" }}>
+                  {/*  <strong>Selected files:</strong>*/}
+                  <ul style={{ paddingLeft: "20px" }}>
+                    {selectedFiles.map((fileName, index) => (
+                      // <li key={index}>{fileName}</li>
+                      <li key={index}>
+                        {fileName.length > 15
+                          ? `${fileName.slice(0, 6)}...${fileName.slice(-8)}`
+                          : fileName}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}{" "}
+            </div>
+          </div>
 
           <div class="modalItem">
             {/* <Button

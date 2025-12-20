@@ -42,6 +42,13 @@ try{
 		$resultdata = array();
 		foreach ($resultdatalist as $row) {
 			$TransactionId = $row['id'];
+			$FooterFileUrl = $row['FooterFileUrl'];
+			if($FooterFileUrl && $FooterFileUrl !='' && $FooterFileUrl !=null){
+				$FooterFileUrlList = explode(',',$FooterFileUrl);
+				$row['FooterFileUrl'] = $FooterFileUrlList[0];
+			}
+
+
 			$query = "SELECT a.TransactionItemId as autoId,a.`TransactionItemId`, a.`TransactionId`, a.`CheckName`,
 			a.RowNo,a.ColumnNo,a.PhotoUrl,'' PhotoUrlChanged, '' PhotoUrlPreview, '' PhotoUrlUpload, a.SortOrder
 			FROM t_transaction_items a

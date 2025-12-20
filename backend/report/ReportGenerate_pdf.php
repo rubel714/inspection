@@ -413,7 +413,13 @@ try {
     $files[] = $OutputFileDirectory.$CheckListFileName;
 
     if ($FooterFileUrl != "") {
-        $files[] = $FileDirectory.$FooterFileUrl;
+        // $files[] = $FileDirectory.$FooterFileUrl;
+
+        $FooterFileUrlList = explode(",", $FooterFileUrl);
+        foreach ($FooterFileUrlList as $FooterFileUrlName) {
+            $files[] = $FileDirectory.$FooterFileUrlName;
+        }
+
     }
 // echo "<pre>";
 // print_r( $files);
