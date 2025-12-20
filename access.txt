@@ -12,6 +12,8 @@ CHOKIDAR_USEPOLLING=true
 REACT_APP_BASE_NAME=/inspection
 REACT_APP_API_URL=http://localhost/inspection/backend/
 REACT_APP_FRONT_URL= http://localhost/inspection/
+REACT_APP_STORAGE_URL= http://localhost/storage/inspection/
+
 
 =================Web .env========inspection.ng-pl.com========================================
 FAST_REFRESH = false
@@ -19,6 +21,7 @@ CHOKIDAR_USEPOLLING=true
 REACT_APP_BASE_NAME=
 REACT_APP_API_URL=https://inspection.ng-pl.com/backend/
 REACT_APP_FRONT_URL=https://inspection.ng-pl.com/
+REACT_APP_STORAGE_URL=https://inspection.ng-pl.com/storage/inspection/
 
 =================Web .env========175.29.124.231======================================
 FAST_REFRESH = false
@@ -26,6 +29,7 @@ CHOKIDAR_USEPOLLING=true
 REACT_APP_BASE_NAME=/inspection
 REACT_APP_API_URL=http://175.29.124.231/inspection/backend/
 REACT_APP_FRONT_URL=http://175.29.124.231/inspection/
+REACT_APP_STORAGE_URL=http://175.29.124.231/storage/inspection/
 
 
 

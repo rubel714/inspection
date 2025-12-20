@@ -62,7 +62,7 @@ const InspectionReportEntry = (props) => {
 
   /* =====Start of Excel Export Code==== */
   const EXCEL_EXPORT_URL = process.env.REACT_APP_API_URL;
-  const baseUrl = process.env.REACT_APP_FRONT_URL;
+  const baseUrl = process.env.REACT_APP_STORAGE_URL;
   const PDFGenerate = (TransactionId) => {
     // if (!chkValidation()) {
     //   return;
