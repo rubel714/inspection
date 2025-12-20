@@ -95,33 +95,7 @@ const InspectionReportEntryAddEditModal = (props) => {
     }
   };
 
-  const handleChangeMasterFileFooter = (e) => {
-    const { name, value } = e.target;
-    // console.log('name: ', name);
-
-    let file = e.target.files[0];
-    // console.log('file: ', file);
-    if (file) {
-      let data = { ...currentRow };
-      // data['CoverFileUrlUpload'] = file;
-      // setCurrentRow(data);
-      // console.log('data: ', data);
-
-      let reader = new FileReader();
-      // reader.onload = () => setPreview(reader.result);
-      reader.readAsDataURL(file);
-      reader.onload = (event) => {
-        // setPreview(event.target.result);
-        data[name] = event.target.result;
-        // data["CoverFileUrlUpload"] = event.target.result;
-        //  console.log('event.target.result: ', event.target.result);
-        // console.log('From onload');
-        setCurrentRow(data);
-      };
-
-      // setErrorObject({ ...errorObject, [name]: null });
-    }
-  };
+  
   // const handleChangeManyDropDown = (name, value, Idx) => {
   //   let data = { ...currentRow };
   //   if (name === "CheckId") {
@@ -326,7 +300,9 @@ const InspectionReportEntryAddEditModal = (props) => {
               id="CoverFileUrlUpload"
               name="CoverFileUrlUpload"
               accept="application/pdf"
-              style={!currentRow.CoverFileUrlUpload ? { color: "transparent" } : {}}
+              style={
+                !currentRow.CoverFileUrlUpload ? { color: "transparent" } : {}
+              }
               //onChange={handleFileChange}
               //onChange={(e) => handleFileChange(e, "CoverFileUrl")}
               onChange={(e) => handleChangeMasterFile(e)}
@@ -364,11 +340,6 @@ const InspectionReportEntryAddEditModal = (props) => {
                   </ul>
                 </div>
               )}
-              
-              {/* { currentRow.CoverFileUrlUpload? currentRow.CoverFileUrlUpload.data:""}
-              { currentRow.CoverFileUrlUpload} */}
-
-
             </div>
             <div> </div>
             <div>
