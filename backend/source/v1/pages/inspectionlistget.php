@@ -9,9 +9,13 @@ try{
 	
 	$sWhere="";
 	if($Search){
-		$sWhere=" where a.InvoiceNo like '%$Search%' ";
+		$sWhere=" and a.InvoiceNo like '%$Search%' ";
 	}
 	
+	$StartDate = date('Y-m-d');
+	$EndDate = date('Y-m-d') . " 23-59-59";
+
+
 	$query = "SELECT a.TransactionId AS id,a.TransactionTypeId,
 	DATE_FORMAT(a.TransactionDate, '%d-%b-%Y') AS TransactionDate,
 		a.InvoiceNo,a.BuyerName,a.SupplierName,a.FactoryName,a.CoverFilePages,ifnull(a.TemplateId,0) as TemplateId,
@@ -22,6 +26,8 @@ try{
 	   FROM `t_transaction` a
 	   INNER JOIN `t_users` b ON a.`UserId` = b.`UserId`
 	   INNER JOIN `t_status` c ON a.`StatusId` = c.`StatusId`
+		where (a.TransactionDate between '$StartDate' and '$EndDate')
+
 	   $sWhere
 	   ORDER BY a.`TransactionDate` DESC, a.InvoiceNo ASC;";
 
