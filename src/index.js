@@ -31,6 +31,7 @@ import RoleToMenuPermission from "views/screens/roletomenupermission/index.js";
 import AuditLog from "views/screens/auditlog/index.js";
 import ErrorLog from "views/screens/errorlog/index.js";
 import InspectionReportEntry from "views/screens/inspectionreportentry/index.js";
+import DefectDescriptionReport from "views/screens/defectdescriptionreport/index.js";
 import UserContextProvider from './context/user-info-context';
 
 // import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
@@ -82,6 +83,7 @@ ReactDOM.render(
             <Route path="/auditlog" render={(props) => <AuditLog {...props} />} />
             <Route path="/errorlog" render={(props) => <ErrorLog {...props} />} />
             <Route path="/inspectionreportentry" render={(props) => <InspectionReportEntry {...props} />} />
+            <Route path="/defectdescriptionreport" render={(props) => <DefectDescriptionReport {...props} />} />
             <Route path="/" render={(props) => <Index {...props} />} />
 
           </Switch>

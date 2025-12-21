@@ -342,18 +342,18 @@ function AfterLoginNavbar(props) {
                   Reports
                   <ul class="dropdownList">
 
-                    {/* {menuShowPermision("customervisitpunchledger") === 1 && (
+                    {menuShowPermision("defectdescriptionreport") === 1 && (
                       <li>
                         <a
                           href="javascript:void(0)"
                           onClick={() =>
-                            props.history.push("customervisitpunchledger")
+                            props.history.push("defectdescriptionreport")
                           }
                         >
-                          Report 01
+                          Defect Description
                         </a>
                       </li>
-                    )} */}
+                    )}
 
                     
 {/* 
