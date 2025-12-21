@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef } from "react";
+import React, { forwardRef, useRef,useEffect } from "react";
 import swal from "sweetalert";
 import {
   DeleteOutline,
@@ -60,6 +60,9 @@ const InspectionReportEntry = (props) => {
     moment().format("YYYY-MM-DD")
   );
 
+  const [StartDate, setStartDate] = useState(moment().format("YYYY-MM-DD"));
+  const [EndDate, setEndDate] = useState(moment().format("YYYY-MM-DD"));
+
   /* =====Start of Excel Export Code==== */
   const EXCEL_EXPORT_URL = process.env.REACT_APP_API_URL;
   const baseUrl = process.env.REACT_APP_STORAGE_URL;
@@ -98,6 +101,21 @@ const InspectionReportEntry = (props) => {
         // getDataList();
       });
   }
+
+    const handleChangeFilterDate = (e) => {
+    const { name, value } = e.target;
+    if (name === "StartDate") {
+      setStartDate(value);
+    }
+
+    if (name === "EndDate") {
+      setEndDate(value);
+    }
+  };
+
+  useEffect(() => {
+    getDataList();
+  }, [StartDate, EndDate]);
 
   // 	$.ajax({
   // 	type: "POST",
@@ -255,7 +273,9 @@ const InspectionReportEntry = (props) => {
       action: "getDataList",
       lan: language(),
       UserId: UserInfo.UserId,
-      TransactionId: 0 /**0=ALL */
+      TransactionId: 0, /**0=ALL */
+      StartDate: StartDate,
+      EndDate: EndDate,
     };
     // console.log('LoginUserInfo params: ', params);
 
@@ -904,6 +924,33 @@ const InspectionReportEntry = (props) => {
           {/* <!-- TABLE SEARCH AND GROUP ADD --> */}
           <div class="searchAdd">
          
+          <div>
+              <label>Report Start Date</label>
+              <div class="">
+                <input
+                  type="date"
+                  id="StartDate"
+                  name="StartDate"
+                  value={StartDate}
+                  onChange={(e) => handleChangeFilterDate(e)}
+                />
+              </div>
+            </div>
+
+            <div>
+              <label>Report End Date</label>
+
+              <div class="">
+                <input
+                  type="date"
+                  id="EndDate"
+                  name="EndDate"
+                  value={EndDate}
+                  onChange={(e) => handleChangeFilterDate(e)}
+                />
+              </div>
+            </div>
+
             {/* <Button
             label={"Export"}
             class={"btnPrint"}
