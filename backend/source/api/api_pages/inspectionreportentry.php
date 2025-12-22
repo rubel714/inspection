@@ -50,10 +50,12 @@ function getDataList($data)
 
 	$pTransactionId = $data->TransactionId ? $data->TransactionId : 0;
 	$pCategoryId = $data->CategoryId ? $data->CategoryId : 0;
-
-	$StartDate = trim($data->StartDate);
-	$EndDate = trim($data->EndDate) . " 23-59-59";
-
+	$dateFilter = "";
+	if($pTransactionId == 0){
+		$StartDate = trim($data->StartDate);
+		$EndDate = trim($data->EndDate) . " 23-59-59";
+		$dateFilter = " and (a.TransactionDate between '$StartDate' and '$EndDate') ";
+	}
 	try {
 		$dbh = new Db();
 
@@ -70,7 +72,7 @@ function getDataList($data)
 	   INNER JOIN `t_status` c ON a.`StatusId` = c.`StatusId`
 	   LEFT JOIN `t_template` d ON a.`TemplateId` = d.`TemplateId`
 	   where (a.TransactionId = $pTransactionId OR $pTransactionId=0)
-		and (a.TransactionDate between '$StartDate' and '$EndDate')
+		$dateFilter
 	   ORDER BY a.`TransactionDate` DESC, a.InvoiceNo ASC;";
 
 		$resultdatalist = $dbh->query($query);
