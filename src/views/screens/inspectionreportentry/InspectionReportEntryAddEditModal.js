@@ -27,9 +27,16 @@ const InspectionReportEntryAddEditModal = (props) => {
   // const [currCheckId, setCurrCheckId] = useState(null);
 
   const baseUrl = process.env.REACT_APP_FRONT_URL;
+  const baseUrlstorage = process.env.REACT_APP_STORAGE_URL;
   const [previewImage, setPreviewImage] = useState(
     `${baseUrl}image/transaction/placeholder.jpg`
   );
+
+  // Build full URL for accessory files stored on server
+  const getAccessoryFileUrl = (fileName) => {
+    if (!fileName) return "";
+    return `${baseUrlstorage}image/transaction/${currentRow.ManyImgPrefix}/${fileName}`;
+  };
 
   const EXCEL_EXPORT_URL = process.env.REACT_APP_API_URL;
   const PDFGenerate = () => {
@@ -45,6 +52,46 @@ const InspectionReportEntryAddEditModal = (props) => {
     data[name] = value;
     setCurrentRow(data);
     setErrorObject({ ...errorObject, [name]: null });
+  };
+
+  const handleDeleteAccessory = (fileName) => {
+    const isServerFile = /_(footer|cover)_/.test(fileName || "");
+    if (!isServerFile) {
+      // Remove from local selections only
+      setSelectedFiles((prev) => prev.filter((f) => f !== fileName));
+      let data = { ...currentRow };
+      if (Array.isArray(data.FooterFileUrlUpload)) {
+        data.FooterFileUrlUpload = data.FooterFileUrlUpload.filter(
+          (f) => f.name !== fileName
+        );
+      }
+      setCurrentRow(data);
+      return;
+    }
+
+    const params = {
+      action: "deleteAccessoryFile",
+      lan: language(),
+      UserId: UserInfo.UserId,
+      TransactionId: currentRow.id,
+      FileName: fileName,
+    };
+
+    apiCall.post(serverpage, { params }, apiOption()).then((res) => {
+      if (
+        props.masterProps &&
+        typeof props.masterProps.openNoticeModal === "function"
+      ) {
+        props.masterProps.openNoticeModal({
+          isOpen: true,
+          msg: res.data.message,
+          msgtype: res.data.success,
+        });
+      }
+      if (res.data.success === 1) {
+        setSelectedFiles((prev) => prev.filter((f) => f !== fileName));
+      }
+    });
   };
 
   const handleChangeMasterFile = (e) => {
@@ -345,19 +392,57 @@ const InspectionReportEntryAddEditModal = (props) => {
             <div>
               {selectedFiles.length > 0 && (
                 <div style={{ color: "#666" }}>
-                  {/*  <strong>Selected files:</strong>*/}
                   <ul style={{ paddingLeft: "20px" }}>
-                    {selectedFiles.map((fileName, index) => (
-                      // <li key={index}>{fileName}</li>
-                      <li key={index}>
-                        {fileName.length > 15
+                    {selectedFiles.map((fileName, index) => {
+                      const displayName =
+                        fileName && fileName.length > 15
                           ? `${fileName.slice(0, 6)}...${fileName.slice(-8)}`
-                          : fileName}
-                      </li>
-                    ))}
+                          : fileName;
+                      // Server-stored files created via ConvertFileAPI include `_footer_` or `_cover_` in the name
+                      const isServerFile = /_(footer|cover)_/.test(fileName || "");
+                      const url = getAccessoryFileUrl(fileName);
+                      return (
+                        <li
+                          key={index}
+                          style={{ display: "flex", alignItems: "center", gap: "4px" }}
+                        >
+                          {isServerFile ? (
+                            <a
+                              href={url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              download
+                              title={fileName}
+                              style={{ textDecoration: "underline", color: "#3366cc" }}
+                            >
+                              {displayName}
+                            </a>
+                          ) : (
+                            <span title={fileName}>{displayName}</span>
+                          )}
+                          <button
+                            type="button"
+                            className="btnDeleteSmall"
+                            onClick={() => handleDeleteAccessory(fileName)}
+                            title="Delete file"
+                            style={{
+                              border: "none",
+                              background: "transparent",
+                              color: "#d33",
+                              cursor: "pointer",
+                              padding: "0 2px",
+                              lineHeight: 1,
+                              minWidth: "2px",
+                            }}
+                          >
+                            ✕
+                          </button>
+                        </li>
+                      );
+                    })}
                   </ul>
                 </div>
-              )}{" "}
+              )}
             </div>
           </div>
 

@@ -34,6 +34,9 @@ switch ($task) {
 	case "getBulkImages":
 		$returnData = getBulkImages($data);
 		break;
+	case "deleteAccessoryFile":
+		$returnData = deleteAccessoryFile($data);
+		break;
 	case "changeCheckListOrder":
 		$returnData = changeCheckListOrder($data);
 		break;
@@ -856,5 +859,74 @@ function getMaxSortOrder($Id,$TableName){
 		return $MaxSortOrder;
 	} catch (PDOException $e) {
 		return 0;
+	}
+}
+
+function deleteAccessoryFile($data)
+{
+	if ($_SERVER["REQUEST_METHOD"] != "POST") {
+		return $returnData = msg(0, 404, 'Page Not Found!');
+	} else {
+		$lan = trim($data->lan);
+		$UserId = trim($data->UserId);
+		$TransactionId = $data->TransactionId;
+		$FileName = trim($data->FileName);
+
+		if (!$TransactionId || !$FileName) {
+			return msg(0, 400, 'TransactionId or FileName missing');
+		}
+
+		try {
+			$dbh = new Db();
+
+			// Get ManyImgPrefix and current FooterFileUrl
+			$query = "SELECT ManyImgPrefix, FooterFileUrl FROM t_transaction WHERE TransactionId = $TransactionId;";
+			$result = $dbh->query($query);
+			if (!$result || count($result) === 0) {
+				return msg(0, 404, 'Report not found');
+			}
+
+			$ManyImgPrefix = $result[0]['ManyImgPrefix'];
+			$FooterFileUrl = $result[0]['FooterFileUrl'];
+
+			// Delete file from storage if it exists
+			$fullPath = STORAGE_PATH . "image/transaction/" . $ManyImgPrefix . "/" . $FileName;
+			if (file_exists($fullPath)) {
+				@unlink($fullPath);
+			}
+
+			// Update DB FooterFileUrl by removing the filename
+			$newFooter = null;
+			if ($FooterFileUrl) {
+				$parts = explode(',', $FooterFileUrl);
+				$parts = array_filter($parts, function ($p) use ($FileName) {
+					return trim($p) !== $FileName;
+				});
+				$newFooter = count($parts) ? implode(',', $parts) : null;
+			}
+
+			$aQuerys = array();
+			$u = new updateq();
+			$u->table = 't_transaction';
+			$u->columns = ['FooterFileUrl'];
+			$u->values = [$newFooter];
+			$u->pks = ['TransactionId'];
+			$u->pk_values = [$TransactionId];
+			$u->build_query();
+			$aQuerys[] = $u;
+
+			$res = exec_query($aQuerys, $UserId, $lan);
+			$success = ($res['msgType'] == 'success') ? 1 : 0;
+			$status = ($res['msgType'] == 'success') ? 200 : 500;
+
+			return [
+				"success" => $success,
+				"status" => $status,
+				"UserId" => $UserId,
+				"message" => $success ? 'File deleted successfully' : $res['msg']
+			];
+		} catch (PDOException $e) {
+			return msg(0, 500, $e->getMessage());
+		}
 	}
 }
