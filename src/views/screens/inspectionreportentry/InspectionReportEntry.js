@@ -173,7 +173,7 @@ const InspectionReportEntry = (props) => {
       visible: true,
       sort: true,
       filter: true,
-      width: "7%",
+      width: "6%",
     },
 
     {
@@ -212,15 +212,15 @@ const InspectionReportEntry = (props) => {
       filter: true,
       // width: "12%",
     },
-    // {
-    //   field: "UserName",
-    //   label: "Reported By",
-    //   align: "left",
-    //   visible: true,
-    //   sort: true,
-    //   filter: true,
-    //   width: "10%",
-    // },
+    {
+      field: "InspectorUserName",
+      label: "Inspector Name",
+      align: "left",
+      visible: true,
+      sort: true,
+      filter: true,
+      width: "8%",
+    },
 
     {
       field: "CoverFileUrlStatus",

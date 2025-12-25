@@ -79,7 +79,7 @@ try {
 		FROM t_transaction_items a
 		where a.TransactionId=$TransactionId;";
 		$resultdatalist = $db->query($query);
-		$SortOrder = $resultdatalist[0]["MaxSortOrder"];
+		$SortOrder = $resultdatalist[0]["MaxSortOrder"]+1;
 		
 
 		$query = "INSERT INTO t_transaction_items (TransactionId,CategoryId,CheckName,RowNo,ColumnNo,CheckType,PhotoUrl,SortOrder) 

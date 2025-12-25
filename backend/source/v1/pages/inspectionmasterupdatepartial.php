@@ -8,6 +8,7 @@ try {
 	$TransactionId = isset($data['TransactionId']) ? checkNull($data['TransactionId']) : "";
 	$TemplateId = isset($data['TemplateId']) ? checkNull($data['TemplateId']) : "";
 	$StatusId = isset($data['StatusId']) ? checkNull($data['StatusId']) : "";
+	$InspectorUserId = isset($data['UserInfoId']) ? checkNull($data['UserInfoId']) : null;
 
 	if ($TransactionId == "") {
 		$apiResponse = json_encode(recordNotFoundMsg(0, "TransactionId param is missing"));
@@ -32,13 +33,27 @@ try {
 
 	
 
-	$query = "UPDATE t_transaction set TemplateId=:TemplateId, StatusId=:StatusId
-	where TransactionId=:TransactionId;";
+	//get old template id start
+	$querydup = "SELECT ifnull(TemplateId,0) as TemplateId, InspectorUserId
+	FROM t_transaction
+	where TransactionId=$TransactionId;";		
+	$resultdatadup = $db->query($querydup);
+	$OldInspectorUserId = $resultdatadup[0]["InspectorUserId"];
+	$OldTemplateId = $resultdatadup[0]["TemplateId"];
+	if($OldTemplateId > 0){
+		$InspectorUserId = $OldInspectorUserId;
+	}
+	//get old template id end
 
+
+
+	$query = "UPDATE t_transaction set TemplateId=:TemplateId, StatusId=:StatusId, InspectorUserId=:InspectorUserId
+	where TransactionId=:TransactionId;";
 	$pList = array(
 		'TemplateId' => $TemplateId,
 		'StatusId' => $StatusId,
-		'TransactionId' => $TransactionId
+		'TransactionId' => $TransactionId,
+		'InspectorUserId' => $InspectorUserId
 	);
 
 

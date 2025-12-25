@@ -64,7 +64,7 @@ function getDataList($data)
 
 		$query = "SELECT a.TransactionId AS id,a.TransactionTypeId,DATE(a.`TransactionDate`) TransactionDate, 
 		a.InvoiceNo,a.BuyerName,a.SupplierName,a.FactoryName,a.CoverFilePages,
-		a.`UserId`, a.StatusId, b.`UserName`,c.`StatusName`, 
+		a.`UserId`, a.StatusId, b.`UserName`,c.`StatusName`, e.`UserName` as InspectorUserName,
 		a.CoverFileUrl,'' CoverFileUrlUpload, case when a.CoverFileUrl is null then '' else 'Yes' end as CoverFileUrlStatus,
 		a.FooterFileUrl,'' FooterFileUrlUpload, case when a.FooterFileUrl is null then '' else 'Yes' end as FooterFileUrlStatus,
 		
@@ -74,6 +74,7 @@ function getDataList($data)
 	   INNER JOIN `t_users` b ON a.`UserId` = b.`UserId`
 	   INNER JOIN `t_status` c ON a.`StatusId` = c.`StatusId`
 	   LEFT JOIN `t_template` d ON a.`TemplateId` = d.`TemplateId`
+	   LEFT JOIN `t_users` e ON a.`InspectorUserId` = e.`UserId`
 	   where (a.TransactionId = $pTransactionId OR $pTransactionId=0)
 		$dateFilter
 	   ORDER BY a.`TransactionDate` DESC, a.InvoiceNo ASC;";
@@ -235,6 +236,7 @@ function updateMasterPartial($data)
 	if ($_SERVER["REQUEST_METHOD"] != "POST") {
 		return $returnData = msg(0, 404, 'Page Not Found!');
 	} else {
+		$dbh = new Db();
 
 		$lan = trim($data->lan);
 		$UserId = trim($data->UserId);
@@ -243,13 +245,27 @@ function updateMasterPartial($data)
 		$TemplateId = $data->rowData->TemplateId;
 		$StatusId = $data->rowData->StatusId;
 
+
+		//get old template id start
+		$querydup = "SELECT ifnull(TemplateId,0) as TemplateId, InspectorUserId
+		FROM t_transaction
+		where TransactionId=$id;";		
+		$resultdatadup = $dbh->query($querydup);
+		$OldInspectorUserId = $resultdatadup[0]["InspectorUserId"];
+		$OldTemplateId = $resultdatadup[0]["TemplateId"];
+		$InspectorUserId = $UserId;
+		if($OldTemplateId > 0){
+			$InspectorUserId = $OldInspectorUserId;
+		}
+		//get old template id end
+
 		try {
 			$aQuerys = array();
 			// if ($id > 0) {
 			$u = new updateq();
 			$u->table = 't_transaction';
-			$u->columns = ['TemplateId','StatusId'];
-			$u->values = [$TemplateId,$StatusId];
+			$u->columns = ['TemplateId','StatusId','InspectorUserId'];
+			$u->values = [$TemplateId,$StatusId,$InspectorUserId];
 			$u->pks = ['TransactionId'];
 			$u->pk_values = [$id];
 			$u->build_query();
@@ -781,6 +797,30 @@ function importInspectionReport($data)
 				$BUYERNAME = $data[$BUYERNAMEIdx];
 				$SUPPLIERNAME = $data[$SUPPLIERNAMEIdx];
 				$FACTORYNAME = $data[$FACTORYNAMEIdx];
+
+
+
+
+				/**Duplicate invoice check start */
+				$querydup = "SELECT count(TransactionId) as InvoiceCount
+				FROM t_transaction
+				where InvoiceNo='$REPORTNUMBER';";		
+				$resultdatadup = $dbh->query($querydup);
+				$InvoiceCount = $resultdatadup[0]["InvoiceCount"];
+				if($InvoiceCount > 0){
+					continue; //skip duplicate invoice
+				}
+				/**Duplicate invoice check start */
+
+
+
+
+
+
+
+
+
+
 
 				$dt = DateTime::createFromFormat("d-M-Y", $INSPECTIONDATE); //17-Sep-2025
 				$TransactionDate =$dt->format("Y-m-d"); // output: 2025-09-17
