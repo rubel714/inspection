@@ -530,9 +530,10 @@ function DefectDescriptionreportExport()
 	$FactoryName = $_REQUEST['FactoryId'];
 
 	$sql = "SELECT a.BuyerName, a.FactoryName, a.InvoiceNo,b.CheckName,
-	b.CheckType, DATE(a.`TransactionDate`) TransactionDate
+	b.CheckType, DATE(a.`TransactionDate`) TransactionDate, e.`UserName` as InspectorUserName
 	FROM `t_transaction` a
 	inner join t_transaction_items b on a.TransactionId = b.TransactionId
+	LEFT JOIN `t_users` e ON a.`InspectorUserId` = e.`UserId`
 	where (a.TransactionDate between '$StartDate' and '$EndDate')
 	and b.CheckType != 'R'
 	and (a.BuyerName = '$BuyerName' or '$BuyerName' = '0')
@@ -540,14 +541,14 @@ function DefectDescriptionreportExport()
 	ORDER BY a.`TransactionDate` DESC, a.InvoiceNo ASC;";
 
 
-	$tableProperties["query_field"] = array("BuyerName", "FactoryName", "InvoiceNo", "CheckName", "CheckType", "TransactionDate");
-	$tableProperties["table_header"] = array('Buyer Name', 'Factory Name', 'Report Number', 'Defect Description', 'Type', 'Inspection Date');
-	$tableProperties["align"] = array("left", "left", "left", "left", "left", "left");
-	$tableProperties["width_print_pdf"] = array("10%", "10%", "10%", "10%", "10%", "10%"); //when exist serial then here total 95% and 5% use for serial
-	$tableProperties["width_excel"] = array("25", "40", "18","30", "10", "18");
-	$tableProperties["precision"] = array("string", "string","string", "string", "string", "string"); //string,date,datetime,0,1,2,3,4
-	$tableProperties["total"] = array(0, 0, 0, 0, 0,0); //not total=0, total=1
-	$tableProperties["color_code"] = array(0, 0, 0, 0,0, 0); //colorcode field = 1 not color code field = 0
+	$tableProperties["query_field"] = array("BuyerName", "FactoryName", "InvoiceNo", "CheckName", "CheckType", "TransactionDate", "InspectorUserName");
+	$tableProperties["table_header"] = array('Buyer Name', 'Factory Name', 'Report Number', 'Defect Description', 'Type', 'Inspection Date', 'Inspector Name');
+	$tableProperties["align"] = array("left", "left", "left", "left", "left", "left", "left");
+	$tableProperties["width_print_pdf"] = array("10%", "10%", "10%", "10%", "10%", "10%", "10%"); //when exist serial then here total 95% and 5% use for serial
+	$tableProperties["width_excel"] = array("25", "40", "18","30", "10", "18", "20");
+	$tableProperties["precision"] = array("string", "string","string", "string", "string", "string", "string"); //string,date,datetime,0,1,2,3,4
+	$tableProperties["total"] = array(0, 0, 0, 0, 0,0, 0); //not total=0, total=1
+	$tableProperties["color_code"] = array(0, 0, 0, 0,0, 0, 0); //colorcode field = 1 not color code field = 0
 	$tableProperties["header_logo"] = 0; //include header left and right logo. 0 or 1
 	$tableProperties["footer_signatory"] = 0; //include footer signatory. 0 or 1
 

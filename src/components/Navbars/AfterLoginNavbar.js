@@ -355,6 +355,19 @@ function AfterLoginNavbar(props) {
                       </li>
                     )}
 
+                     {menuShowPermision("bulkreportdownload") === 1 && (
+                      <li>
+                        <a
+                          href="javascript:void(0)"
+                          onClick={() =>
+                            props.history.push("bulkreportdownload")
+                          }
+                        >
+                          Bulk Report Download
+                        </a>
+                      </li>
+                    )}
+
                     
 {/* 
                     {menuShowPermision("customervisitpunchsummary") === 1 && (

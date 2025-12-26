@@ -16,8 +16,8 @@ import ExecuteQueryHook from "../../../components/hooks/ExecuteQueryHook";
 import moment from "moment";
 import { id } from "date-fns/locale";
 
-const DefectDescriptionReport = (props) => {
-  const serverpage = "defectdescriptionreport"; // this is .php server page
+const BulkReportDownload = (props) => {
+  const serverpage = "bulkreportdownload"; // this is .php server page
 
   const { useState } = React;
   const [bFirst, setBFirst] = useState(true);
@@ -38,13 +38,11 @@ const DefectDescriptionReport = (props) => {
     const EXCEL_EXPORT_URL = process.env.REACT_APP_API_URL;
 
     const PrintPDFExcelExportFunction = () => {
-      let finalUrl = EXCEL_EXPORT_URL + "report/print_pdf_excel_server.php";
+      let finalUrl = EXCEL_EXPORT_URL + "report/BulkReportGenerateAndDownload.php";
      
       window.open(
         finalUrl +
-          "?action=DefectDescriptionreportExport" +
-          "&reportType=excel" +
-          "&StartDate=" + StartDate +
+          "?StartDate=" + StartDate +
           "&EndDate=" + EndDate +
           "&BuyerId=" + selectedBuyer.id +
           "&FactoryId=" + selectedFactory.id +
@@ -143,7 +141,6 @@ const DefectDescriptionReport = (props) => {
       filter: true,
       width: "17%",
     },
-
     {
       field: "InvoiceNo",
       label: "Report Number",
@@ -151,25 +148,7 @@ const DefectDescriptionReport = (props) => {
       visible: true,
       sort: true,
       filter: true,
-      width: "12%",
-    },
-    {
-      field: "CheckName",
-      label: "Defect Description",
-      align: "left",
-      visible: true,
-      sort: true,
-      filter: true,
-      // width: "12%",
-    },
-    {
-      field: "CheckType",
-      label: "Type",
-      align: "left",
-      visible: true,
-      sort: true,
-      filter: true,
-      width: "6%",
+      width: "10%",
     },
     {
       field: "TransactionDate",
@@ -178,7 +157,16 @@ const DefectDescriptionReport = (props) => {
       visible: true,
       sort: true,
       filter: true,
-      width: "10%",
+      width: "8%",
+    },
+    {
+      field: "TemplateName",
+      label: "Template",
+      align: "left",
+      visible: true,
+      sort: true,
+      filter: true,
+      // width: "12%",
     },
     {
       field: "InspectorUserName",
@@ -187,8 +175,8 @@ const DefectDescriptionReport = (props) => {
       visible: true,
       sort: true,
       filter: true,
-      width: "10%",
-    },
+      width: "12%",
+    }
   ];
 
   if (bFirst) {
@@ -222,7 +210,7 @@ const DefectDescriptionReport = (props) => {
       <div class="bodyContainer">
         {/* <!-- ######-----TOP HEADER-----####### --> */}
         <div class="topHeader">
-          <h4>Home ❯ Reports ❯ Defect Description</h4>
+          <h4>Home ❯ Reports ❯ Bulk Report Download</h4>
         </div>
 
         {/* <!-- TABLE SEARCH AND GROUP ADD --> */}
@@ -290,7 +278,7 @@ const DefectDescriptionReport = (props) => {
           </div>
 
           <Button
-            label={"Export"}
+            label={"Bulk Download"}
             class={"btnPrint"}
             onClick={PrintPDFExcelExportFunction}
           />
@@ -306,4 +294,4 @@ const DefectDescriptionReport = (props) => {
   );
 };
 
-export default DefectDescriptionReport;
+export default BulkReportDownload;

@@ -1,11 +1,13 @@
 <?php
 // echo "<pre>";
+// echo 13123;
 // print_r($_REQUEST);
-
+// exit;
 // error_reporting(E_ALL);
 // ini_set('display_errors', 1);
 
 $TransactionId = isset($_REQUEST['TransactionId']) ? $_REQUEST['TransactionId'] : -1;
+$BulkFolderName = isset($_REQUEST['BulkFolderName']) ? $_REQUEST['BulkFolderName'] : "";
 if ($TransactionId == -1) {
     echo "Parameter is invalid";
     exit;
@@ -58,7 +60,7 @@ $OutputFileDirectory = STORAGE_PATH . 'media/files/';
 
 /*check the director is available. If not, then create*/
 // $path = "../../image/transaction/" . $ManyImgPrefix;
-$path = STORAGE_PATH."image/transaction/" . $ManyImgPrefix;
+$path = STORAGE_PATH . "image/transaction/" . $ManyImgPrefix;
 if (!file_exists($path)) {
     mkdir($path, 0777, true);
 }
@@ -74,7 +76,7 @@ class MYPDF extends TCPDF
 
         // Logo
         // $image_file = '../../image/appmenu/Intertek_Logo.png';
-        $image_file = STORAGE_PATH.'image/appmenu/Intertek_Logo.png';
+        $image_file = STORAGE_PATH . 'image/appmenu/Intertek_Logo.png';
         $this->Image($image_file, 5, 5, 30, 10, 'PNG', '', '', false, 150, '', false, false, 1, false, false, false);
         // Set font
         $this->SetFont('helvetica', 'B', 10);
@@ -143,16 +145,6 @@ $sqlmany = "SELECT a.TransactionItemId,a.CheckId,a.CheckName,a.RowNo,a.ColumnNo,
 			where a.TransactionId = $TransactionId
 			order by a.SortOrder;";
 $manyresult = $db->query($sqlmany);
-// 'half-one-third'
-// 'half-half'
-// 'full-full'
-
-// reportcheckblock-width-half
-// reportcheckblock-width-full
-
-// reportcheckblock-height-onethird
-// reportcheckblock-height-half
-// reportcheckblock-height-full
 
 $images = [];
 foreach ($manyresult as $result) {
@@ -238,18 +230,12 @@ $label_height = 6;
 
 $page_width = $pdf->getPageWidth() - $pdf->getMargins()['left'] - $pdf->getMargins()['right']; // 200
 $page_height = $pdf->getPageHeight() - 5; // space for header/footer // 292
-// echo $page_width;
-// echo "=======";
-// echo $page_height;
-// exit;
+
 
 $x = $pdf->GetX(); // 5
 $y = $pdf->GetY(); // 25
 $row_height = 0;
-// echo $x;
-// echo "=======";
-// echo $y;
-// exit;
+
 
 foreach ($images as $img) {
 
@@ -304,40 +290,32 @@ foreach ($images as $img) {
         $row_height = 0;
     }
 
-    // Draw image
-    //$x=5, $y=25, $w=200, $h=224
-    //$pdf->Image($img['file'], $x, $y, $w, $h, '', '', '', true);
-	
-		
-		
-	// ✅ 3. Draw 3:4 ratio box and insert image
-	$boxWidth  = $w;// $page_width;  // mm
-	$boxHeight = $h;//$page_height; // mm
-	// $boxWidth  = 90;  // mm
-	// $boxHeight = 120; // mm
-	//$x = 10;
-	//$y = 25;
 
-	$pdf->Rect($x, $y, $boxWidth, $boxHeight); // optional: container border
-	$pdf->Rect($x, $y, $w, $h); // optional: container border
+    // ✅ 3. Draw 3:4 ratio box and insert image
+    $boxWidth  = $w; // $page_width;  // mm
+    $boxHeight = $h; //$page_height; // mm
 
-	$imageFile = $img['file'];//'example.jpg'; // your image path
-	list($imgW, $imgH) = getimagesize($imageFile);
-	$imgRatio = $imgW / $imgH;
-	$boxRatio = $boxWidth / $boxHeight;
 
-	if ($imgRatio > $boxRatio) {
-		$fitW = $boxWidth;
-		$fitH = $boxWidth / $imgRatio;
-	} else {
-		$fitH = $boxHeight;
-		$fitW = $boxHeight * $imgRatio;
-	}
+    $pdf->Rect($x, $y, $boxWidth, $boxHeight); // optional: container border
+    $pdf->Rect($x, $y, $w, $h); // optional: container border
 
-	$imgX = $x + ($boxWidth - $fitW) / 2;
-	$imgY = $y + ($boxHeight - $fitH) / 2;
+    $imageFile = $img['file']; //'example.jpg'; // your image path
+    list($imgW, $imgH) = getimagesize($imageFile);
+    $imgRatio = $imgW / $imgH;
+    $boxRatio = $boxWidth / $boxHeight;
 
-	$pdf->Image($img['file'], $imgX, $imgY, $fitW, $fitH, '', '', '', false, 300, '', false, false, 0, false, false, false);
+    if ($imgRatio > $boxRatio) {
+        $fitW = $boxWidth;
+        $fitH = $boxWidth / $imgRatio;
+    } else {
+        $fitH = $boxHeight;
+        $fitW = $boxHeight * $imgRatio;
+    }
+
+    $imgX = $x + ($boxWidth - $fitW) / 2;
+    $imgY = $y + ($boxHeight - $fitH) / 2;
+
+    $pdf->Image($img['file'], $imgX, $imgY, $fitW, $fitH, '', '', '', false, 300, '', false, false, 0, false, false, false);
 
 
     // Draw label below image
@@ -351,23 +329,16 @@ foreach ($images as $img) {
     //$row_height = 230;
     $row_height = max($row_height, $total_height);
 }
-// $pdf->Output('images_with_labels.pdf', 'I');
-// $FileDirectory = dirname(__FILE__) . '/';
-// $CheckListFileName = $ManyImgPrefix.'_checklistreport_'.date("Y_m_d_H_i_s").'.pdf';
 
 
 if ($CoverFileUrl == "" && $FooterFileUrl == "") {
     $CheckListFileName = $InvoiceNo . '_' . date("Y_m_d_H_i_s") . '.pdf';
-}else{
+} else {
     $CheckListFileName = $InvoiceNo . '_' . date("Y_m_d_H_i_s") . '_checklist.pdf';
 }
 
 $SecondFileName = $OutputFileDirectory . $CheckListFileName;
 $pdf->Output($SecondFileName, 'F'); //save file
-
-
-
-
 
 
 
@@ -385,155 +356,54 @@ try {
     $merger = new Merger(new TcpdiDriver());
 
 
-	//when Cover file is not available
-	if ($CoverFileUrl == "" && $FooterFileUrl == "") {
-		$pdf->Output($SecondFileName, 'I'); //show file
-	} else {
-		
-		
-    // Add PDF files (must exist and be valid)
-    // $merger->addFile(__DIR__ . '/1111.pdf');
-    // $merger->addFile(__DIR__ . '/aaa.pdf');
-    // $merger->addFile(__DIR__ . '/2222.pdf');
-    // $merger->addFile(__DIR__ . '/bbb.pdf');
+    //when Cover file is not available
+    if ($CoverFileUrl == "" && $FooterFileUrl == "") {
+        $pdf->Output($SecondFileName, 'I'); //show file
+    } else {
+        $files = [];
 
-   // // Merge them
-    //$createdPdf = $merger->merge();
-
-   // // Save the result
-    //file_put_contents(__DIR__ . '/merged.pdf', $createdPdf);
-	
-////////////////////////////////////////////////////////////////////////////////////////////////////
-	 $files = [];
-
-    if ($CoverFileUrl != "") {
-        $files[] = $FileDirectory.$CoverFileUrl;
-    }
-
-    $files[] = $OutputFileDirectory.$CheckListFileName;
-
-    if ($FooterFileUrl != "") {
-        // $files[] = $FileDirectory.$FooterFileUrl;
-
-        $FooterFileUrlList = explode(",", $FooterFileUrl);
-        foreach ($FooterFileUrlList as $FooterFileUrlName) {
-            $files[] = $FileDirectory.$FooterFileUrlName;
+        if ($CoverFileUrl != "") {
+            $files[] = $FileDirectory . $CoverFileUrl;
         }
 
-    }
-// echo "<pre>";
-// print_r( $files);
-// exit;
-    // $pdf->setPrintHeader(false);
-    // $pdf->setPrintFooter(false);
-    foreach ($files as $file) {
-		$merger->addFile($file);
-    }
+        $files[] = $OutputFileDirectory . $CheckListFileName;
 
-    // Merge them
-    $createdPdf = $merger->merge();
-	// echo "<pre>";
-	// print_r($createdPdf);
-	// exit;
-    // $CombineFileName = $OutputFileDirectory . $InvoiceNo . '_' . date("Y_m_d_H_i_s") . '.pdf';
-    $CombineFileName = $InvoiceNo . '_' . date("Y_m_d_H_i_s") . '.pdf';
-	// echo $CombineFileName;
-	// exit;
-    // Save the result
-    // file_put_contents($CombineFileName, $createdPdf);
-	// $OutputFile = __DIR__ . '/../../media/files/'.$CombineFileName;
-	$OutputFile = STORAGE_PATH . 'media/files/'.$CombineFileName;
-    // file_put_contents(__DIR__ . '/../../media/files/'.$CombineFileName, $createdPdf);
-    file_put_contents($OutputFile, $createdPdf);
-	
-	// $url = domainurl.'media/files/'.$CombineFileName;
-	$url = STORAGE_PATH_URL.'media/files/'.$CombineFileName;
-	header('Location: ' . $url);
-	// exit;
-	}
-	
+        if ($FooterFileUrl != "") {
+            // $files[] = $FileDirectory.$FooterFileUrl;
+
+            $FooterFileUrlList = explode(",", $FooterFileUrl);
+            foreach ($FooterFileUrlList as $FooterFileUrlName) {
+                $files[] = $FileDirectory . $FooterFileUrlName;
+            }
+        }
+
+        foreach ($files as $file) {
+            $merger->addFile($file);
+        }
+
+        // Merge them
+        $createdPdf = $merger->merge();
+        $CombineFileName = $InvoiceNo . '_' . date("Y_m_d_H_i_s") . '.pdf';
+
+        if ($BulkFolderName != "") {
+            //when bulk folder name is provided then create the file in that folder
+            $CombineFileName = $BulkFolderName . '/' . $CombineFileName;
+            //create bulk folder if not exists
+            $bulkPath = STORAGE_PATH . "media/files/" . $BulkFolderName;
+            if (!file_exists($bulkPath)) {
+                mkdir($bulkPath, 0777, true);
+            }
+        }
+
+        $OutputFile = STORAGE_PATH . 'media/files/' . $CombineFileName;
+        file_put_contents($OutputFile, $createdPdf);
+
+        if ($BulkFolderName == "") {
+            //when bulk folder name is not provided then show the file
+            $url = STORAGE_PATH_URL . 'media/files/' . $CombineFileName;
+            header('Location: ' . $url);
+        }
+    }
 } catch (Exception $e) {
     echo "❌ Error merging PDFs: " . $e->getMessage();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
-//===========================================================================================================
-//=============================================Merge Report==================================================
-//===========================================================================================================
-/*
-require_once('fpdi-tcpdf/vendor/autoload.php');
-
-use setasign\Fpdi\Tcpdf\Fpdi;
- try {
-//when Cover file is not available
-if ($CoverFileUrl == "" && $FooterFileUrl == "") {
-    $pdf->Output($SecondFileName, 'I'); //show file
-} else {
-    //when Cover file is available
-
-    // Extend FPDI (which extends TCPDF)
-    class PDFMerger extends Fpdi {}
-    $pdf = new PDFMerger();
-
-    // $files = ['file1.pdf', 'file2.pdf'];
-    // $files = [$CoverFileUrl, $CheckListFileName];
-
-    $files = [];
-
-    if ($CoverFileUrl != "") {
-        $files[] = $FileDirectory.$CoverFileUrl;
-    }
-
-    $files[] = $OutputFileDirectory.$CheckListFileName;
-
-    if ($FooterFileUrl != "") {
-        $files[] = $FileDirectory.$FooterFileUrl;
-    }
-
-    $pdf->setPrintHeader(false);
-    $pdf->setPrintFooter(false);
-    foreach ($files as $file) {
-        // $pageCount = $pdf->setSourceFile($file);
-        // $pageCount = $pdf->setSourceFile($FileDirectory . $file);
-        $pageCount = $pdf->setSourceFile($file);
-
-        for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
-            $templateId = $pdf->importPage($pageNo);
-            $size = $pdf->getTemplateSize($templateId);
-
-            $pdf->AddPage($size['orientation'], [$size['width'], $size['height']]);
-            $pdf->useTemplate($templateId);
-        }
-    }
-
-    //$CheckListFileName = $InvoiceNo . '_' . date("Y_m_d_H_i_s") . '.pdf';
-
-    // $CombineFileName = $FileDirectory . $ManyImgPrefix . '_invoicereport_' . date("Y_m_d_H_i_s") . '.pdf';
-    $CombineFileName = $OutputFileDirectory . $InvoiceNo . '_' . date("Y_m_d_H_i_s") . '.pdf';
-    $pdf->Output($CombineFileName, 'F'); //save file
-
-    $pdf->Output($CombineFileName, 'I'); //show file
-}
-} catch (Exception $e) {
-    echo "Error reading $file: " . $e->getMessage() . "\n";
-}
-
-*/
