@@ -34,30 +34,119 @@ const BulkReportDownload = (props) => {
   const [selectedBuyer, setSelectedBuyer] = useState(null);
   const [selectedFactory, setSelectedFactory] = useState(null);
 
-  /* =====Start of Excel Export Code==== */
-    const EXCEL_EXPORT_URL = process.env.REACT_APP_API_URL;
+  // Processing/loader states
+  const { useState: useStateAlias } = React; // keep consistency if needed
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [completedCount, setCompletedCount] = useState(0);
+  const [totalCount, setTotalCount] = useState(0);
+  const timerRef = useRef(null);
+  const [showProgressModal, setShowProgressModal] = useState(false);
 
-    const PrintPDFExcelExportFunction = () => {
-      let finalUrl = EXCEL_EXPORT_URL + "report/BulkReportGenerateAndDownload.php";
-     
+  const formatTime = (totalSeconds) => {
+    const m = Math.floor(totalSeconds / 60);
+    const s = totalSeconds % 60;
+    return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+  };
+
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+    };
+  }, []);
+
+  /* =====Start of Excel Export Code==== */
+  const EXCEL_EXPORT_URL = process.env.REACT_APP_API_URL;
+
+  // const PrintPDFExcelExportFunction = () => {
+  //   let finalUrl = EXCEL_EXPORT_URL + "report/BulkReportGenerateAndDownload.php";
+
+  //   window.open(
+  //     finalUrl +
+  //       "?StartDate=" + StartDate +
+  //       "&EndDate=" + EndDate +
+  //       "&BuyerId=" + selectedBuyer.id +
+  //       "&FactoryId=" + selectedFactory.id +
+  //       "&TimeStamp=" + Date.now()
+  //   );
+  // };
+
+  const PrintPDFExcelExportFunction = () => {
+    if (!dataList || dataList.length === 0) {
+      alert("No reports to download");
+      return;
+    }
+
+    let BulkFolderName =
+      "Inspection_reports_" +
+      StartDate +
+      "_to_" +
+      EndDate +
+      "_generated_" +
+      new Date().toISOString().replace(/[:.-]/g, "_");
+
+    // Init processing state and timer
+    setIsProcessing(true);
+    setShowProgressModal(true);
+    setElapsedSeconds(0);
+    setCompletedCount(0);
+    setTotalCount(dataList.length);
+    const startTs = Date.now();
+    if (timerRef.current) clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => {
+      setElapsedSeconds(Math.floor((Date.now() - startTs) / 1000));
+    }, 1000);
+
+    const requests = dataList.map((record) =>
+      fetch(
+        EXCEL_EXPORT_URL +
+          "report/ReportGenerate_pdf.php?TransactionId=" +
+          record.TransactionId +
+          "&BulkFolderName=" +
+          BulkFolderName +
+          "&TimeStamp=" +
+          Date.now().toString(),
+        { method: "POST" }
+      )
+        .then((res) => {
+          setCompletedCount((c) => c + 1);
+          return res.ok;
+        })
+        .catch(() => {
+          setCompletedCount((c) => c + 1);
+          return false;
+        })
+    );
+
+    Promise.allSettled(requests).then(() => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+      setIsProcessing(false);
+      setShowProgressModal(false);
+      let finalUrl =
+        EXCEL_EXPORT_URL + "report/BulkReportGenerateAndDownload.php";
+
       window.open(
         finalUrl +
-          "?StartDate=" + StartDate +
-          "&EndDate=" + EndDate +
-          "&BuyerId=" + selectedBuyer.id +
-          "&FactoryId=" + selectedFactory.id +
-          "&TimeStamp=" + Date.now()
+          "?BulkFolderName=" +
+          BulkFolderName +
+          "&TimeStamp=" +
+          Date.now()
       );
-    };
 
-// StartDate: StartDate,
-// EndDate: EndDate,
-// BuyerId: selectedBuyer,
-// FactoryId: selectedFactory,
+      // alert(
+      //   "Report generation in progress. Please check the Downloads section after a few minutes to download the ZIP file."
+      // );
+    });
+  };
 
-    /* =====End of Excel Export Code==== */
-
-
+  /* =====End of Excel Export Code==== */
 
   const handleChangeFilterDate = (e) => {
     const { name, value } = e.target;
@@ -176,7 +265,7 @@ const BulkReportDownload = (props) => {
       sort: true,
       filter: true,
       width: "12%",
-    }
+    },
   ];
 
   if (bFirst) {
@@ -217,7 +306,7 @@ const BulkReportDownload = (props) => {
         <div class="searchAdd">
           <div>
             <label>Report Start Date</label>
-            <div class="" >
+            <div class="">
               <input
                 type="date"
                 id="StartDate"
@@ -251,9 +340,7 @@ const BulkReportDownload = (props) => {
                 value={selectedBuyer}
                 defaultValue={{ id: 0, name: "All Buyers" }}
                 onChange={(e, newValue) => setSelectedBuyer(newValue)}
-                renderInput={(params) => (
-                  <TextField {...params}  size="small" />
-                )}
+                renderInput={(params) => <TextField {...params} size="small" />}
                 style={{ width: 220 }}
               />
             </div>
@@ -269,9 +356,7 @@ const BulkReportDownload = (props) => {
                 }
                 value={selectedFactory}
                 onChange={(e, newValue) => setSelectedFactory(newValue)}
-                renderInput={(params) => (
-                  <TextField {...params} size="small" />
-                )}
+                renderInput={(params) => <TextField {...params} size="small" />}
                 style={{ width: 220 }}
               />
             </div>
@@ -281,8 +366,52 @@ const BulkReportDownload = (props) => {
             label={"Bulk Download"}
             class={"btnPrint"}
             onClick={PrintPDFExcelExportFunction}
+            disabled={isProcessing}
           />
+          {isProcessing && (
+            <div class="processingStatus" style={{ marginTop: 8 }}>
+              Generating {completedCount}/{totalCount} reports • Elapsed {formatTime(elapsedSeconds)}
+            </div>
+          )}
         </div>
+
+        {showProgressModal && (
+          <div
+            class="modalOverlay"
+            style={{
+              position: "fixed",
+              inset: 0,
+              backgroundColor: "rgba(0,0,0,0.35)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              zIndex: 1000,
+            }}
+          >
+            <div
+              class="modalContent"
+              style={{
+                background: "#fff",
+                padding: 20,
+                borderRadius: 8,
+                minWidth: 360,
+                boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
+              }}
+            >
+              <h4 style={{ marginTop: 0, marginBottom: 10 }}>Generating Reports</h4>
+              <div style={{ marginBottom: 6 }}>
+                Progress: {completedCount}/{totalCount}
+              </div>
+              <div style={{ marginBottom: 12 }}>
+                Elapsed: {formatTime(elapsedSeconds)}
+              </div>
+              <div style={{ fontSize: 13, color: "#666" }}>
+                Please keep this tab open. The ZIP download will start
+                automatically when ready.
+              </div>
+            </div>
+          </div>
+        )}
 
         <CustomTable
           columns={columnList}
