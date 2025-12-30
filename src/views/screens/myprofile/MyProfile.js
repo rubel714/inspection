@@ -33,6 +33,8 @@ const MyProfile = (props) => {
     // IsActive: false,
   });
   const [errorObject, setErrorObject] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const UserInfo = LoginUserInfo();
 
   const [DesignationList, setDesignationList] = useState(null);
@@ -269,26 +271,60 @@ const MyProfile = (props) => {
 
             <div class="contactmodalBody pt-10">
               <label>Password</label>
-              <input
-                id="Password"
-                name="Password"
-                type="Password"
-                class={errorObject.Password}
-                placeholder="Enter Password"
-                value={currentRow.Password}
-                onChange={(e) => handleChange(e)}
-              />
+              <div style={{ position: 'relative', display: 'inline-block', width: '100%' }}>
+                <input
+                  id="Password"
+                  name="Password"
+                  type={showPassword ? "text" : "password"}
+                  class={errorObject.Password}
+                  placeholder="Enter Password"
+                  value={currentRow.Password}
+                  onChange={(e) => handleChange(e)}
+                  style={{ width: '100%', paddingRight: '40px' }}
+                />
+                <span
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{
+                    position: 'absolute',
+                    right: '10px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    cursor: 'pointer',
+                    userSelect: 'none',
+                    fontSize: '18px'
+                  }}
+                >
+                  {showPassword ? '👁️' : '👁️‍🗨️'}
+                </span>
+              </div>
 
               <label>Confirm Password</label>
-              <input
-                id="confirmChangePassword"
-                name="confirmChangePassword"
-                type="Password"
-                class={errorObject.confirmChangePassword}
-                placeholder="Enter Confirm Password"
-                value={currentRow.confirmChangePassword}
-                onChange={(e) => handleChange(e)}
-              />
+              <div style={{ position: 'relative', display: 'inline-block', width: '100%' }}>
+                <input
+                  id="confirmChangePassword"
+                  name="confirmChangePassword"
+                  type={showConfirmPassword ? "text" : "password"}
+                  class={errorObject.confirmChangePassword}
+                  placeholder="Enter Confirm Password"
+                  value={currentRow.confirmChangePassword}
+                  onChange={(e) => handleChange(e)}
+                  style={{ width: '100%', paddingRight: '40px' }}
+                />
+                <span
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  style={{
+                    position: 'absolute',
+                    right: '10px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    cursor: 'pointer',
+                    userSelect: 'none',
+                    fontSize: '18px'
+                  }}
+                >
+                  {showConfirmPassword ? '👁️' : '👁️‍🗨️'}
+                </span>
+              </div>
             </div>
 
             <div class="contactmodalBody pt-10">
