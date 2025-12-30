@@ -36,14 +36,14 @@ function getDataList($data)
 		$query = "SELECT a.TransactionId, DATE(a.`TransactionDate`) TransactionDate, 
 		a.InvoiceNo,a.BuyerName,a.SupplierName,a.FactoryName,d.TemplateName, e.`UserName` as InspectorUserName
 		FROM `t_transaction` a
-	   LEFT JOIN `t_template` d ON a.`TemplateId` = d.`TemplateId`
+	   INNER JOIN `t_template` d ON a.`TemplateId` = d.`TemplateId`
 	   LEFT JOIN `t_users` e ON a.`InspectorUserId` = e.`UserId`
 		where (a.TransactionDate between '$StartDate' and '$EndDate')
 		and (a.BuyerName = '$BuyerName' or '$BuyerName' = '0')
 		and (a.FactoryName = '$FactoryName' or '$FactoryName' = '0')
 		and a.CoverFileUrl is not null and a.CoverFileUrl != ''
 		and a.FooterFileUrl is not null and a.FooterFileUrl != ''
-		and a.`TemplateId` is not null
+
 		ORDER BY a.`TransactionDate` DESC, a.InvoiceNo ASC;";
 
 		$resultdatalist = $dbh->query($query);

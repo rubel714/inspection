@@ -1,25 +1,12 @@
 import React, { useState, useContext } from "react";
 import { Button } from "../../components/CustomControl/Button";
-
 import BeforeLoginNavbar from "../../components/Navbars/BeforeLoginNavbar.js";
-
 import DarkFooter from "../../components/Footers/DarkFooter.js";
-
 // services & auth
 import * as Service from "../../services/Service.js";
-
 //Import Preloader
 import LoadingSpinnerOpaque from "../../services/LoadingSpinnerOpaque";
 import swal from "sweetalert";
-
-import {
-  Typography,
-  TextField,
-} from "@material-ui/core";
-import Autocomplete from "@material-ui/lab/Autocomplete";
-
-// const regex =
-//   /^[a-z0-9][a-z0-9-_\.]+@([a-z]|[a-z0-9]?[a-z0-9-]+[a-z0-9])\.[a-z0-9]{2,10}(?:\.[a-z]{2,10})?$/;
 
 function LoginPage(props) {
   // const userCtx = useContext(UserContext);
@@ -39,9 +26,8 @@ function LoginPage(props) {
   });
 
   const [isLoading, setLoading] = useState(false);
-  const [clientList, setClientList] = useState(null);
-  const [branchList, setBranchList] = useState(null);
   const [bFirst, setBFirst] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
 
   React.useEffect(() => {
     document.body.classList.add("login-page");
@@ -64,24 +50,8 @@ function LoginPage(props) {
     setState(data);
   };
 
-  // const handleChangeChoosenMaster = (name, value) => {
-  //   let data = { ...state };
-  //   data[name] = value;
-  //   console.log("data: ", data);
-
-  //   if (name === "ClientId") {
-  //     getBranchList(value);
-  //   }
-
-  //   setState(data);
-  // };
-
   const LoginPage = (data) => {
     if (state.email.length > 0 && state.password.length > 0) {
-      //if (!regex.test(state.email)) {
-      // swal("Oops Error!", "Your email is not valid!", "error");
-      //} else {
-
       setLoading(true);
 
       const body = {
@@ -111,7 +81,7 @@ function LoginPage(props) {
 
             setLoading(false);
 
-            window.location.href =process.env.REACT_APP_BASE_NAME + "/";
+            window.location.href = process.env.REACT_APP_BASE_NAME + "/";
             // window.location.href = process.env.REACT_APP_BASE_NAME + `/check-permission`;
           } else if (res.success == 0) {
             setLoading(false);
@@ -128,27 +98,8 @@ function LoginPage(props) {
     }
   };
 
-  // function getClientList() {
-  //   state.service.default
-  //     .postApi("source/combo_script.php?action=ClientList")
-  //     .then((res) => {
-  //       setClientList([{ id: "", name: "Select client" }].concat(res));
-  //     })
-  //     .catch((err) => {});
-  // }
-
-  // function getBranchList(ClientId) {
-  //   state.service.default
-  //     .postApi("source/combo_script.php?action=BranchList&ClientId=" + ClientId)
-  //     .then((res) => {
-  //       setBranchList([{ id: "", name: "Select branch" }].concat(res));
-  //     })
-  //     .catch((err) => {});
-  // }
-
   if (bFirst) {
     /**First time call for datalist */
-    // getClientList();
     setBFirst(false);
   }
 
@@ -164,78 +115,6 @@ function LoginPage(props) {
             <h3>User Login</h3>
           </div>
           <div class="userLogin">
-            {/* <label>Client</label>
-            <div class="">
-              <Autocomplete
-                autoHighlight
-                className="chosen_dropdown"
-                id="ClientId"
-                name="ClientId"
-                autoComplete
-                options={clientList ? clientList : []}
-                getOptionLabel={(option) => option.name}
-                value={
-                  clientList
-                    ? clientList[
-                      clientList.findIndex(
-                          (list) => list.id === state.ClientId
-                        )
-                      ]
-                    : null
-                }
-                onChange={(event, valueobj) =>
-                  handleChangeChoosenMaster(
-                    "ClientId",
-                    valueobj ? valueobj.id : ""
-                  )
-                }
-                renderOption={(option) => (
-                  <Typography className="chosen_dropdown_font">
-                    {option.name}
-                  </Typography>
-                )}
-                renderInput={(params) => (
-                  <TextField {...params} variant="standard" />
-                )}
-              />
-            </div> */}
-
-            {/* <label>Branch</label>
-            <div class="">
-              <Autocomplete
-                autoHighlight
-                className="chosen_dropdown"
-                id="BranchId"
-                name="BranchId"
-                autoComplete
-                options={branchList ? branchList : []}
-                getOptionLabel={(option) => option.name}
-                value={
-                  branchList
-                    ? branchList[
-                      branchList.findIndex(
-                          (list) => list.id === state.BranchId
-                        )
-                      ]
-                    : null
-                }
-                onChange={(event, valueobj) =>
-                  handleChangeChoosenMaster(
-                    "BranchId",
-                    valueobj ? valueobj.id : ""
-                  )
-                }
-                renderOption={(option) => (
-                  <Typography className="chosen_dropdown_font">
-                    {option.name}
-                  </Typography>
-                )}
-                renderInput={(params) => (
-                  <TextField {...params} variant="standard" />
-                )}
-              />
-            </div> */}
-
             <label>User Name</label>
             <input
               type="text"
@@ -244,12 +123,29 @@ function LoginPage(props) {
               onChange={(e) => handleChange(e)}
             />
             <label>Password</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              onChange={(e) => handleChange(e)}
-            />
+            <div style={{ position: 'relative', display: 'inline-block', width: '100%' }}>
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                name="password"
+                onChange={(e) => handleChange(e)}
+                style={{ width: '100%', paddingRight: '40px' }}
+              />
+              <span
+                onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  position: 'absolute',
+                  right: '10px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  cursor: 'pointer',
+                  userSelect: 'none',
+                  fontSize: '18px'
+                }}
+              >
+                {showPassword ? '👁️' : '👁️‍🗨️'}
+              </span>
+            </div>
           </div>
 
           <Button label={"Login"} class={"btnLogin"} onClick={LoginPage} />
@@ -261,143 +157,6 @@ function LoginPage(props) {
       </div>
 
       <DarkFooter {...props} />
-
-      {/* <div className="page-header sw_relative_login">
-        {isLoading && <LoadingSpinnerOpaque />}
-        <div
-          className="page-header-image"
-          style={{
-            backgroundImage: "url(" + require("assets/img/bg8.jpg") + ")",
-          }}
-        ></div>
-        <div className="content">
-          <Container>
-            <Col className="ml-auto mr-auto" md="4">
-              <Card className="card-login card-plain">
-                <Form action="" className="form" method="">
-                  <CardHeader className="text-center">
-                    <div className="logo-container"></div>
-                  </CardHeader>
-                  <CardBody>
-                    <InputGroup
-                      className={
-                        "no-border input-lg" +
-                        (firstFocus ? " input-group-focus" : "")
-                      }
-                    >
-                      <InputGroupAddon addonType="prepend">
-                        <InputGroupText className="sw_login_padd">
-                          <i className="now-ui-icons users_circle-08"></i>
-                        </InputGroupText>
-                      </InputGroupAddon>
-                      <Input
-                        className="placeholder_color"
-                        placeholder="Username..."
-                        type="text"
-                        name="email"
-                        onChange={(e) => handleChange(e)}
-                        valid={false}
-                        invalid={false}
-                        onFocus={() => setFirstFocus(true)}
-                        onBlur={() => setFirstFocus(false)}
-                      ></Input>
-                    </InputGroup>
-                    <InputGroup
-                      className={
-                        "no-border input-lg" +
-                        (lastFocus ? " input-group-focus" : "")
-                      }
-                    >
-                      <InputGroupAddon addonType="prepend">
-                        <InputGroupText className="sw_login_padd">
-                          <i className="now-ui-icons ui-1_lock-circle-open"></i>
-                        </InputGroupText>
-                      </InputGroupAddon>
-                      <Input
-                        className="placeholder_color"
-                        placeholder="Password..."
-                        name="password"
-                        onChange={(e) => handleChange(e)}
-                        type={passwordShown ? "text" : "password"}
-                        onFocus={() => setLastFocus(true)}
-                        onBlur={() => setLastFocus(false)}
-                      ></Input>
-                      <InputGroupAddon addonType="append">
-                        <InputGroupText className="password-eye">
-                          <i
-                            onClick={togglePasswordVisiblity}
-                            className="fa fa-eye"
-                            aria-hidden="true"
-                          ></i>
-                        </InputGroupText>
-                      </InputGroupAddon>
-                    </InputGroup>
-                  </CardBody>
-                  <CardFooter className="text-center">
-                    <Button
-                      block
-                      className="btn-round"
-                      color="info"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        LoginPage();
-                      }}
-                      size="lg"
-                    >
-                      LOGIN
-                    </Button>
-                    <div className="pull-left">
-                      <h6>
-                        <a
-                          className="link"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            props.history.push("/signup");
-                          }}
-                        >
-                          Create Account
-                        </a>
-                      </h6>
-                    </div>
-                    <div className="pull-right">
-                      <h6>
-                        <a
-                          className="link"
-                          href="javascript:void(0)"
-                          onClick={() => toggle()}
-                        >
-                          Forget Password?
-                        </a>
-                      </h6>
-                    </div>
-                  </CardFooter>
-                </Form>
-              </Card>
-            </Col>
-          </Container>
-        </div>
-        <TransparentFooter />
-      </div> */}
-
-      {/* <Modal isOpen={modal} toggle={toggle} className={className} centered>
-        <ModalHeader toggle={toggle}>Forgot Password Link</ModalHeader>
-        <ModalBody className="text-center">
-          <a className="" href={"./reset-password"}>
-            This is the Link to Change Password
-          </a>
-        </ModalBody>
-        <ModalFooter className="reset-modal-btn">
-          <Button
-            color="primary"
-            onClick={(e) => {
-              e.preventDefault(e);
-              props.history.push("./reset-password");
-            }}
-          >
-            Reset Password
-          </Button> 
-        </ModalFooter>
-      </Modal> */}
     </>
   );
 }
