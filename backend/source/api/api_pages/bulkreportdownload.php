@@ -71,12 +71,22 @@ function getBuyerList($data)
 		$StartDate = trim($data->StartDate);
 		$EndDate = trim($data->EndDate) . " 23-59-59";
 
+		// $query = "SELECT distinct BuyerName id, BuyerName name
+		// 	FROM `t_transaction`
+		// 	where (TransactionDate between '$StartDate' and '$EndDate')
+		// 	and BuyerName is not null 
+		// 	and BuyerName != ''
+		// 	ORDER BY BuyerName ASC;";
+
 		$query = "SELECT distinct BuyerName id, BuyerName name
-			FROM `t_transaction`
-			where (TransactionDate between '$StartDate' and '$EndDate')
-			and BuyerName is not null 
-			and BuyerName != ''
-			ORDER BY BuyerName ASC;";
+		FROM `t_transaction` a
+	   INNER JOIN `t_template` d ON a.`TemplateId` = d.`TemplateId`
+		where (a.TransactionDate between '$StartDate' and '$EndDate') 
+		and a.CoverFileUrl is not null and a.CoverFileUrl != ''
+		and a.FooterFileUrl is not null and a.FooterFileUrl != ''
+		ORDER BY BuyerName ASC;";
+
+
 
 		$resultdata = $dbh->query($query);
 
@@ -103,12 +113,22 @@ function getFactoryList($data)
 		$StartDate = trim($data->StartDate);
 		$EndDate = trim($data->EndDate) . " 23-59-59";
 
+		// $query = "SELECT distinct FactoryName id, FactoryName name
+		// 	FROM `t_transaction`
+		// 	where (TransactionDate between '$StartDate' and '$EndDate')
+		// 	and FactoryName is not null 
+		// 	and FactoryName != ''
+		// 	ORDER BY FactoryName ASC;";
+
+
 		$query = "SELECT distinct FactoryName id, FactoryName name
-			FROM `t_transaction`
-			where (TransactionDate between '$StartDate' and '$EndDate')
-			and FactoryName is not null 
-			and FactoryName != ''
-			ORDER BY FactoryName ASC;";
+		FROM `t_transaction` a
+	   INNER JOIN `t_template` d ON a.`TemplateId` = d.`TemplateId`
+		where (a.TransactionDate between '$StartDate' and '$EndDate') 
+		and a.CoverFileUrl is not null and a.CoverFileUrl != ''
+		and a.FooterFileUrl is not null and a.FooterFileUrl != ''
+		ORDER BY FactoryName ASC;";
+
 
 		$resultdata = $dbh->query($query);
 
