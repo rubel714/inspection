@@ -42,8 +42,6 @@ function getDataList($data)
 		and (a.BuyerName = '$BuyerName' or '$BuyerName' = '0')
 		and (a.FactoryName = '$FactoryName' or '$FactoryName' = '0')
 		and a.CoverFileUrl is not null and a.CoverFileUrl != ''
-		and a.FooterFileUrl is not null and a.FooterFileUrl != ''
-
 		ORDER BY a.`TransactionDate` DESC, a.InvoiceNo ASC;";
 
 		$resultdatalist = $dbh->query($query);
@@ -83,7 +81,6 @@ function getBuyerList($data)
 	   INNER JOIN `t_template` d ON a.`TemplateId` = d.`TemplateId`
 		where (a.TransactionDate between '$StartDate' and '$EndDate') 
 		and a.CoverFileUrl is not null and a.CoverFileUrl != ''
-		and a.FooterFileUrl is not null and a.FooterFileUrl != ''
 		ORDER BY BuyerName ASC;";
 
 
@@ -126,7 +123,6 @@ function getFactoryList($data)
 	   INNER JOIN `t_template` d ON a.`TemplateId` = d.`TemplateId`
 		where (a.TransactionDate between '$StartDate' and '$EndDate') 
 		and a.CoverFileUrl is not null and a.CoverFileUrl != ''
-		and a.FooterFileUrl is not null and a.FooterFileUrl != ''
 		ORDER BY FactoryName ASC;";
 
 
