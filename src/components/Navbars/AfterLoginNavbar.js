@@ -368,6 +368,19 @@ function AfterLoginNavbar(props) {
                       </li>
                     )}
 
+                      {menuShowPermision("inspectioncompletionreport") === 1 && (
+                      <li>
+                        <a
+                          href="javascript:void(0)"
+                          onClick={() =>
+                            props.history.push("inspectioncompletionreport")
+                          }
+                        >
+                          Inspection Completion Report
+                        </a>
+                      </li>
+                    )}
+
                     
 {/* 
                     {menuShowPermision("customervisitpunchsummary") === 1 && (

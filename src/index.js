@@ -33,6 +33,7 @@ import ErrorLog from "views/screens/errorlog/index.js";
 import InspectionReportEntry from "views/screens/inspectionreportentry/index.js";
 import DefectDescriptionReport from "views/screens/defectdescriptionreport/index.js";
 import BulkReportDownload from "views/screens/bulkreportdownload/index.js";
+import InspectionCompletionReport from "views/screens/inspectioncompletionreport/index.js";
 import UserContextProvider from './context/user-info-context';
 
 // import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
@@ -86,6 +87,7 @@ ReactDOM.render(
             <Route path="/inspectionreportentry" render={(props) => <InspectionReportEntry {...props} />} />
             <Route path="/defectdescriptionreport" render={(props) => <DefectDescriptionReport {...props} />} />
             <Route path="/bulkreportdownload" render={(props) => <BulkReportDownload {...props} />} />
+            <Route path="/inspectioncompletionreport" render={(props) => <InspectionCompletionReport {...props} />} />
             <Route path="/" render={(props) => <Index {...props} />} />
 
           </Switch>

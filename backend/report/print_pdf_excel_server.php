@@ -62,6 +62,9 @@ switch ($task) {
 	case "DefectDescriptionreportExport":
 		DefectDescriptionreportExport();
 		break;
+	case "InspectionCompletionReportExport":
+		InspectionCompletionReportExport();
+		break;
 
 
 
@@ -564,6 +567,45 @@ function DefectDescriptionreportExport()
 
 
 
+function InspectionCompletionReportExport()
+{
+
+	global $sql, $tableProperties, $TEXT, $siteTitle;
+	$StartDate = $_REQUEST['StartDate'];
+	$EndDate = $_REQUEST['EndDate'] . " 23-59-59";
+
+	$sql = "SELECT a.InvoiceNo,DATE(a.`TransactionDate`) TransactionDate, 
+	a.BuyerName,a.SupplierName,a.FactoryName,d.TemplateName,e.`UserName` as InspectorUserName,
+	 case when a.CoverFileUrl is null then '' else 'Yes' end as CoverFileUrlStatus,
+	 case when a.FooterFileUrl is null then '' else 'Yes' end as FooterFileUrlStatus,c.`StatusName`
+	   FROM `t_transaction` a
+	   INNER JOIN `t_users` b ON a.`UserId` = b.`UserId`
+	   INNER JOIN `t_status` c ON a.`StatusId` = c.`StatusId`
+	   INNER JOIN `t_template` d ON a.`TemplateId` = d.`TemplateId`
+	   LEFT JOIN `t_users` e ON a.`InspectorUserId` = e.`UserId`
+	   where (a.TransactionDate between '$StartDate' and '$EndDate')
+	   ORDER BY a.`TransactionDate` DESC, a.InvoiceNo ASC;";
+
+
+	$tableProperties["query_field"] = array("InvoiceNo", "TransactionDate", "BuyerName", "SupplierName", "FactoryName", "TemplateName", "InspectorUserName","CoverFileUrlStatus","FooterFileUrlStatus","StatusName");
+	$tableProperties["table_header"] = array('Report Number', 'Report Date', 'Buyer', 'Supplier', 'Factory', 'Template', 'Inspector Name','Report File','Accessories File','Status');
+	$tableProperties["align"] = array("left", "left", "left", "left", "left", "left", "left", "left", "left", "left");
+	$tableProperties["width_print_pdf"] = array("10%", "10%", "10%", "10%", "10%", "10%", "10%", "10%", "10%", "10%"); //when exist serial then here total 95% and 5% use for serial
+	$tableProperties["width_excel"] = array("18", "15", "20","30", "25", "25", "20", "14", "18", "10");
+	$tableProperties["precision"] = array("string", "string","string", "string", "string", "string", "string", "string", "string", "string"); //string,date,datetime,0,1,2,3,4
+	$tableProperties["total"] = array(0, 0, 0, 0, 0,0, 0, 0, 0, 0); //not total=0, total=1
+	$tableProperties["color_code"] = array(0, 0, 0, 0,0, 0, 0, 0, 0, 0); //colorcode field = 1 not color code field = 0
+	$tableProperties["header_logo"] = 0; //include header left and right logo. 0 or 1
+	$tableProperties["footer_signatory"] = 0; //include footer signatory. 0 or 1
+
+	//Report header list
+	$tableProperties["header_list"][0] = $siteTitle;
+	$tableProperties["header_list"][1] = 'Inspection Completion Report';
+	// $tableProperties["header_list"][1] = 'Heading 2';
+
+	//Report save name. Not allow any type of special character
+	$tableProperties["report_save_name"] = 'Inspection_Completion_Report';
+}
 
 
 
