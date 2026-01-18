@@ -5,6 +5,7 @@
 // exit;
 // error_reporting(E_ALL);
 // ini_set('display_errors', 1);
+ini_set('memory_limit', '512M');
 // CORS for your frontend origin
 header('Access-Control-Allow-Origin: *'); // or * if acceptable
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
