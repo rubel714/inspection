@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useEffect, useState } from "react";
 import { Button } from "../../../components/CustomControl/Button";
-import { DeleteOutline, Edit, ArrowUpward,ArrowDownward } from "@material-ui/icons";
+import { DeleteOutline, Edit, ArrowUpward,ArrowDownward,FileCopyTwoTone } from "@material-ui/icons";
 import ExecuteQueryHook from "../../../components/hooks/ExecuteQueryHook";
 import {
   apiCall,
@@ -105,8 +105,8 @@ const TemplateAddEditModal = (props) => {
     {
       field: "custom",
       label: "Action",
-      width: "15%",
-      align: "left",
+      width: "20%",
+      align: "center",
       visible: true,
       sort: false,
       filter: false,
@@ -181,6 +181,14 @@ const TemplateAddEditModal = (props) => {
            changeOrder("down",rowData);
           }}
         />
+
+        <FileCopyTwoTone
+          className={"table-edit-icon mr-10"}
+          onClick={() => {
+           copyCheckApi(rowData);
+          }}
+        />
+
         </>
       )}
        
@@ -271,6 +279,22 @@ const TemplateAddEditModal = (props) => {
       type: type,
       rowData: rowData,
       toRowData: TorowData,
+    };
+
+    apiCall.post(serverpage, { params }, apiOption()).then((res) => {
+      getDataList();
+    });
+  }
+ 
+
+
+  function copyCheckApi(rowData) {
+   
+    let params = {
+      action: "copyCheck",
+      lan: language(),
+      UserId: UserInfo.UserId,
+      rowData: rowData,
     };
 
     apiCall.post(serverpage, { params }, apiOption()).then((res) => {

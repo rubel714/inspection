@@ -27,6 +27,9 @@ switch ($task) {
 	case "changeOrder":
 		$returnData = changeOrder($data);
 		break;
+	case "copyCheck":
+		$returnData = copyCheck($data);
+		break;
 	default:
 		echo "{failure:true}";
 		break;
@@ -193,7 +196,8 @@ function getCheckDataList($data){
 	try{
 		$dbh = new Db();
 		$query = "SELECT t_checklist.CheckId AS id, CheckName,t_checklist.CategoryId, SortOrder, CategoryName, 
-		case when t_template_checklist_map.CheckId is null then 0 else 1 end IsAssigned, t_template_checklist_map.TemplateCheckListMapId
+		case when t_template_checklist_map.CheckId is null then 0 else 1 end IsAssigned, 
+		t_template_checklist_map.TemplateCheckListMapId,t_template_checklist_map.TemplateId
 		FROM t_checklist 
 		$join join t_category on t_category.CategoryId=t_checklist.CategoryId
 		$join join t_template_checklist_map on t_template_checklist_map.CheckId=t_checklist.CheckId and t_template_checklist_map.TemplateId=$TemplateId
@@ -224,6 +228,7 @@ function assignData($data)
 	}{
 
 		$CheckId = $data->rowData->id;
+		$TemplateCheckListMapId = $data->rowData->TemplateCheckListMapId;
 		$TemplateId = $data->rowData->TemplateId;
 		$IsAssigned = $data->rowData->IsAssigned;
 		$lan = trim($data->lan);
@@ -254,8 +259,8 @@ function assignData($data)
 			}else{
 				$d = new deleteq();
 				$d->table = 't_template_checklist_map';
-				$d->pks = ['TemplateId','CheckId'];
-				$d->pk_values = [$TemplateId,$CheckId];
+				$d->pks = ['TemplateCheckListMapId'];
+				$d->pk_values = [$TemplateCheckListMapId];
 				$d->build_query();
 				$aQuerys[] = $d;
 			}
@@ -318,6 +323,62 @@ function changeOrder($data)
 			$u->pk_values = [$ToId];
 			$u->build_query();
 			$aQuerys[] = $u;
+
+			$res = exec_query($aQuerys, $UserId, $lan);
+			$success = ($res['msgType'] == 'success') ? 1 : 0;
+			$status = ($res['msgType'] == 'success') ? 200 : 500;
+
+			$returnData = [
+				"success" => $success,
+				"status" => $status,
+				"UserId" => $UserId,
+				"message" => $res['msg']
+			];
+		} catch (PDOException $e) {
+			$returnData = msg(0, 500, $e->getMessage());
+		}
+
+		return $returnData;
+	}
+}
+
+
+function copyCheck($data)
+{
+
+	if ($_SERVER["REQUEST_METHOD"] != "POST") {
+		return $returnData = msg(0, 404, 'Page Not Found!');
+	}{
+		$dbh = new Db();
+
+		$CopyFromId = $data->rowData->TemplateCheckListMapId;
+		$CopyFromSortOrder = $data->rowData->SortOrder;
+		$NextSortOrder = $CopyFromSortOrder + 1;
+		$TemplateId = $data->rowData->TemplateId;
+		$CheckId = $data->rowData->id;
+
+		$lan = trim($data->lan);
+		$UserId = trim($data->UserId);
+
+
+		try {
+
+			/**Next all check list order+1 */
+			$query = "update t_template_checklist_map set SortOrder=SortOrder+1
+			 where TemplateId=$TemplateId and SortOrder>$CopyFromSortOrder;";
+			$dbh->query($query);
+
+
+			$aQuerys = array();
+		
+			$q = new insertq();
+			$q->table = 't_template_checklist_map';
+			$q->columns = ['TemplateId','CheckId','SortOrder'];
+			$q->values = [$TemplateId,$CheckId,$NextSortOrder];
+			$q->pks = ['TemplateCheckListMapId'];
+			$q->bUseInsetId = false;
+			$q->build_query();
+			$aQuerys[] = $q;
 
 			$res = exec_query($aQuerys, $UserId, $lan);
 			$success = ($res['msgType'] == 'success') ? 1 : 0;
