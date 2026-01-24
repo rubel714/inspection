@@ -77,6 +77,82 @@ if (!file_exists($path)) {
     mkdir($path, 0777, true);
 }
 
+// Function to compress image before adding to PDF
+function compressImageForPDF($source, $maxWidth = 800, $maxHeight = 800, $quality = 60) {
+    if (!file_exists($source)) {
+        return $source;
+    }
+    
+    $info = @getimagesize($source);
+    if (!$info) {
+        return $source;
+    }
+    
+    $mime = $info['mime'];
+    $origWidth = $info[0];
+    $origHeight = $info[1];
+    
+    // Create image resource based on type
+    switch ($mime) {
+        case 'image/jpeg':
+            $image = @imagecreatefromjpeg($source);
+            break;
+        case 'image/png':
+            $image = @imagecreatefrompng($source);
+            break;
+        case 'image/gif':
+            $image = @imagecreatefromgif($source);
+            break;
+        default:
+            return $source; // Unsupported format, return original
+    }
+    
+    if (!$image) {
+        return $source;
+    }
+    
+    // Calculate new dimensions while maintaining aspect ratio
+    $ratio = min($maxWidth / $origWidth, $maxHeight / $origHeight);
+    
+    // Only resize if image is larger than max dimensions
+    if ($ratio < 1) {
+        $newWidth = (int)($origWidth * $ratio);
+        $newHeight = (int)($origHeight * $ratio);
+    } else {
+        $newWidth = $origWidth;
+        $newHeight = $origHeight;
+    }
+    
+    // Create new image with new dimensions
+    $newImage = imagecreatetruecolor($newWidth, $newHeight);
+    
+    // Preserve transparency for PNG
+    if ($mime == 'image/png') {
+        imagealphablending($newImage, false);
+        imagesavealpha($newImage, true);
+        $transparent = imagecolorallocatealpha($newImage, 255, 255, 255, 127);
+        imagefilledrectangle($newImage, 0, 0, $newWidth, $newHeight, $transparent);
+    }
+    
+    // Resize the image
+    imagecopyresampled($newImage, $image, 0, 0, 0, 0, $newWidth, $newHeight, $origWidth, $origHeight);
+    
+    // Create temp file for compressed image
+    $tempFile = sys_get_temp_dir() . '/pdf_img_' . uniqid() . '.jpg';
+    
+    // Save as JPEG with compression
+    imagejpeg($newImage, $tempFile, $quality);
+    
+    // Free memory
+    imagedestroy($image);
+    imagedestroy($newImage);
+    
+    return $tempFile;
+}
+
+// Array to track temp files for cleanup
+$tempFiles = [];
+
 class MYPDF extends TCPDF
 {
     public function Header()
@@ -147,6 +223,7 @@ class MYPDF extends TCPDF
 
 
 $pdf = new MyPDF();
+$pdf->SetCompression(true); // Enable PDF compression
 $pdf->SetMargins(5, 25, 5);
 $pdf->SetAutoPageBreak(true, 5);
 $pdf->SetFont('helvetica', 'R', 10); //Global font size of this pdf
@@ -312,7 +389,12 @@ foreach ($images as $img) {
     $pdf->Rect($x, $y, $w, $h); // optional: container border
 
     $imageFile = $img['file']; //'example.jpg'; // your image path
-    list($imgW, $imgH) = getimagesize($imageFile);
+    
+    // Compress image before adding to PDF (maxWidth, maxHeight, quality)
+    $compressedImage = compressImageForPDF($imageFile, 800, 800, 35);
+    $tempFiles[] = $compressedImage; // Track for cleanup
+    
+    list($imgW, $imgH) = getimagesize($compressedImage);
     $imgRatio = $imgW / $imgH;
     $boxRatio = $boxWidth / $boxHeight;
 
@@ -327,7 +409,7 @@ foreach ($images as $img) {
     $imgX = $x + ($boxWidth - $fitW) / 2;
     $imgY = $y + ($boxHeight - $fitH) / 2;
 
-    $pdf->Image($img['file'], $imgX, $imgY, $fitW, $fitH, '', '', '', false, 300, '', false, false, 0, false, false, false);
+    $pdf->Image($compressedImage, $imgX, $imgY, $fitW, $fitH, '', '', '', false, 72, '', false, false, 0, false, false, false);
 
 
     // Draw label below image
@@ -351,6 +433,13 @@ if ($CoverFileUrl == "" && $FooterFileUrl == "") {
 
 $SecondFileName = $OutputFileDirectory . $CheckListFileName;
 $pdf->Output($SecondFileName, 'F'); //save file
+
+// Cleanup temporary compressed images
+foreach ($tempFiles as $tempFile) {
+    if (file_exists($tempFile) && strpos($tempFile, sys_get_temp_dir()) === 0) {
+        @unlink($tempFile);
+    }
+}
 
 
 
