@@ -18,7 +18,7 @@ const InspectionReportEntryAddEditModal = (props) => {
   const [selectedFiles, setSelectedFiles] = useState(
     props.currentRow.FooterFileUrl
       ? props.currentRow.FooterFileUrl.split(",")
-      : []
+      : [],
   );
   // const [currentFile, setCurrentFile] = useState(null);
   const UserInfo = LoginUserInfo();
@@ -29,7 +29,7 @@ const InspectionReportEntryAddEditModal = (props) => {
   const baseUrl = process.env.REACT_APP_FRONT_URL;
   const baseUrlstorage = process.env.REACT_APP_STORAGE_URL;
   const [previewImage, setPreviewImage] = useState(
-    `${baseUrl}image/transaction/placeholder.jpg`
+    `${baseUrl}image/transaction/placeholder.jpg`,
   );
 
   // Build full URL for accessory files stored on server
@@ -38,11 +38,48 @@ const InspectionReportEntryAddEditModal = (props) => {
     return `${baseUrlstorage}image/transaction/${currentRow.ManyImgPrefix}/${fileName}`;
   };
 
+  // Build full URL for cover/report file stored on server
+  const getCoverFileUrl = (fileName) => {
+    if (!fileName) return "";
+    return `${baseUrlstorage}image/transaction/${currentRow.ManyImgPrefix}/${fileName}`;
+  };
+
+  const handleDeleteCoverFile = () => {
+    const fileName = currentRow.CoverFileUrl;
+    if (!fileName) return;
+
+    const params = {
+      action: "deleteCoverFile",
+      lan: language(),
+      UserId: UserInfo.UserId,
+      TransactionId: currentRow.id,
+      FileName: fileName,
+    };
+
+    apiCall.post(serverpage, { params }, apiOption()).then((res) => {
+      if (
+        props.masterProps &&
+        typeof props.masterProps.openNoticeModal === "function"
+      ) {
+        props.masterProps.openNoticeModal({
+          isOpen: true,
+          msg: res.data.message,
+          msgtype: res.data.success,
+        });
+      }
+      if (res.data.success === 1) {
+        let data = { ...currentRow };
+        data.CoverFileUrl = "";
+        setCurrentRow(data);
+      }
+    });
+  };
+
   const EXCEL_EXPORT_URL = process.env.REACT_APP_API_URL;
   const PDFGenerate = () => {
     let finalUrl = EXCEL_EXPORT_URL + "report/ReportGenerate_pdf.php";
     window.open(
-      finalUrl + "?TransactionId=" + currentRow.id + "&TimeStamp=" + Date.now()
+      finalUrl + "?TransactionId=" + currentRow.id + "&TimeStamp=" + Date.now(),
     );
   };
 
@@ -62,7 +99,7 @@ const InspectionReportEntryAddEditModal = (props) => {
       let data = { ...currentRow };
       if (Array.isArray(data.FooterFileUrlUpload)) {
         data.FooterFileUrlUpload = data.FooterFileUrlUpload.filter(
-          (f) => f.name !== fileName
+          (f) => f.name !== fileName,
         );
       }
       setCurrentRow(data);
@@ -142,7 +179,6 @@ const InspectionReportEntryAddEditModal = (props) => {
     }
   };
 
-  
   // const handleChangeManyDropDown = (name, value, Idx) => {
   //   let data = { ...currentRow };
   //   if (name === "CheckId") {
@@ -376,13 +412,51 @@ const InspectionReportEntryAddEditModal = (props) => {
               {currentRow.CoverFileUrl && !currentRow.CoverFileUrlUpload && (
                 <div style={{ color: "#666" }}>
                   <ul style={{ paddingLeft: "20px" }}>
-                    <li key={0}>
-                      {currentRow.CoverFileUrl.length > 15
-                        ? `${currentRow.CoverFileUrl.slice(
-                            0,
-                            6
-                          )}...${currentRow.CoverFileUrl.slice(-8)}`
-                        : currentRow.CoverFileUrl}
+                    <li
+                      key={0}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "4px",
+                      }}
+                    >
+                      <a
+                        href={getCoverFileUrl(currentRow.CoverFileUrl)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        download
+                        title={currentRow.CoverFileUrl}
+                        style={{
+                          textDecoration: "underline",
+                          color: "#3366cc",
+                        }}
+                      >
+                        {currentRow.CoverFileUrl.length > 15
+                          ? `${currentRow.CoverFileUrl.slice(
+                              0,
+                              6,
+                            )}...${currentRow.CoverFileUrl.slice(-8)}`
+                          : currentRow.CoverFileUrl}
+                      </a>
+                      {UserInfo.RoleId[0] == 1 && (
+                        <button
+                          type="button"
+                          className="btnDeleteSmall"
+                          onClick={handleDeleteCoverFile}
+                          title="Delete file"
+                          style={{
+                            border: "none",
+                            background: "transparent",
+                            color: "#d33",
+                            cursor: "pointer",
+                            padding: "0 2px",
+                            lineHeight: 1,
+                            minWidth: "2px",
+                          }}
+                        >
+                          ✕
+                        </button>
+                      )}
                     </li>
                   </ul>
                 </div>
@@ -399,12 +473,18 @@ const InspectionReportEntryAddEditModal = (props) => {
                           ? `${fileName.slice(0, 6)}...${fileName.slice(-8)}`
                           : fileName;
                       // Server-stored files created via ConvertFileAPI include `_footer_` or `_cover_` in the name
-                      const isServerFile = /_(footer|cover)_/.test(fileName || "");
+                      const isServerFile = /_(footer|cover)_/.test(
+                        fileName || "",
+                      );
                       const url = getAccessoryFileUrl(fileName);
                       return (
                         <li
                           key={index}
-                          style={{ display: "flex", alignItems: "center", gap: "4px" }}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "4px",
+                          }}
                         >
                           {isServerFile ? (
                             <a
@@ -413,30 +493,36 @@ const InspectionReportEntryAddEditModal = (props) => {
                               rel="noopener noreferrer"
                               download
                               title={fileName}
-                              style={{ textDecoration: "underline", color: "#3366cc" }}
+                              style={{
+                                textDecoration: "underline",
+                                color: "#3366cc",
+                              }}
                             >
                               {displayName}
                             </a>
                           ) : (
                             <span title={fileName}>{displayName}</span>
                           )}
-                          <button
-                            type="button"
-                            className="btnDeleteSmall"
-                            onClick={() => handleDeleteAccessory(fileName)}
-                            title="Delete file"
-                            style={{
-                              border: "none",
-                              background: "transparent",
-                              color: "#d33",
-                              cursor: "pointer",
-                              padding: "0 2px",
-                              lineHeight: 1,
-                              minWidth: "2px",
-                            }}
-                          >
-                            ✕
-                          </button>
+
+                          {UserInfo.RoleId[0] == 1 && (
+                            <button
+                              type="button"
+                              className="btnDeleteSmall"
+                              onClick={() => handleDeleteAccessory(fileName)}
+                              title="Delete file"
+                              style={{
+                                border: "none",
+                                background: "transparent",
+                                color: "#d33",
+                                cursor: "pointer",
+                                padding: "0 2px",
+                                lineHeight: 1,
+                                minWidth: "2px",
+                              }}
+                            >
+                              ✕
+                            </button>
+                          )}
                         </li>
                       );
                     })}

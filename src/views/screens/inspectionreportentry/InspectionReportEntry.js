@@ -55,6 +55,7 @@ const InspectionReportEntry = (props) => {
   const { isLoading, data: dataList, error, ExecuteQuery } = ExecuteQueryHook(); //Fetch data
   const { isLoading:isLoadingCategory, data: categoryDataList, error:errorCategory, ExecuteQuery:ExecuteQueryCategory } = ExecuteQueryHook(); //Fetch data
   const UserInfo = LoginUserInfo();
+  // console.log('UserInfo: ', UserInfo);
   const [selectedDate, setSelectedDate] = useState(
     //new Date()
     moment().format("YYYY-MM-DD")
