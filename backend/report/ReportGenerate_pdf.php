@@ -189,7 +189,7 @@ class MYPDF extends TCPDF
 
         $this->SetXY(150, 14); // adjust X and Y as needed
         // $ReportDate = 'REPORT DATE: 08-01-2025';
-        $this->Cell(0, 0, 'REPORT DATE: ' . $TransactionDate, 0, 'L', false, 0, '', '', true, 0, false, true, 0, 'T', true);
+        $this->Cell(0, 0, 'INSPECTION DATE: ' . $TransactionDate, 0, 'L', false, 0, '', '', true, 0, false, true, 0, 'T', true);
 
         $this->SetXY(150, 18); // adjust X and Y as needed
         // $PageNumber = 'PAGE: 1  of  12';
@@ -391,7 +391,7 @@ foreach ($images as $img) {
     $imageFile = $img['file']; //'example.jpg'; // your image path
     
     // Compress image before adding to PDF (maxWidth, maxHeight, quality)
-    $compressedImage = compressImageForPDF($imageFile, 800, 800, 35);
+    $compressedImage = compressImageForPDF($imageFile, 800, 800, 95);
     $tempFiles[] = $compressedImage; // Track for cleanup
     
     list($imgW, $imgH) = getimagesize($compressedImage);
