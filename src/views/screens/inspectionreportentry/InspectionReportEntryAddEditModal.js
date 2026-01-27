@@ -438,7 +438,7 @@ const InspectionReportEntryAddEditModal = (props) => {
                             )}...${currentRow.CoverFileUrl.slice(-8)}`
                           : currentRow.CoverFileUrl}
                       </a>
-                      {UserInfo.RoleId[0] == 1 && (
+                      {/* {UserInfo.RoleId[0] == 1 && ( */}
                         <button
                           type="button"
                           className="btnDeleteSmall"
@@ -456,7 +456,7 @@ const InspectionReportEntryAddEditModal = (props) => {
                         >
                           ✕
                         </button>
-                      )}
+                      {/*  )} */}
                     </li>
                   </ul>
                 </div>
@@ -504,7 +504,7 @@ const InspectionReportEntryAddEditModal = (props) => {
                             <span title={fileName}>{displayName}</span>
                           )}
 
-                          {UserInfo.RoleId[0] == 1 && (
+                          {/* {UserInfo.RoleId[0] == 1 && ( */}
                             <button
                               type="button"
                               className="btnDeleteSmall"
@@ -522,7 +522,7 @@ const InspectionReportEntryAddEditModal = (props) => {
                             >
                               ✕
                             </button>
-                          )}
+                          {/* )} */}
                         </li>
                       );
                     })}

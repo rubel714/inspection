@@ -325,7 +325,7 @@ const InspectionReportEntry = (props) => {
           }}
         />)}
 
-        {rowData.StatusId==1 && (<DeleteOutline
+        {rowData.StatusId==1 && UserInfo.RoleId[0] == 1 && (<DeleteOutline
           className={"table-delete-icon"}
           onClick={() => {
             deleteData(rowData);
