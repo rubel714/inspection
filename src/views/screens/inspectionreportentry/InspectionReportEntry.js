@@ -1079,11 +1079,11 @@ const InspectionReportEntry = (props) => {
                 onClick={()=>panelShowHide(2)}
               />
 
-              <Button
+               {UserInfo.RoleId[0] == 1 && (<Button
                   label={"Finish Inspection"}
                   class={"btnUpdate"}
                   onClick={postInspection}
-                />
+                />)}
 
             </div>
           </div>
