@@ -81,22 +81,52 @@ function getDataList($data)
 	   where (a.TransactionId = $pTransactionId OR $pTransactionId=0)
 		$dateFilter
 	   ORDER BY a.`TransactionDate` DESC, a.InvoiceNo ASC;";
+	   $resultdatalist = $dbh->query($query);
 
-		$resultdatalist = $dbh->query($query);
+
+
+
+
+
+
+		$queryMany = "SELECT b.TransactionItemId AS autoId,b.`TransactionItemId`, b.`TransactionId`,b.CategoryId, b.`CheckId`,b.CheckName,
+			b.RowNo,b.ColumnNo,b.PhotoUrl,'' PhotoUrlChanged, '' PhotoUrlPreview, '' PhotoUrlUpload, b.SortOrder,b.CheckType
+			FROM `t_transaction` a
+			INNER JOIN t_transaction_items b ON a.TransactionId=b.TransactionId
+			WHERE (a.TransactionId = $pTransactionId OR $pTransactionId=0)
+			AND (b.CategoryId = $pCategoryId OR $pCategoryId=0)
+			$dateFilter
+			ORDER BY a.TransactionId ASC, b.CategoryId ASC, b.SortOrder ASC;";
+		$resultMany = $dbh->query($queryMany);
+		$ManyDataList = array();
+		foreach ($resultMany as $r) {
+			$TId = $r['TransactionId'];
+			$ManyDataList[$TId][] = $r;
+		}
+
+
 		$resultdata = array();
 		foreach ($resultdatalist as $row) {
 			$TransactionId = $row['id'];
-
-			$query = "SELECT a.TransactionItemId as autoId,a.`TransactionItemId`, a.`TransactionId`,a.CategoryId, a.`CheckId`,a.CheckName,
-			a.RowNo,a.ColumnNo,a.PhotoUrl,'' PhotoUrlChanged, '' PhotoUrlPreview, '' PhotoUrlUpload, a.SortOrder,a.CheckType
-			FROM t_transaction_items a
-			where a.TransactionId=$TransactionId
-			and (a.CategoryId = $pCategoryId OR $pCategoryId=0)
-			order by a.SortOrder ASC;";
-			$resultdataItems = $dbh->query($query);
-			$row['Items'] = $resultdataItems;
+			$row['Items'] = $ManyDataList[$TransactionId];
 			$resultdata[] = $row;
 		}
+
+
+
+		// foreach ($resultdatalist as $row) {
+		// 	$TransactionId = $row['id'];
+
+		// 	$query = "SELECT a.TransactionItemId as autoId,a.`TransactionItemId`, a.`TransactionId`,a.CategoryId, a.`CheckId`,a.CheckName,
+		// 	a.RowNo,a.ColumnNo,a.PhotoUrl,'' PhotoUrlChanged, '' PhotoUrlPreview, '' PhotoUrlUpload, a.SortOrder,a.CheckType
+		// 	FROM t_transaction_items a
+		// 	where a.TransactionId=$TransactionId
+		// 	and (a.CategoryId = $pCategoryId OR $pCategoryId=0)
+		// 	order by a.SortOrder ASC;";
+		// 	$resultdataItems = $dbh->query($query);
+		// 	$row['Items'] = $resultdataItems;
+		// 	$resultdata[] = $row;
+		// }
 
 
 
