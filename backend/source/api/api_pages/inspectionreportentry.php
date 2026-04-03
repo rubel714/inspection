@@ -43,6 +43,9 @@ switch ($task) {
 	case "changeCheckListOrder":
 		$returnData = changeCheckListOrder($data);
 		break;
+	case "updateCheckListSortOrders":
+		$returnData = updateCheckListSortOrders($data);
+		break;
 	case "importInspectionReport":
 		$returnData = importInspectionReport($data);
 		break;
@@ -752,6 +755,49 @@ function changeCheckListOrder($data)
 
 		return $returnData;
 	}
+}
+
+function updateCheckListSortOrders($data)
+{
+	if ($_SERVER["REQUEST_METHOD"] != "POST") {
+		return msg(0, 404, 'Page Not Found!');
+	}
+
+	$orderList = $data->orderList;
+	$lan = trim($data->lan);
+	$UserId = trim($data->UserId);
+
+	try {
+		$aQuerys = array();
+
+		foreach ($orderList as $item) {
+			$id = intval($item->id);
+			$sortOrder = intval($item->SortOrder);
+
+			$u = new updateq();
+			$u->table = 't_transaction_items';
+			$u->columns = ['SortOrder'];
+			$u->values = [$sortOrder];
+			$u->pks = ['TransactionItemId'];
+			$u->pk_values = [$id];
+			$u->build_query();
+			$aQuerys[] = $u;
+		}
+
+		$res = exec_query($aQuerys, $UserId, $lan);
+		$success = ($res['msgType'] == 'success') ? 1 : 0;
+		$status = ($res['msgType'] == 'success') ? 200 : 500;
+
+		$returnData = [
+			"success" => $success,
+			"status" => $status,
+			"message" => $res['msg']
+		];
+	} catch (PDOException $e) {
+		$returnData = msg(0, 500, $e->getMessage());
+	}
+
+	return $returnData;
 }
 
 function importInspectionReport($data)
